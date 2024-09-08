@@ -23,3 +23,4 @@ export interface NewGame{
     owner:string;
     password?:string;
 };
+

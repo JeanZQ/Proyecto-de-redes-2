@@ -1,21 +1,5 @@
-<div class="container-btn">
-    <mat-card class="example-card" appearance="outlined">
-        <mat-card-header>
-          <div mat-card-avatar class="example-header-image"></div>
-          <mat-card-title> Agregar un nuevo juego</mat-card-title>
-        </mat-card-header>
-      
-        <mat-card-actions align="end">
-            <button mat-flat-button (click)="createRoom()">Crear sala</button>
-        </mat-card-actions>
-      </mat-card>
-    
-
-</div>
-
 <div *ngIf="serverData">
     <ul >
-        <!-- <p>{{serverData | json}}  </p> -->
         <li *ngFor="let game of serverData.data">
             <userRoom [game] = 'game'></userRoom>
         </li>

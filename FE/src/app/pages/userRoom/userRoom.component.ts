@@ -21,4 +21,8 @@ export class UserRoomComponent  {
 
     ngOnInit() {};
 
+    joinRoom(){
+        console.log('Joining room');
+    }
+
 }
