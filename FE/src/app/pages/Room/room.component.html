@@ -1,0 +1,8 @@
+<div *ngIf="serverData">
+    <ul >
+        <li *ngFor="let game of serverData.data">
+            <userRoom [game] = 'game'></userRoom>
+        </li>
+    </ul>
+</div>
+
