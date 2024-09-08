@@ -24,3 +24,11 @@ export interface NewGame{
     password?:string;
 };
 
+export interface JoinGame{
+    id:string;
+    player?:string;
+    owner:string;
+    password:string;
+};
+
+
