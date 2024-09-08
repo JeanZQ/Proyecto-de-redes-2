@@ -1,11 +1,11 @@
-export type ServerResponse = {
+export interface ServerGameResponse  {
     status: number;
     msg: string;
     data: GameResponse[];
     other: any;
 };
 
-export type GameResponse = {
+export interface GameResponse  {
     name: string;
     owner: string;
     status: string;
@@ -16,4 +16,10 @@ export type GameResponse = {
     enemies: string[];
     currentRound: string;
     id: string;
+};
+
+export interface NewGame{
+    name:string;
+    owner:string;
+    password?:string;
 };

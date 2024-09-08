@@ -1,50 +1,44 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { Server } from "http";
-import { ServerResponse,GameResponse } from "../../models/serverResponse";
+import { ServerGameResponse,GameResponse } from "../../models/app.interface";
 import { UserRoomComponent } from '../userRoom/userRoom.component';
-import { JsonPipe, NgFor } from "@angular/common";
+import { JsonPipe, NgFor,CommonModule } from "@angular/common";
+import { DataService } from "../../services/data.service";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
+import {MatListModule} from '@angular/material/list';
 
 @Component({
     selector: 'room',
     standalone: true,
-    imports: [UserRoomComponent,NgFor,JsonPipe],
+    imports: [UserRoomComponent,NgFor,JsonPipe,MatButtonModule,
+        MatCardModule, MatButtonModule,MatListModule,CommonModule],
     templateUrl: './room.component.html',
     styleUrl: './room.component.css',
 })
 
-export class RoomComponent {
+export class RoomComponent implements OnInit {
     
-    @Input() serverData: ServerResponse[] = [];
-    rooms: GameResponse[] = [];
-    names: string[] = [];
-    owner: string[] = [];
-    constructor() {     
+    serverData! : ServerGameResponse;
+
+    constructor(private datasvc : DataService) {
     }
     
     ngOnInit() {
-        this.getRooms();
-        // console.log("Respuesta del server 1" + this.serverData)
+        this.datasvc.getRooms().subscribe(
+            response => (this.serverData = response),
+        );
+        // this.createRoom();
     };
 
-    
-    public getRooms() {
-        // if (this.serverData && this.serverData.data && this.serverData.data.length > 0) {
-        //     this.rooms = this.serverData.data;
-
-        //     // Guardar los nombres y propietarios en arrays separados
-        //     for (let room of this.rooms) {
-        //         this.names.push(room.name);
-        //     //     this.owners.push(room.owner);  // Corrigiendo typo, "owner" -> "owners"
-        //     }
-
-        //     console.log("Nombres: ", this.names);
-        //     // console.log("Propietarios: ", this.owners);
-        // } else {
-        //     console.log("No hay datos disponibles en serverData.");
-        // }
-
-        console.log(this.serverData)
-    }
-
-    
+    createRoom(){
+        console.log('Creating new game');
+        const newGame = {
+            name: 'Prueba Angular Raul',
+            owner: 'Raul',
+            password: 'Raul'
+        }
+        this.datasvc.createRoom(newGame).subscribe(
+            data => (console.log(data))
+        );
+    };
 }
