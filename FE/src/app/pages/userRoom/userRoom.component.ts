@@ -14,14 +14,9 @@ import { GameResponse } from "../../models/app.interface";
     
     })
 
-export class UserRoomComponent implements OnInit {
-
+export class UserRoomComponent {
     @Input()game!: GameResponse;
     constructor() {};
-
-    ngOnInit() {
-        // this.joinRoom();
-    };
 
     joinRoom(){
         console.log('Joining room');

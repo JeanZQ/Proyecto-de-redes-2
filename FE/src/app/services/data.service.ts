@@ -32,30 +32,3 @@ export class DataService{
         }});
     }
 
-
-    //   public fetchJoinGame(owner: string, player: string, password: string, id: string) {
-    //     const headers = new HttpHeaders({
-    //       'accept': 'application/json',
-    //       'password': password,
-    //       'player': owner,  
-    //       'Content-Type': 'application/json'
-    //     });
-      
-    //     const body = {
-    //       player: player 
-    //     };
-      
-    //     this.http.put(`https://contaminados.akamai.meseguercr.com/api/games/${id}`, body, { headers })
-    //       .subscribe(
-    //         (response: any) => {
-    //           this.dataGetGame = response;
-    //           console.log(this.dataGetGame);
-    //           //localStorage.setItem("getGameResponse", JSON.stringify(this.dataGetGame));
-    //         },
-    //         (error: any) => {
-    //           console.log(error);
-    //         }
-    //       );
-    //   } 
-
-} 
