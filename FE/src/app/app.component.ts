@@ -1,21 +1,27 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {UserCardComponent} from './pages/userCard/userCard.component';
+import { RoomComponent } from "./pages/room/room.component";
+import { JsonPipe } from '@angular/common';
+import { CreateRoomComponent } from './pages/createRoom/createRoom.component';
+import { ReactiveFormsModule} from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCardModule } from '@angular/material/card';
+
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, UserCardComponent],
-  template: `<div>
-    <h1>ContaminaDos 👾</h1>
-    <userCard></userCard>
-    </div>`,
-  // templateUrl: './app.component.html',
-  // styleUrl: './app.component.css'
+  imports: [RouterOutlet, RoomComponent,
+     JsonPipe,ReactiveFormsModule,
+     MatInputModule,
+     MatButtonModule,
+     MatFormFieldModule,MatCardModule,CreateRoomComponent],
+  templateUrl: './app.component.html',
+
 })
 
-
-
 export class AppComponent {
-  // title = 'contaminaDos';
 }

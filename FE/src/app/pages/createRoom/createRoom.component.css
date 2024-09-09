@@ -1,0 +1,12 @@
+.createRoom {
+    margin: 1rem;
+    width: 300px;
+    height: auto;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

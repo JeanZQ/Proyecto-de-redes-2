@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "contaminaDos": {
+    "FE": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/contamina-dos",
+            "outputPath": "dist/fe",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "contaminaDos:build:production"
+              "buildTarget": "FE:build:production"
             },
             "development": {
-              "buildTarget": "contaminaDos:build:development"
+              "buildTarget": "FE:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -101,6 +101,6 @@
     }
   },
   "cli": {
-    "analytics": "6443a953-dc9b-4d19-8703-422dea6c182a"
+    "analytics": "2604693d-64f1-45e9-86b0-0f38cdf6edaa"
   }
 }
