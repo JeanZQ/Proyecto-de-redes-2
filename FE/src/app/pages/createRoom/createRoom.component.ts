@@ -77,21 +77,17 @@ export class CreateRoomComponent{
         // });
 }
     
-
-    
     // searchGame(){
     //     this.datasvc.getGame({id: '66de0a8f5a6527506bd6b15c', owner: 'Chuta', password: 'Chuta'}).subscribe(
     //         data => (console.log(data))
     //     );
     // };
-    
+
     // joinGame(){
     //     this.datasvc.joinGame({id: '66de0a8f5a6527506bd6b15c', owner: 'Luis', password: 'Chuta', player: 'Luis'}).subscribe(
     //         data => (console.log(data
     //         ))
     //     );
     // };
-
-
 
 }

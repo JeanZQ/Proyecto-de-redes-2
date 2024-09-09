@@ -6,6 +6,7 @@ import { Http2ServerRequest } from 'http2';
 
 const serverConfig: ApplicationConfig = {
   providers: [provideServerRendering()]
+
 };
 
 export const config = mergeApplicationConfig(appConfig, serverConfig);

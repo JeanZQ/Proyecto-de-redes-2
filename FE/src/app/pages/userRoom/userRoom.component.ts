@@ -15,7 +15,6 @@ import { GameResponse } from "../../models/app.interface";
     })
 
 export class UserRoomComponent {
-
     @Input()game!: GameResponse;
     constructor() {};
 
