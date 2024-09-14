@@ -31,4 +31,4 @@ export class DataService{
             {headers: {'password': payload.password,'player': payload.owner
         }});
     }
-
+}
