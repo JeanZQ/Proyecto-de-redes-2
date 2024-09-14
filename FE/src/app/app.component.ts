@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { getRoomComponent } from "./pages/getRoom/getRoom.component";
+import { getRoomInputComponent } from "./pages/getRoom/getRoomInput.component";
 
 
 
@@ -21,7 +22,7 @@ import { getRoomComponent } from "./pages/getRoom/getRoom.component";
     JsonPipe, ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
-    MatFormFieldModule, MatCardModule, CreateRoomComponent, getRoomComponent],
+    MatFormFieldModule, MatCardModule, CreateRoomComponent, getRoomComponent, getRoomInputComponent],
   templateUrl: './app.component.html',
 })
 

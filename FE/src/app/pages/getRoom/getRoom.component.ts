@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import { getRoomInputComponent } from "./getRoomInput.component";
 
 /**
  * @title Dialog with header, scrollable content and actions
@@ -30,7 +31,7 @@ export class getRoomComponent {
   templateUrl: './getRoomPopUp.component.html',
   styleUrl: './getRoom.component.css',
   standalone: true,
-  imports: [MatDialogModule, MatButtonModule],
+  imports: [MatDialogModule, MatButtonModule, getRoomComponent, getRoomInputComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class getRoomPopUpComponent {}
