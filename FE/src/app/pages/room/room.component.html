@@ -1,8 +1,11 @@
-<div *ngIf="serverData">
-    <ul >
-        <li *ngFor="let game of serverData.data">
-            <userRoom [game] = 'game'></userRoom>
-        </li>
-    </ul>
+<div class="room-container" *ngIf="serverData">
+    <!-- Barra lateral colapsable -->
+    <div class="sidebar" [class.collapsed]="isSidebarCollapsed">
+        <button class="toggle-btn" (click)="toggleSidebar()">&#9776;</button>
+        <ul>
+            <li *ngFor="let game of serverData.data">
+                <userRoom [game]="game"></userRoom>
+            </li>
+        </ul>
+    </div>
 </div>
-

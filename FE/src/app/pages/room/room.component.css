@@ -4,3 +4,40 @@ li {
     padding: 0;
     overflow: hidden;
 }
+
+.room-container {
+    display: flex;
+    height: 60vh;
+}
+
+.sidebar {
+    width: 100vh;
+    background-color: #ffffff;
+    padding: 15px;
+    overflow-y: auto;
+    transition: width 0.3s ease;
+    margin-right: 20%;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+}
+
+.sidebar.collapsed {
+    width: 50px;
+    border-radius: 10px;
+}
+
+.toggle-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #ddd;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+}
+
+.room-content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #ffffff;
+}

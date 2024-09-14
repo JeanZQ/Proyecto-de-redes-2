@@ -11,21 +11,26 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { getRoomComponent } from "./pages/getRoom/getRoom.component";
 import { getRoomInputComponent } from "./pages/getRoom/getRoomInput.component";
-
-
-
+import { MatGridListModule } from '@angular/material/grid-list';
 
 @Component({
   selector: 'app-root',
+  styleUrls: ['./app.component.css'],
+  templateUrl: './app.component.html',
   standalone: true,
-  imports: [RouterOutlet, RoomComponent,
-    JsonPipe, ReactiveFormsModule,
+  imports: [
+    RouterOutlet,
+    RoomComponent,
+    JsonPipe,
+    ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
-    MatFormFieldModule, MatCardModule, CreateRoomComponent, getRoomComponent, getRoomInputComponent],
-  templateUrl: './app.component.html',
+    MatFormFieldModule,
+    MatCardModule,
+    CreateRoomComponent,
+    getRoomComponent,
+    getRoomInputComponent,
+    MatGridListModule,
+  ]
 })
-
-export class AppComponent {
-
-}
+export class AppComponent {}
