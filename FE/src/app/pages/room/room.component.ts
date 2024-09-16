@@ -19,6 +19,7 @@ import { MatListModule } from '@angular/material/list';
         MatButtonModule,
         MatListModule,
         CommonModule,
+        MatCardModule
     ],
     templateUrl: './room.component.html',
     styleUrl: './room.component.css',
