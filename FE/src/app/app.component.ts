@@ -15,7 +15,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 @Component({
   selector: 'app-root',
-  styleUrls: ['./app.component.css'],
+  styleUrls: ['./app.component.css','./responsive.web.design.css'],
   templateUrl: './app.component.html',
   standalone: true,
   imports: [
