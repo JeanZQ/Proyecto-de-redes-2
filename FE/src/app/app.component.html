@@ -1,36 +1,12 @@
-<!-- <div style="margin: 20px;">
-  <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
-    <mat-form-field appearance="fill">
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="name" placeholder="Nombre" />
-      <mat-error >
-        El nombre es obligatorio.
-      </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Email</mat-label>
-      <input matInput formControlName="email" placeholder="Email" type="email" />
-      <mat-error >
-        Introduce un email válido.
-      </mat-error>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Contraseña</mat-label>
-      <input matInput formControlName="password" placeholder="Contraseña" type="password" />
-      <mat-error >
-        La contraseña debe tener al menos 6 caracteres.
-      </mat-error>
-    </mat-form-field>
-
-    <button mat-raised-button color="primary" type="submit" >Enviar</button>
-  </form>
-  <button (click)="hola()">Hola</button>
-</div> -->
-
 <div>
-<h1>ContaminaDos 👾</h1>
-<createRoom></createRoom>
-<room></room>
-</div>`
+  <h1>ContaminaDos 👾</h1>
+  <div class="row">
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+      <createRoom />
+    </div>
+    <div class="col-xl-8 col-lg-9 col-md-9 col-sm-9">
+      <room />
+    </div>
+  </div>
+  <getRoom />
+</div>
