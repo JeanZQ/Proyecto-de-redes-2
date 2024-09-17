@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { NewGame, ServerGameResponse,JoinGame } from "../models/app.interface";
+import { NewGame, ServerGameResponse,JoinGame, StartGame } from "../models/app.interface";
 
 @Injectable({
     providedIn: 'root'
@@ -30,5 +30,12 @@ export class DataService{
         return this.http.put<ServerGameResponse>(`${this.urlAPI}/${payload.id}`, {player: payload.player},
             {headers: {'password': payload.password,'player': payload.owner
         }});
+    }
+
+    startGame(payload:StartGame):Observable<ServerGameResponse>{
+        return this.http.head<ServerGameResponse>(`${this.urlAPI}/${payload.id}/start`, 
+            {headers: {'player': payload.player
+        }}
+        );
     }
 }

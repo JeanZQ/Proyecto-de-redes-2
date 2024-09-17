@@ -31,4 +31,9 @@ export interface JoinGame{
     password:string;
 };
 
+export interface StartGame{
+    id:string;
+    player:string;
+    password:string;
+};
 

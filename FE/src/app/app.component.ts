@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
+import { StartGameComponent } from './pages/start-game/start-game.component';
 
 
 
@@ -19,7 +20,10 @@ import { MatCardModule } from '@angular/material/card';
      JsonPipe,ReactiveFormsModule,
      MatInputModule,
      MatButtonModule,
-     MatFormFieldModule,MatCardModule,CreateRoomComponent],
+     MatFormFieldModule,
+     MatCardModule,
+     CreateRoomComponent,
+     StartGameComponent],
   templateUrl: './app.component.html',
 })
 
