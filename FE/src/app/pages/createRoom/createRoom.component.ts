@@ -64,30 +64,19 @@ export class CreateRoomComponent{
             data => (response = data.status)
         );
 
-        // if(response == 200){
-        //     messages = "Se creo la sala";
-        // }else if(response == 409){
-        //     messages = "Ya existe una sala con ese nombre";
-        // }else if(response == 400){
-        //     messages = "Ocurrio un error";
-        // }
+        if(response == 200){
+            messages = "Se creo la sala";
+        }else if(response == 409){
+            messages = "Ya existe una sala con ese nombre";
+        }else if(response == 400){
+            messages = "Ocurrio un error";
+        }
 
-        // this._snackBar.open(messages, 'Ok', {
-        //     duration: 5000,
-        // });
+        this._snackBar.open(messages, 'Ok', {
+            duration: 5000,
+        });
 }
     
-    // searchGame(){
-    //     this.datasvc.getGame({id: '66de0a8f5a6527506bd6b15c', owner: 'Chuta', password: 'Chuta'}).subscribe(
-    //         data => (console.log(data))
-    //     );
-    // };
 
-    // joinGame(){
-    //     this.datasvc.joinGame({id: '66de0a8f5a6527506bd6b15c', owner: 'Luis', password: 'Chuta', player: 'Luis'}).subscribe(
-    //         data => (console.log(data
-    //         ))
-    //     );
-    // };
 
 }
