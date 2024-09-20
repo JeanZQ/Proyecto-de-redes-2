@@ -2,14 +2,10 @@ import { Component, OnInit} from '@angular/core';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import { DataService } from '../../services/data.service';
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Necesario para Angular Material
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { inject } from '@angular/core';
 
 @Component({
   selector: 'createRoom',

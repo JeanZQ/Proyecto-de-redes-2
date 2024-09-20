@@ -1,0 +1,16 @@
+.card-heading {
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: 700;
+    color: rgb(27, 27, 27);
+}
+
+.input {
+    width: 96%;
+    height: 40px;
+    border: 1px solid rgb(27, 27, 27);
+    border-radius: 5px;
+    padding: 0 10px;
+    font-size: 16px;
+    margin-top: 10px;
+}

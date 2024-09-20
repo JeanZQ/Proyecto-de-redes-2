@@ -1,10 +1,10 @@
 .example-card {
-    margin: 1rem;
-    width: 500px;
-    height: auto;
-  }
+  margin: 1rem;
+  width: 500px;
+  height: auto;
+}
 
-  .btn {
-    margin-left: 1rem;
-    margin-bottom: 1rem;
-  }
+.btn {
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+}

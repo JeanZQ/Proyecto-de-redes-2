@@ -30,13 +30,19 @@ export class DataService {
     }
 
     joinGame(payload: JoinGame): Observable<ServerGameResponse> {
-        return this.http.put<ServerGameResponse>(`${this.urlAPI}/${payload.id}`, { player: payload.player },
-            {
-                headers: {
-                    'password': payload.password, 'player': payload.owner
-                }
-            });
+        const headers = new HttpHeaders({
+            'password': payload.password,
+            'player': payload.owner,
+            'Content-Type': 'application/json'
+        });
+    
+        return this.http.put<ServerGameResponse>(
+            `${this.urlAPI}/${payload.id}/`,
+            { player: payload.player },
+            { headers: headers }
+        );
     }
+    
 
     gamesearch(payload: SearchGame): Observable<ServerGameResponse> {
         return this.http.get<ServerGameResponse>(`${this.urlAPI}/${'?name=' + payload.name + '&status=' + payload.status + '&page=' + payload.page, '&limit=' + payload.limit}`);

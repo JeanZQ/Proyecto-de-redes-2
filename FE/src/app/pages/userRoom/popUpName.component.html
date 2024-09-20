@@ -1,0 +1,18 @@
+<div>
+    <mat-dialog-content>
+        <p class="card-heading">What is your name?</p>
+        <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input matInput [(ngModel)]="player" />
+        </mat-form-field>
+        <p class="card-heading">Enter Password</p>
+        <mat-form-field>
+            <mat-label>Password</mat-label>
+            <input matInput type="password" [(ngModel)]="password" />
+        </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <button mat-button (click)="onNoClick()">No Thanks</button>
+        <button mat-button [mat-dialog-close]="{ player, password }" cdkFocusInitial>Ok</button>
+    </mat-dialog-actions>
+</div>
