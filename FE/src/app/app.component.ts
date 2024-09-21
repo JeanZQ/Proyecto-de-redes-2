@@ -12,10 +12,11 @@ import { MatCardModule } from '@angular/material/card';
 import { getRoomComponent } from "./pages/getRoom/getRoom.component";
 import { getRoomInputComponent } from "./pages/getRoom/getRoomInput.component";
 import { MatGridListModule } from '@angular/material/grid-list';
+import { StartGameComponent } from './pages/start-game/start-game.component';
 
 @Component({
   selector: 'app-root',
-  styleUrls: ['./app.component.css','./responsive.web.design.css'],
+  standalone: true,
   templateUrl: './app.component.html',
   standalone: true,
   imports: [
@@ -31,6 +32,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
     getRoomComponent,
     getRoomInputComponent,
     MatGridListModule,
+   StartGameComponent,
   ]
 })
 export class AppComponent {}
