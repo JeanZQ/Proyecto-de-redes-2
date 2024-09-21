@@ -21,5 +21,4 @@ export class StartGameComponent {
     console.log('Starting game');
   }
 
-
 }
