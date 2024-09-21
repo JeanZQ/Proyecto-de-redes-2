@@ -17,6 +17,7 @@ export class DataService {
     }
 
     createRoom(payload: NewGame): Observable<ServerGameResponse> {
+        console.log(payload);
         return this.http.post<ServerGameResponse>(this.urlAPI, payload);
     }
 

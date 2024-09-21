@@ -70,22 +70,28 @@ export class CreateRoomComponent{
       }
     }
   
-
-    // crea la sala
     createRoom() {
-      const newRoom = {
-        name: this.myForm.value.name,
-        owner: this.myForm.value.owner,
-        password: this.myForm.value.password
+      const { name, owner, password } = this.myForm.value;
+    
+      // Crear el payload
+      const newRoom: any = {
+        name,
+        owner,
       };
-
-      this.datasvc.createRoom(newRoom).subscribe(() => {
-        this._snackBar.open('Sala creada', 'ok', 
-          { duration: 5000
-
-          });
-        });
+    
+      // Añadir la contraseña solo si no está vacía
+      if (password && password.trim() !== '') {
+        newRoom.password = password;
       }
+    
+      // Enviar la información al servicio
+      this.datasvc.createRoom(newRoom).subscribe(() => {
+        this._snackBar.open('Sala creada', 'ok', {
+          duration: 5000
+        });
+      });
+    }
+    
 
   
  }
