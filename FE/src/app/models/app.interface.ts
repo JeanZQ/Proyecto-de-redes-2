@@ -31,9 +31,18 @@ export interface JoinGame{
     password:string;
 };
 
+
 export interface StartGame{
     id:string;
     player:string;
     password:string;
 };
+
+export interface SearchGame{
+    name:string;
+    status:string;
+    page:number;
+    limit:number;
+};
+
 
