@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { LobbyComponent } from './pages/lobby/lobby.component';
 
 @Component({
   selector: 'app-root',
@@ -26,6 +27,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
     MatCardModule,
     CreateRoomComponent,
     MatGridListModule,
+    LobbyComponent
   ]
 })
 export class AppComponent {}

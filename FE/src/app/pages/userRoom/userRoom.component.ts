@@ -56,7 +56,7 @@ export class UserRoomComponent {
 
                 this.dataService.joinGame(payload).subscribe({
                     next: (response: any) => {
-                        console.log(response);
+                        localStorage.setItem('GameResponse', JSON.stringify(response.data));
                     },
                     error: (error: any) => {
                         alert('Error al unirse al juego');
