@@ -10,10 +10,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { LobbyComponent } from './pages/lobby/lobby.component';
+import { StartGameComponent } from './pages/start-game/start-game.component';
+
 
 @Component({
   selector: 'app-root',
-  styleUrls: ['./app.component.css','./responsive.web.design.css'],
+  standalone: true,
   templateUrl: './app.component.html',
   standalone: true,
   imports: [
@@ -28,6 +30,7 @@ import { LobbyComponent } from './pages/lobby/lobby.component';
     CreateRoomComponent,
     MatGridListModule,
     LobbyComponent
+   StartGameComponent,
   ]
 })
 export class AppComponent {}
