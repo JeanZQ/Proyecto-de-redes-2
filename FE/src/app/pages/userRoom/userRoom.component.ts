@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit, inject, model, signal } from "@angular/core";
+import { Component, ChangeDetectionStrategy, Input, inject, model, signal, ChangeDetectorRef } from "@angular/core";
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from "@angular/material/icon";
@@ -8,6 +8,8 @@ import { MatInputModule } from "@angular/material/input";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { FormsModule } from "@angular/forms";
 import { DataService } from "../../services/data.service";
+import { AlertComponent } from "../alert/alert.component";
+import { CommonModule } from '@angular/common';
 
 export interface DialogData {
     player: string;
@@ -17,25 +19,33 @@ export interface DialogData {
 @Component({
     selector: 'userRoom',
     imports: [
+        CommonModule,
         MatButtonModule,
         MatCardModule,
         MatIcon,
         MatFormFieldModule,
         MatInputModule,
-        MatButtonModule],
+        MatButtonModule,
+        AlertComponent],
     standalone: true,
     templateUrl: './userRoom.component.html',
     styleUrl: './userRoom.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
-
 })
 
 export class UserRoomComponent {
     @Input() game!: GameResponse;
+
+    showError = false;
+    errorTitle = '';
+    errorMessage = '';
+
     readonly player = signal('');
     readonly password = signal('');
     readonly dialog = inject(MatDialog);
     private dataService = inject(DataService);
+
+    constructor(private cdr: ChangeDetectorRef) { }
 
     openPopUp(gameId: string): void {
         const dialogRef = this.dialog.open(PopUpComponent,
@@ -59,18 +69,25 @@ export class UserRoomComponent {
                         localStorage.setItem('GameResponse', JSON.stringify(response.data));
                     },
                     error: (error: any) => {
-                        alert('Error al unirse al juego');
+                        this.showError = true;
+                        this.errorMessage = "Could not enter the game.\nPlease try again later.";
+                        this.errorTitle = "Error " + error.status;
+                        this.cdr.detectChanges();
                     }
                 });
             }
         });
+    }
+
+    onCloseAlert() {
+        this.showError = false;
     }
 }
 
 @Component({
     selector: 'popUp',
     templateUrl: './popUpName.component.html',
-    styleUrl: './popUpName.component.css',
+    styleUrls: ['./popUpName.component.css'],
     standalone: true,
     imports: [
         MatFormFieldModule,
@@ -80,7 +97,8 @@ export class UserRoomComponent {
         MatDialogTitle,
         MatDialogContent,
         MatDialogActions,
-        MatDialogClose
+        MatDialogClose,
+        AlertComponent
     ],
 })
 
@@ -89,6 +107,7 @@ export class PopUpComponent {
     readonly data = inject<DialogData>(MAT_DIALOG_DATA);
     readonly player = model(this.data.player);
     readonly password = model(this.data.password);
+
     onNoClick(): void {
         this.dialogRef.close();
     }

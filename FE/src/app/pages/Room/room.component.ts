@@ -28,7 +28,7 @@ import { MatPaginator } from '@angular/material/paginator';
         MatPaginator
     ],
     templateUrl: './room.component.html',
-    styleUrls: ['./room.component.css'],
+    styleUrls: ['./room.component.css','../../responsive.web.design.css'],
 })
 
 export class RoomComponent implements OnInit {
@@ -45,7 +45,6 @@ export class RoomComponent implements OnInit {
         this.datasvc.getRooms().subscribe(
             response => {
                 this.serverData = response;
-                console.log(this.serverData);
                 this.filteredResults = this.serverData.data;
             },
         );

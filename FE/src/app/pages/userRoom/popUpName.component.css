@@ -1,73 +1,94 @@
-/* From Uiverse.io by Mr-Roy-alt */
-.form {
-    background-color: white;
-    padding: 3.125em;
+/* From Uiverse.io by ahmed150up */
+.login-card {
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
     border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-shadow: 5px 5px 15px -1px rgba(0, 0, 0, 0.75);
+    background-color: #e8e8e8;
+    box-shadow: 2px 2px 10px #ccc;
 }
 
-.signup {
-    color: rgb(77, 75, 75);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    display: block;
-    font-weight: bold;
-    font-size: x-large;
-    margin-bottom: 0.5em;
+.card-header {
+    text-align: center;
+    margin-bottom: 20px
 }
 
-.form--input {
+.card-header .log {
+    margin: 0;
+    font-size: 24px;
+    color: black;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="password"] {
     width: 100%;
-    margin-bottom: 1.25em;
-    height: 40px;
-    border-radius: 5px;
-    border: 1px solid gray;
-    padding: 0.8em;
-    font-family: 'Inter', sans-serif;
-    outline: none;
-}
-
-.form--input:focus {
-    border: 1px solid #639;
-    outline: none;
-}
-
-.form--marketing {
-    display: flex;
-    margin-bottom: 1.25em;
-    align-items: center;
-}
-
-.form--marketing>input {
-    margin-right: 0.625em;
-}
-
-.form--marketing>label {
-    color: grey;
-}
-
-.checkbox,
-input[type="checkbox"] {
-    accent-color: #639;
-}
-
-.form--submit {
-    width: 50%;
-    padding: 0.625em;
-    border-radius: 5px;
-    color: white;
-    background-color: #639;
-    border: 1px dashed #639;
-    cursor: pointer;
-}
-
-.form--submit:hover {
-    color: #639;
-    background-color: white;
-    border: 1px dashed #639;
-    cursor: pointer;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
     transition: 0.5s;
 }
+
+button {
+    font-family: inherit;
+    font-size: 20px;
+    background: #212121;
+    color: white;
+    fill: rgb(155, 153, 153);
+    padding: 0.7em 1em;
+    padding-left: 0.9em;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    border-radius: 15px;
+    font-weight: 1000;
+    margin-left: 30%;
+  }
+  
+  button span {
+    display: block;
+    margin-left: 0.3em;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  button svg {
+    display: block;
+    transform-origin: center center;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  button:hover {
+    background: #000;
+  }
+  
+  button:hover .svg-wrapper {
+    transform: scale(1.25);
+    transition: 0.5s linear;
+  }
+  
+  button:hover svg {
+    transform: translateX(1.0em) scale(1.1);
+    fill: #fff;
+  }
+  
+  button:hover span {
+    opacity: 0;
+    transition: 0.5s linear;
+  }
+  
+  button:active {
+    transform: scale(0.95);
+  }
+  
