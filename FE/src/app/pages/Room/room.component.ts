@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { ServerGameResponse } from "../../models/app.interface";
 import { UserRoomComponent } from '../userRoom/userRoom.component';
 import { JsonPipe, NgFor, CommonModule } from "@angular/common";
@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginator } from '@angular/material/paginator';
+import { RouterLink } from "@angular/router";
+import { StartGameComponent } from "../start-game/start-game.component";
 
 @Component({
     selector: 'room',
@@ -25,10 +27,12 @@ import { MatPaginator } from '@angular/material/paginator';
         FormsModule,
         MatInputModule,
         MatFormFieldModule,
-        MatPaginator
+        MatPaginator,
+        RouterLink,
+        StartGameComponent
     ],
     templateUrl: './room.component.html',
-    styleUrls: ['./room.component.css','../../responsive.web.design.css'],
+    styleUrls: ['./room.component.css', '../../responsive.web.design.css'],
 })
 
 export class RoomComponent implements OnInit {
@@ -49,9 +53,7 @@ export class RoomComponent implements OnInit {
             },
         );
     }
-
     
-
     searchRoom() {
         if (!this.searchTerm) {
             this.filteredResults = this.serverData.data;

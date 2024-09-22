@@ -63,10 +63,10 @@ export class UserRoomComponent {
                     owner: result.player(),
                     password: result.password()
                 };
-
                 this.dataService.joinGame(payload).subscribe({
                     next: (response: any) => {
                         localStorage.setItem('GameResponse', JSON.stringify(response.data));
+                        window.location.href = '/lobby';
                     },
                     error: (error: any) => {
                         this.showError = true;
