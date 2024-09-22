@@ -1,6 +1,5 @@
 <div class="scrollBar" *ngIf="serverData">
     <div class="container">
-        <a mat-raised-button [routerLink]="['/createRoom']">Create Room</a>
         <input id="searchInput" type="text" name="text" class="input" placeholder="Enter the room name."
             [(ngModel)]="searchTerm" (ngModelChange)="searchRoom()">
 
