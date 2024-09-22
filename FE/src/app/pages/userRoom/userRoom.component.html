@@ -1,3 +1,7 @@
+<!-- Mostrar alerta si showError es true -->
+<alert *ngIf="showError" [title]="errorTitle" [message]="errorMessage" (closeAlert)="onCloseAlert()">
+</alert>
+
 <mat-card class="example-card" appearance="outlined">
   <mat-card-header>
     <div mat-card-avatar class="example-header-image"></div>

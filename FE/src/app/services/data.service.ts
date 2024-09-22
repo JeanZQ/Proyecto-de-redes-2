@@ -45,7 +45,7 @@ export class DataService {
             { headers: headers }
         );
     }
-
+    
     gamesearch(payload: SearchGame): Observable<ServerGameResponse> {
         return this.http.get<ServerGameResponse>(`${this.urlAPI}/${'?name=' + payload.name + '&status=' + payload.status + '&page=' + payload.page, '&limit=' + payload.limit}`);
     }

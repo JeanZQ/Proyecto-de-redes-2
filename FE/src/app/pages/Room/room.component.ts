@@ -9,6 +9,7 @@ import { MatListModule } from '@angular/material/list';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatPaginator } from '@angular/material/paginator';
 import { RouterLink } from "@angular/router";
 import { StartGameComponent } from "../start-game/start-game.component";
 
@@ -16,21 +17,22 @@ import { StartGameComponent } from "../start-game/start-game.component";
     selector: 'room',
     standalone: true,
     imports: [
-    UserRoomComponent,
-    NgFor,
-    JsonPipe,
-    MatButtonModule,
-    MatCardModule,
-    MatListModule,
-    CommonModule,
-    FormsModule,
-    MatInputModule,
-    MatFormFieldModule,
-    RouterLink,
-    StartGameComponent
-],
+        UserRoomComponent,
+        NgFor,
+        JsonPipe,
+        MatButtonModule,
+        MatCardModule,
+        MatListModule,
+        CommonModule,
+        FormsModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatPaginator,
+        RouterLink,
+        StartGameComponent
+    ],
     templateUrl: './room.component.html',
-    styleUrls: ['./room.component.css'],
+    styleUrls: ['./room.component.css', '../../responsive.web.design.css'],
 })
 
 export class RoomComponent implements OnInit {
@@ -38,6 +40,8 @@ export class RoomComponent implements OnInit {
     serverData!: ServerGameResponse;
     searchTerm: string = '';
     filteredResults: any[] = [];
+    pageSize: number = 5;
+    currentPage: number = 0;
 
     constructor(private datasvc: DataService) { }
 
@@ -49,7 +53,7 @@ export class RoomComponent implements OnInit {
             },
         );
     }
-
+    
     searchRoom() {
         if (!this.searchTerm) {
             this.filteredResults = this.serverData.data;

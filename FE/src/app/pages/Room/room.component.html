@@ -4,7 +4,7 @@
             [(ngModel)]="searchTerm" (ngModelChange)="searchRoom()">
 
         <ul>
-            <li *ngFor="let game of filteredResults">
+            <li *ngFor="let game of filteredResults.slice(currentPage * pageSize, (currentPage + 1) * pageSize)">
                 <userRoom [game]="game"></userRoom>
             </li>
         </ul>
@@ -14,8 +14,11 @@
                 <mat-card-header>
                     <mat-card-title>Oh no! Server not found!</mat-card-title>
                 </mat-card-header>
-                <img mat-card-image src="https://i.imgur.com/z4l5HRa.png" alt="engineer kitten" style="width: 200px; height: auto;">
+                <img mat-card-image src="https://i.imgur.com/z4l5HRa.png" alt="engineer kitten"
+                    style="width: 200px; height: auto;">
             </mat-card>
         </p>
+        <mat-paginator [length]="filteredResults.length" [pageSize]="pageSize" (page)="currentPage = $event.pageIndex"
+            aria-label="Select page"></mat-paginator>
     </div>
 </div>
