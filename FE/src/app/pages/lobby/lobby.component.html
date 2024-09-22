@@ -1,4 +1,5 @@
 <div class="lobby-grid">
+    <startGame></startGame>
     <div *ngFor="let player of players; let i = index" class="card">
         <div class="card-photo">
             <img mat-card-image [src]="playersImg[i]" alt="avatar"> <!-- Usar el índice para acceder a la imagen -->

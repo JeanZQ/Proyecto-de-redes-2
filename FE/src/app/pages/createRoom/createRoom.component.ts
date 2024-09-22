@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'createRoom',
@@ -16,13 +17,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
-    MatFormFieldModule]
+    MatFormFieldModule,
+    RouterLink
+  ]
 
 })
+
 export class CreateRoomComponent{
     
     myForm: FormGroup;
-    messages: string[] = ["Se creo la sala","No se pudo crear la sala", "Ya existe una sala con ese nombre" ];
 
     constructor(
         private datasvc : DataService, 
@@ -35,55 +38,74 @@ export class CreateRoomComponent{
         password: ['']
       });
     }
-    
+
+
     onSubmit() {
-      if (this.myForm.valid) {
-        console.log('Formulario enviado', this.myForm.value);
-        this.createGame();
+    
+      const isFormValid = this.myForm.get('name')?.valid && this.myForm.get('owner')?.valid;
+      if (isFormValid) {
+        
+        this.createRoom();
+        
+        
+        this.myForm.reset({
+          name: '',
+          owner: '',
+          password: ''
+        });
+        
+        // // Establece el estado de validez sin errores 
+        // Object.keys(this.myForm.controls).forEach(control => {
+        //   this.myForm.controls[control].setErrors(null);
+        // });
+        
+
       } else {
+
         this._snackBar.open('Formulario Invalido', 'Ok', {
             duration: 5000,
         });
       }
     }
+  
+    createRoom() {
+      const { name, owner, password } = this.myForm.value;
     
-    createGame(){
-        console.log('Creating new game');
-        let response: number = 0;
-        let messages: string = 'Ocurrio un error';
-        const newGame = {
-            name: this.myForm.value.name,
-            owner: this.myForm.value.owner,
-            password: this.myForm.value.password
+      // Crear el payload
+      const newRoom: any = {
+        name,
+        owner,
+      };
+    
+      // Añadir la contraseña solo si no está vacía
+      if (password && password.trim() !== '') {
+        newRoom.password = password;
+      }
+    
+      // Enviar la información al servicio
+      this.datasvc.createRoom(newRoom).subscribe({
+        next: (response: any) => {
+          localStorage.setItem('GameResponse', JSON.stringify(response.data));
+          this._snackBar.open('Sala creada', 'ok', {
+            duration: 5000,
+          });
+          window.location.href = '/lobby';
+        },
+        error: (error: any) => {
+          alert('Error al unirse al juego');
         }
-        this.datasvc.createRoom(newGame).subscribe(
-            data => (response = data.status)
-        );
-
-        // if(response == 200){
-        //     messages = "Se creo la sala";
-        // }else if(response == 409){
-        //     messages = "Ya existe una sala con ese nombre";
-        // }else if(response == 400){
-        //     messages = "Ocurrio un error";
-        // }
-
-        // this._snackBar.open(messages, 'Ok', {
-        //     duration: 5000,
-        // });
-}
+      });
+    }
     
-    // searchGame(){
-    //     this.datasvc.getGame({id: '66de0a8f5a6527506bd6b15c', owner: 'Chuta', password: 'Chuta'}).subscribe(
-    //         data => (console.log(data))
-    //     );
-    // };
 
-    // joinGame(){
-    //     this.datasvc.joinGame({id: '66de0a8f5a6527506bd6b15c', owner: 'Luis', password: 'Chuta', player: 'Luis'}).subscribe(
-    //         data => (console.log(data
-    //         ))
-    //     );
-    // };
+  
+ }
+  
+    
+  
 
-}
+  
+
+   
+ 
+
