@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'createRoom',
@@ -16,7 +17,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    RouterLink
   ]
 
 })
@@ -81,10 +83,17 @@ export class CreateRoomComponent{
       }
     
       // Enviar la información al servicio
-      this.datasvc.createRoom(newRoom).subscribe(() => {
-        this._snackBar.open('Sala creada', 'ok', {
-          duration: 5000
-        });
+      this.datasvc.createRoom(newRoom).subscribe({
+        next: (response: any) => {
+          localStorage.setItem('GameResponse', JSON.stringify(response.data));
+          this._snackBar.open('Sala creada', 'ok', {
+            duration: 5000,
+          });
+          window.location.href = '/lobby';
+        },
+        error: (error: any) => {
+          alert('Error al unirse al juego');
+        }
       });
     }
     

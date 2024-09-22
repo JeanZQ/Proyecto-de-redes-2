@@ -15,7 +15,7 @@ export class DataService {
     constructor(private http: HttpClient) { }
 
     getRooms(): Observable<ServerGameResponse> {
-        return this.http.get<ServerGameResponse>(this.urlAPI);
+        return this.http.get<ServerGameResponse>(`${this.urlAPI}?page=2&limit=130`);
     }
 
     createRoom(payload: NewGame): Observable<ServerGameResponse> {
@@ -45,12 +45,7 @@ export class DataService {
             { headers: headers }
         );
     }
-<<<<<<< HEAD
-    
 
-=======
-  
->>>>>>> 0fe29c10afd1033bba34bf035465655d9b502b1f
     gamesearch(payload: SearchGame): Observable<ServerGameResponse> {
         return this.http.get<ServerGameResponse>(`${this.urlAPI}/${'?name=' + payload.name + '&status=' + payload.status + '&page=' + payload.page, '&limit=' + payload.limit}`);
     }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { RoomComponent } from "./pages/Room/room.component";
 import { JsonPipe } from '@angular/common';
 import { CreateRoomComponent } from './pages/createRoom/createRoom.component';
@@ -11,13 +11,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { LobbyComponent } from './pages/lobby/lobby.component';
 import { StartGameComponent } from './pages/start-game/start-game.component';
+import { routes } from './app.routes';
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
   templateUrl: './app.component.html',
-  standalone: true,
+  styleUrls: ['./responsive.web.design.css'],
   imports: [
     RouterOutlet,
     RoomComponent,
@@ -29,8 +30,11 @@ import { StartGameComponent } from './pages/start-game/start-game.component';
     MatCardModule,
     CreateRoomComponent,
     MatGridListModule,
-    LobbyComponent
-   StartGameComponent,
+    LobbyComponent,
+    StartGameComponent,
+    RouterLink,
   ]
 })
-export class AppComponent {}
+export class AppComponent {
+
+}
