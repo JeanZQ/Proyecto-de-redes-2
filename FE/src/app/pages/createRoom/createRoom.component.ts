@@ -86,6 +86,7 @@ export class CreateRoomComponent{
       this.datasvc.createRoom(newRoom).subscribe({
         next: (response: any) => {
           localStorage.setItem('GameResponse', JSON.stringify(response.data));
+          localStorage.setItem('PlayerInfo', JSON.stringify(newRoom));
           this._snackBar.open('Sala creada', 'ok', {
             duration: 5000,
           });

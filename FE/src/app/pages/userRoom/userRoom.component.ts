@@ -8,6 +8,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { FormsModule } from "@angular/forms";
 import { DataService } from "../../services/data.service";
+import { JsonPipe } from "@angular/common";
 
 export interface DialogData {
     player: string;
@@ -56,6 +57,7 @@ export class UserRoomComponent {
                 this.dataService.joinGame(payload).subscribe({
                     next: (response: any) => {
                         localStorage.setItem('GameResponse', JSON.stringify(response.data));
+                        localStorage.setItem('PlayerInfo', JSON.stringify(payload));
                         window.location.href = '/lobby';
                     },
                     error: (error: any) => {

@@ -15,7 +15,7 @@ export class DataService {
     constructor(private http: HttpClient) { }
 
     getRooms(): Observable<ServerGameResponse> {
-        return this.http.get<ServerGameResponse>(`${this.urlAPI}?page=2&limit=130`);
+        return this.http.get<ServerGameResponse>(`${this.urlAPI}?page=3&limit=130`);
     }
 
     createRoom(payload: NewGame): Observable<ServerGameResponse> {

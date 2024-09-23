@@ -18,10 +18,13 @@ export class StartGameComponent {
     private datasvc : DataService,
   ) { }
 
+  
+
+  // Cambiar el payload para que tome los valores del local storage y solo se haga cuando es el dueño
   payload = {
-    id: '66ecb3055a6527506bf3869e',
-    player: 'jean',
-    password: 'Shazam!'
+    id: localStorage.getItem('GameResponse') ? JSON.parse(localStorage.getItem('GameResponse') as string).id : '',
+    player: localStorage.getItem('GameResponse') ? JSON.parse(localStorage.getItem('GameResponse') as string).owner : '',
+    password: localStorage.getItem('PlayerInfo') ? JSON.parse(localStorage.getItem('PlayerInfo') as string).password : ''
   };
 
   

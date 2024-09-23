@@ -1,5 +1,7 @@
-<div class="lobby-grid">
+<div class="btnContainer" *ngIf="game.player == undefined">
     <startGame></startGame>
+</div>
+<div class="lobby-grid">
     <div *ngFor="let player of players; let i = index" class="card">
         <div class="card-photo">
             <img mat-card-image [src]="playersImg[i]" alt="avatar"> <!-- Usar el índice para acceder a la imagen -->
@@ -23,4 +25,5 @@
             </button>
         </div>
     </div>
+
 </div>
