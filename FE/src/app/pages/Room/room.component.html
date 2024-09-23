@@ -1,10 +1,39 @@
 <div class="scrollBar" *ngIf="serverData">
     <div class="container">
-        <input id="searchInput" type="text" name="text" class="input" placeholder="Enter the room name."
-            [(ngModel)]="searchTerm" (ngModelChange)="searchRoom()">
+
+        <div class="header">
+            <input id="searchInput" type="text" name="text" class="input" placeholder="Enter the room name."
+                [(ngModel)]="searchTerm" (ngModelChange)="onInput()">
+
+            <div class="select">
+                <div class="selected" data-default="lobby" data-one="rounds" data-two="ended">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" class="arrow">
+                        <path
+                            d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z">
+                        </path>
+                    </svg>
+                </div>
+
+                <div class="options">
+                    <div title="all" (click)="selectOption('lobby')">
+                        <input id="all" name="option" type="radio" checked="" />
+                        <label class="option" for="all" data-txt="lobby"></label>
+                    </div>
+                    <div title="option-1" (click)="selectOption('rounds')">
+                        <input id="option-1" name="option" type="radio" />
+                        <label class="option" for="option-1" data-txt="rounds"></label>
+                    </div>
+                    <div title="option-2" (click)="selectOption('ended')">
+                        <input id="option-2" name="option" type="radio" />
+                        <label class="option" for="option-2" data-txt="ended"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <ul>
-            <li *ngFor="let game of filteredResults.slice(currentPage * pageSize, (currentPage + 1) * pageSize)">
+            <li *ngFor="let game of filteredResults">
                 <userRoom [game]="game"></userRoom>
             </li>
         </ul>
@@ -18,7 +47,7 @@
                     style="width: 200px; height: auto;">
             </mat-card>
         </p>
-        <mat-paginator [length]="filteredResults.length" [pageSize]="pageSize" (page)="currentPage = $event.pageIndex"
-            aria-label="Select page"></mat-paginator>
+        <mat-paginator [length]="pageSize" [pageSize]="pageSize-1" (page)="onPageChange($event)"
+            hidePageSize></mat-paginator>
     </div>
 </div>
