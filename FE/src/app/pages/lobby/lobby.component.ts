@@ -1,6 +1,5 @@
 import { NgFor, CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component } from "@angular/core";
-import {playersImg} from "../../../assets/players.json";
 import { StartGameComponent } from "../start-game/start-game.component";
 
 @Component({
@@ -19,7 +18,6 @@ import { StartGameComponent } from "../start-game/start-game.component";
 export class LobbyComponent {
     readonly gameResponse: string | null;
     readonly players: any[];
-    readonly playersImg: string[];
 
     constructor() {
         if (typeof localStorage !== 'undefined') {
@@ -29,7 +27,5 @@ export class LobbyComponent {
             this.gameResponse = null;
             this.players = [];
         }
-
-        this.playersImg = playersImg;
     }
 }

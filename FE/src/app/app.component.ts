@@ -34,5 +34,4 @@ import { StartGameComponent } from './pages/start-game/start-game.component';
   ]
 })
 export class AppComponent {
-
 }
