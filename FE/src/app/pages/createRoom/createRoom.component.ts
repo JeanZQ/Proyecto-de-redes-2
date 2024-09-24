@@ -1,12 +1,13 @@
-import { Component, OnInit} from '@angular/core';
-import {MatButtonModule} from '@angular/material/button';
-import {MatCardModule} from '@angular/material/card';
+import { Component, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { DataService } from '../../services/data.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterLink } from '@angular/router';
+import { DEFAULT_PASSWORD } from '../../models/app.interface';
 
 @Component({
   selector: 'createRoom',
@@ -23,49 +24,84 @@ import { RouterLink } from '@angular/router';
 
 })
 
-export class CreateRoomComponent{
-    
-    myForm: FormGroup;
+export class CreateRoomComponent {
 
-    constructor(
-        private datasvc : DataService, 
-        private fb: FormBuilder, 
-        private _snackBar: MatSnackBar
-    ) {
-      this.myForm = this.fb.group({
-        name: ['', [Validators.required]],
-        owner: ['', [Validators.required]],
-        password: ['']
+  myForm: FormGroup;
+
+  constructor(
+    private datasvc: DataService,
+    private fb: FormBuilder,
+    private _snackBar: MatSnackBar
+  ) {
+    this.myForm = this.fb.group({
+      name: ['', [Validators.required]],
+      owner: ['', [Validators.required]],
+      password: ['']
+    });
+  }
+
+
+  onSubmit() {
+
+    const isFormValid = this.myForm.get('name')?.valid && this.myForm.get('owner')?.valid;
+    if (isFormValid) {
+
+      this.createRoom();
+
+      this.myForm.reset({
+        name: '',
+        owner: '',
+        password: ''
+      });
+
+      // // Establece el estado de validez sin errores 
+      // Object.keys(this.myForm.controls).forEach(control => {
+      //   this.myForm.controls[control].setErrors(null);
+      // });
+
+
+    } else {
+
+      this._snackBar.open('Formulario Invalido', 'Ok', {
+        duration: 5000,
       });
     }
+  }
 
+  createRoom() {
+    const { name, owner, password } = this.myForm.value;
 
-    onSubmit() {
-    
-      const isFormValid = this.myForm.get('name')?.valid && this.myForm.get('owner')?.valid;
-      if (isFormValid) {
-        
-        this.createRoom();
-        
-        
-        this.myForm.reset({
-          name: '',
-          owner: '',
-          password: ''
+    // Crear el payload
+    const newRoom: any = {
+      name,
+      owner,
+    };
+
+    // Añadir la contraseña solo si no está vacía
+    if (password && password.trim() !== '') {
+      newRoom.password = password;
+    }
+
+    // Enviar la información al servicio
+    this.datasvc.createRoom(newRoom).subscribe({
+      next: (response: any) => {
+        localStorage.setItem('GameResponse', JSON.stringify(response.data));
+
+        if (password && password.trim() !== '') {
+          localStorage.setItem('password', password);
+        } else {
+          localStorage.setItem('password', DEFAULT_PASSWORD);
+        }
+
+        this._snackBar.open('Sala creada', 'ok', {
+          duration: 5000,
         });
-        
-        // // Establece el estado de validez sin errores 
-        // Object.keys(this.myForm.controls).forEach(control => {
-        //   this.myForm.controls[control].setErrors(null);
-        // });
-        
-
-      } else {
-
-        this._snackBar.open('Formulario Invalido', 'Ok', {
-            duration: 5000,
-        });
+        window.location.href = '/lobby';
+      },
+      error: (error: any) => {
+        alert('Error al unirse al juego');
       }
+
     }
   
     createRoom() {
@@ -99,14 +135,13 @@ export class CreateRoomComponent{
     }
     
 
-  
- }
-  
-    
-  
+    });
+  }
+}
 
-  
 
-   
- 
+
+
+
+
 

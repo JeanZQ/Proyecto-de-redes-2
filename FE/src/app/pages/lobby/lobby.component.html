@@ -4,11 +4,10 @@
 <div class="lobby-grid">
     <div *ngFor="let player of players; let i = index" class="card">
         <div class="card-photo">
-            <img mat-card-image [src]="playersImg[i]" alt="avatar"> <!-- Usar el índice para acceder a la imagen -->
+            <img mat-card-image [src]="'https://robohash.org/' + player + '?set=set4'" alt="avatar">
         </div>
         <div class="card-title">
             {{ player }} <br>
-            <span>{{ player.type }}</span>
         </div>
         <div class="button">
             <button class="game-btn check">

@@ -1,6 +1,5 @@
 import { NgFor, CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component } from "@angular/core";
-import {playersImg} from "../../../assets/players.json";
 import { StartGameComponent } from "../start-game/start-game.component";
 import { JoinGame } from "../../models/app.interface";
 import { DataService } from "../../services/data.service";
@@ -21,8 +20,8 @@ import { DataService } from "../../services/data.service";
 export class LobbyComponent  {
     readonly gameResponse: string | null;
     readonly players: any[];
-    readonly playersImg: string[];
     readonly gameInfo: any;
+
 
     readonly game:JoinGame ={
         id: '',
@@ -54,7 +53,5 @@ export class LobbyComponent  {
             this.gameResponse = null;
             this.players = [];
         }
-        this.playersImg = playersImg;
-        console.log(this.game);
     }
 }
