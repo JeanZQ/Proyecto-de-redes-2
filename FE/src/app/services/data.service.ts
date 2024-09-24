@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, Input } from "@angular/core";
 import { Observable } from "rxjs";
 
-import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame } from "../models/app.interface";
+import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD } from "../models/app.interface";
 
 
 @Injectable({
@@ -30,8 +30,9 @@ export class DataService {
     }
 
     joinGame(payload: JoinGame): Observable<ServerGameResponse> {
+
         const headers = new HttpHeaders({
-            'password': payload.password,
+            'password': payload.password ? payload.password : DEFAULT_PASSWORD,
             'player': payload.owner,
             'Content-Type': 'application/json'
         });

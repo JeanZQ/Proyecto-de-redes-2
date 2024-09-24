@@ -57,6 +57,7 @@ export class UserRoomComponent {
             if (result !== undefined) {
                 this.player.set(result.player);
                 this.password.set(result.password);
+
                 const payload = {
                     id: gameId,
                     player: result.player(),
