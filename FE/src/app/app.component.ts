@@ -11,8 +11,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { LobbyComponent } from './pages/lobby/lobby.component';
 import { StartGameComponent } from './pages/start-game/start-game.component';
-import { routes } from './app.routes';
-
 
 @Component({
   selector: 'app-root',
