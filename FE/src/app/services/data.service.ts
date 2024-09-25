@@ -22,11 +22,11 @@ export class DataService {
         return this.http.post<ServerGameResponse>(this.urlAPI, payload);
     }
 
-    getGame(payload: JoinGame): Observable<ServerGameResponse> {
+    getGame(payload: StartGame): Observable<ServerGameResponse> {
         return this.http.get<ServerGameResponse>(`${this.urlAPI}/${payload.id}`,
             {
                 headers: {
-                    'password': payload.password, 'player': payload.owner
+                    'player': payload.player,'password': payload.password
                 }
             });
     }
