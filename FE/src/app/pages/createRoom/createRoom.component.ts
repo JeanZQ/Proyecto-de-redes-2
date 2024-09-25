@@ -87,11 +87,7 @@ export class CreateRoomComponent {
       next: (response: any) => {
         localStorage.setItem('GameResponse', JSON.stringify(response.data));
 
-        if (password && password.trim() !== '') {
-          localStorage.setItem('password', password);
-        } else {
-          localStorage.setItem('password', DEFAULT_PASSWORD);
-        }
+        localStorage.setItem('password', password && password.trim() !== '' ? password : DEFAULT_PASSWORD);
 
         this._snackBar.open('Sala creada', 'ok', {
           duration: 5000,
