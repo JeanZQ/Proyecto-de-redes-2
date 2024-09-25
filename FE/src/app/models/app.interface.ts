@@ -38,7 +38,7 @@ export interface JoinGame {
 export interface StartGame {
     id: string;
     player: string;
-    password: string;
+    password?: string;
 };
 
 export interface SearchGame {
