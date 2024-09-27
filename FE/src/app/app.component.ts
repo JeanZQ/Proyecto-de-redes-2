@@ -11,6 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { LobbyComponent } from './pages/lobby/lobby.component';
 import { StartGameComponent } from './pages/start-game/start-game.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-root',
@@ -31,6 +32,7 @@ import { StartGameComponent } from './pages/start-game/start-game.component';
     LobbyComponent,
     StartGameComponent,
     RouterLink,
+    MatIconModule
   ]
 })
 export class AppComponent {

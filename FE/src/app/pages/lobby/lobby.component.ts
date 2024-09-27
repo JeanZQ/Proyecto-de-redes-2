@@ -4,6 +4,8 @@ import { StartGameComponent } from "../start-game/start-game.component";
 import { RoundInfoRequest, RoundResponse, StartGame } from "../../models/app.interface";
 import { DataService } from "../../services/data.service";
 import { interval, Subscription } from 'rxjs';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
     selector: 'lobby',
@@ -11,7 +13,9 @@ import { interval, Subscription } from 'rxjs';
     imports: [
         CommonModule,
         NgFor,
-        StartGameComponent
+        StartGameComponent,
+        MatButtonModule, 
+        MatIconModule
     ],
     templateUrl: './lobby.component.html',
     styleUrls: ['./lobby.component.css'],
@@ -27,6 +31,7 @@ export class LobbyComponent implements OnDestroy {
     readonly gameName : string | null | undefined;
     rounds: any[] = []; // lista de rounds
     hasPassword: boolean = false;
+    enemies: string[] = [];
 
     public roundPayload: RoundInfoRequest = {
         gameId: '',
@@ -72,9 +77,7 @@ export class LobbyComponent implements OnDestroy {
             this.players = this.gameResponse ? JSON.parse(this.gameResponse).players : [];
             this.gameName = this.gameResponse ? JSON.parse(this.gameResponse).name : '';
             let roundId = this.gameResponse ? JSON.parse(this.gameResponse).currentRound : '';
-          
-
-            
+;
 
             // payload para obtener una ronda
             this.roundPayload = {
@@ -94,8 +97,8 @@ export class LobbyComponent implements OnDestroy {
             this.subscription = interval(5000).subscribe(() => {
 
 
-
                 this.getRound();
+                console.log('ENEMIGOS:' + this.enemies);
 
 
                 this.dataService.getGame(this.game).subscribe({
@@ -109,23 +112,12 @@ export class LobbyComponent implements OnDestroy {
                     }
                 });
 
-                //     // Actualizar rondas cada 5 segundos
-                // this.dataService.getAllRounds(this.payload).subscribe({
-                //     next: (response: any) => {
-                //         this.updateRounds(response);
-                //     },
-                //     error: (error: any) => {
-                //         console.log('Error al obtener las rondas:', error);
-                //     }
-                // });
 
-              //  console.log('RONDAS DATA: ' + this.payload.id + ' ' + this.payload.owner + ' ' + this.payload.password);
 
             });
         } else {
             this.gameResponse = null;
             this.players = [];
-           // this.roundResponse = null;
         }
     }
 
@@ -143,7 +135,16 @@ export class LobbyComponent implements OnDestroy {
         localStorage.setItem('GameResponse', JSON.stringify(response.data)); // Actualiza el localStorage
         console.log('Players updated:', this.players);
         this.cdr.detectChanges(); // Actualiza la vista
-    }
+        this.enemies = response.data.enemies; // Suponiendo que los enemigos están en response.data.enemies
+   
+
+        if (this.isCurrentPlayerEnemy()) {
+            console.log(`${this.game.player} es un enemigo.`);
+        } else {
+            console.log(`${this.game.player} NO es un enemigo.`);
+        }
+    
+    }    
 
 
     getRound() {
@@ -169,45 +170,15 @@ export class LobbyComponent implements OnDestroy {
             }
         });
 
-
+      
     }
 
 
-    
-  
-    // // Método para obtener todas las rondas de un juego
-    // getAllRounds() {
-       
 
-    //     // si tiene password, añadirlo al payload
-    //     if(this.hasPassword) {
-    //         this.payload.password = this.game.password;
-    //     }
+    // devuelve si el player actual es enemigo
+    isCurrentPlayerEnemy(): boolean {
+        return this.enemies.includes(this.game.player);
+    }
 
-    //     this.dataService.getAllRounds(this.payload).subscribe({
-    //         next: (data: any) => {
-    //             this.rounds = data; // Almacena las rondas en la propiedad
-    //             console.log('Rondas obtenidas:', this.rounds);
-    //             this.cdr.detectChanges(); // Actualiza la vista
-    //         },
-    //         error: (error: any) => {
-    //             console.error('Error al obtener las rondas:', error);
-    //         }
-    //     });
-    // }
-
-    // updateRounds(response: any) {
-    //     this.rounds = response.data.rounds; // Actualiza la lista de rondas
-    //     localStorage.setItem('Rounds', JSON.stringify(response.data.rounds)); // Guarda las rondas en localStorage
-    //     console.log('Rounds updated:', this.rounds);
-    //     this.cdr.detectChanges(); // Actualiza la vista
-    // }
-
-    // updateRound(response: any) {
-    //     this.rounds = response.data.rounds; // Actualiza la lista de rondas
-    //     localStorage.setItem('RoundResponse', JSON.stringify(response.data)); // Guarda las rondas en localStorage
-    //     console.log('Rounds updated:', this.rounds);
-    //     this.cdr.detectChanges(); // Actualiza la vista
-    // }
 
 }
