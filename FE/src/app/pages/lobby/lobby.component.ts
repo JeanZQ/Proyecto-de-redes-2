@@ -76,5 +76,6 @@ export class LobbyComponent implements OnDestroy {
         this.cdr.detectChanges(); // Actualiza la vista
     }
 
+    
 
 }
