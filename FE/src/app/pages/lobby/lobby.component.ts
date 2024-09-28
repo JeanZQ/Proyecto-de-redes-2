@@ -83,7 +83,7 @@ export class LobbyComponent implements OnDestroy {
             this.roundPayload = {
                 gameId: this.game.id,
                 roundId: roundId,  
-                player: 'Churry'
+                player: this.game.player
             };
                     
 
