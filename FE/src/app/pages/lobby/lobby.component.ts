@@ -1,11 +1,15 @@
 import { NgFor, CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Inject, OnDestroy } from "@angular/core";
 import { StartGameComponent } from "../start-game/start-game.component";
 import { RoundInfoRequest, RoundResponse, StartGame } from "../../models/app.interface";
 import { DataService } from "../../services/data.service";
 import { interval, Subscription } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import { FormsModule, ReactiveFormsModule,FormBuilder } from "@angular/forms";
+import { SelectRoundGroupComponent } from "../select-round-group/select-round-group.component";
+
 
 @Component({
     selector: 'lobby',
@@ -15,7 +19,11 @@ import { MatIconModule } from '@angular/material/icon';
         NgFor,
         StartGameComponent,
         MatButtonModule, 
-        MatIconModule
+        MatIconModule,
+        MatCheckboxModule,
+        ReactiveFormsModule,
+        FormsModule,
+        SelectRoundGroupComponent
     ],
     templateUrl: './lobby.component.html',
     styleUrls: ['./lobby.component.css'],
@@ -32,7 +40,11 @@ export class LobbyComponent implements OnDestroy {
     rounds: any[] = []; // lista de rounds
     hasPassword: boolean = false;
     enemies: string[] = [];
-
+    private readonly _formBuiler = inject(FormBuilder);
+    private roundGroup:string[] = [];
+    public roundLeader: string | '' | undefined;
+    public groupDefined: boolean = false;
+    public leader: boolean = false;
     public roundPayload: RoundInfoRequest = {
         gameId: '',
         roundId: '',  
@@ -44,6 +56,10 @@ export class LobbyComponent implements OnDestroy {
         player: '',
         password: ''
     };
+
+    readonly selectedPlayers = this._formBuiler.group({
+        player:''
+    });
 
     roundResponse: RoundResponse = {
         status: 0,
@@ -77,13 +93,12 @@ export class LobbyComponent implements OnDestroy {
             this.players = this.gameResponse ? JSON.parse(this.gameResponse).players : [];
             this.gameName = this.gameResponse ? JSON.parse(this.gameResponse).name : '';
             let roundId = this.gameResponse ? JSON.parse(this.gameResponse).currentRound : '';
-;
 
             // payload para obtener una ronda
             this.roundPayload = {
                 gameId: this.game.id,
                 roundId: roundId,  
-                player: 'Churry'
+                player: this.game.player
             };
                     
 
@@ -96,7 +111,6 @@ export class LobbyComponent implements OnDestroy {
             // Llama al servicio cada 5 segundos
             this.subscription = interval(5000).subscribe(() => {
 
-
                 this.getRound();
                 console.log('ENEMIGOS:' + this.enemies);
 
@@ -105,6 +119,13 @@ export class LobbyComponent implements OnDestroy {
                     next: (response: any) => {
                         // Actualiza los jugadores sin recargar la página
                         this.updatePlayers(response);
+                        if (this.gameResponse) {
+                            this.roundPayload = {
+                                gameId: this.game.id,
+                                roundId: JSON.parse(this.gameResponse).currentRound,  
+                                player: this.game.player
+                            };
+                        }
 
                     },
                     error: (error: any) => {
@@ -137,6 +158,10 @@ export class LobbyComponent implements OnDestroy {
         this.cdr.detectChanges(); // Actualiza la vista
         this.enemies = response.data.enemies; // Suponiendo que los enemigos están en response.data.enemies
    
+        if(!this.leader && this.game.player == response.data.owner) {
+            console.log('El jugador es el dueño de la sala');
+            this.leader = true;
+        }
 
         if (this.isCurrentPlayerEnemy()) {
             console.log(`${this.game.player} es un enemigo.`);
@@ -156,14 +181,26 @@ export class LobbyComponent implements OnDestroy {
             this.roundPayload.password = this.game.password;
         }
 
+        console.log('PAYLOAD: ');
+        console.log(this.roundPayload);
+        // if(this.roundPayload.player == undefined) {
+        //    this.roundPayload.player = this.gameResponse ? JSON.parse(this.gameResponse).player : '';
+        //    this.game.player = this.gameResponse ? JSON.parse(this.gameResponse).player : '';
+        // }
+
+
 
         this.dataService.getRound(this.roundPayload).subscribe({
             
             next: (response: any) => {
                 this.roundResponse = response; // Actualiza la ronda
                 localStorage.setItem('RoundResponse', JSON.stringify(response.data)); // Guarda la ronda en localStorage
+                this.roundLeader = response.data.leader; // Actualiza el líder de la ronda
                 console.log('Round obtained:', this.roundResponse);
                 this.cdr.detectChanges(); // Actualiza la vista
+
+                
+
             },
             error: (error: any) => {
                 console.error('Error al obtener la ronda:', error);
@@ -173,12 +210,27 @@ export class LobbyComponent implements OnDestroy {
       
     }
 
-
-
     // devuelve si el player actual es enemigo
     isCurrentPlayerEnemy(): boolean {
         return this.enemies.includes(this.game.player);
     }
 
+
+    onPlayerSelect(player: string, event: boolean) {
+        console.log('Player selected:', player, event);
+
+        if (event) {
+            this.roundGroup.push(player);
+        } else {
+            this.roundGroup = this.roundGroup.filter(p => p !== player);
+        }
+        
+        
+    }
+
+
+    selectGroup() {
+        console.log('Round group:', this.roundGroup);
+    }
 
 }
