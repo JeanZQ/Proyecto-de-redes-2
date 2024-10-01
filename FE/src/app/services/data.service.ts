@@ -5,6 +5,7 @@ import { Observable } from "rxjs";
 import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD } from "../models/app.interface";
 
 
+
 @Injectable({
     providedIn: 'root'
 })
@@ -14,6 +15,7 @@ export class DataService {
 
     getRooms(page: number, limit: number): Observable<ServerGameResponse> {
         return this.http.get<ServerGameResponse>(`${this.urlAPI}?page=${page}&limit=${limit}`);
+
     }
 
     createRoom(payload: NewGame): Observable<ServerGameResponse> {

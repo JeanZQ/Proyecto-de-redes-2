@@ -48,4 +48,13 @@ export interface SearchGame {
     limit: number;
 };
 
+export interface GameInfo{
+    id:string;
+    player:string;
+    owner:string;
+    password:string;
+};
+
+
+
 

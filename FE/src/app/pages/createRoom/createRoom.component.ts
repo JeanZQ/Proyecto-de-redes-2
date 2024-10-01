@@ -68,17 +68,18 @@ export class CreateRoomComponent {
     }
   }
 
-  createRoom() {
-    const { name, owner, password } = this.myForm.value;
 
-    // Crear el payload
-    const newRoom: any = {
-      name,
-      owner,
-    };
+    createRoom(){
+      const { name, owner, password } = this.myForm.value;
 
-    // Añadir la contraseña solo si no está vacía
-    if (password && password.trim() !== '') {
+      // Crear el payload
+      const newRoom: any = {
+        name,
+        owner,
+      };
+
+      // Añadir la contraseña solo si no está vacía
+      if(password && password.trim() !== '') {
       newRoom.password = password;
     }
 
@@ -86,9 +87,7 @@ export class CreateRoomComponent {
     this.datasvc.createRoom(newRoom).subscribe({
       next: (response: any) => {
         localStorage.setItem('GameResponse', JSON.stringify(response.data));
-
-        localStorage.setItem('password', password && password.trim() !== '' ? password : DEFAULT_PASSWORD);
-
+        localStorage.setItem('PlayerInfo', JSON.stringify(newRoom));
         this._snackBar.open('Sala creada', 'ok', {
           duration: 5000,
         });
@@ -99,13 +98,7 @@ export class CreateRoomComponent {
       }
     });
   }
+
 }
-
-
-
-
-
-
-
 
 
