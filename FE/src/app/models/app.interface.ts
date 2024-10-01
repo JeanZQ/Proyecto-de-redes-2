@@ -93,6 +93,14 @@ export interface RoundInfoData {
     votes: boolean[];
 };
 
+export interface ProposeRound{
+    gameId:string;
+    roundId:string;
+    player:string;
+    password?:string;
+    group:string[];
+};
+
 
 
 

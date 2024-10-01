@@ -46,6 +46,7 @@ export class LobbyComponent implements OnDestroy {
     public roundLeader: string | '' | undefined;
     public groupDefined: boolean = false;
     public leader: boolean = false;
+    public gameStarted: boolean = false;
     public roundPayload: RoundInfoRequest = {
         gameId: '',
         roundId: '',
@@ -156,6 +157,17 @@ export class LobbyComponent implements OnDestroy {
         if (!this.leader && this.game.player == response.data.owner) {
             this.leader = true;
         }
+        console.log('Status: ' + response.data.status);
+        if(!this.gameStarted && response.data.status === "rounds") {	
+            this.gameStarted = true;
+        }
+
+        if (this.isCurrentPlayerEnemy()) {
+            console.log(`${this.game.player} es un enemigo.`);
+        } else {
+            console.log(`${this.game.player} NO es un enemigo.`);
+        }
+
     }
 
 
@@ -207,6 +219,24 @@ export class LobbyComponent implements OnDestroy {
 
     selectGroup() {
         console.log('Round group:', this.roundGroup);
+        
+        const payload = {
+            gameId: this.roundPayload.gameId,
+            roundId: this.roundPayload.roundId,
+            player: this.roundPayload.player,
+            password: this.game.password,
+            group: this.roundGroup
+        };
+
+        this.dataService.proposeGroup(payload).subscribe({
+            next: (response: any) => {
+                console.log('Group proposed:', response);
+                this.groupDefined = true;
+            },
+            error: (error: any) => {
+                console.error('Error proposing group:', error);
+            }
+    })
     }
 
 }
