@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, Input } from "@angular/core";
 import { Observable } from "rxjs";
 
-import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD, RoundInfoData, RoundResponse, AllRoundsInfoRequest, RoundInfoRequest, GetRound } from "../models/app.interface";
+import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD, RoundInfoData, RoundResponse, AllRoundsInfoRequest, RoundInfoRequest } from "../models/app.interface";
 
 
 
@@ -60,8 +60,9 @@ export class DataService {
         );
     }
 
-    getRound(payload: GetRound): Observable<RoundResponse> {
-        return this.http.get<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds`,
+    getRound(payload: RoundInfoRequest): Observable<RoundResponse> {
+        console.log(payload);
+        return this.http.get<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId === '0000000000000000000000000' ? '' : payload.roundId}`,
             {
                 headers: {
                     'player': payload.player,

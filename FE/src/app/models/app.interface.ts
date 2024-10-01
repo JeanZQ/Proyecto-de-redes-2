@@ -74,12 +74,6 @@ export interface RoundInfoRequest {
     player: string;
 };
 
-export interface GetRound {
-    gameId: string;
-    player: string;
-    password?: string;
-};
-
 // muestra el contenido de uno o varios rounds
 export interface RoundResponse {
     status: number;
