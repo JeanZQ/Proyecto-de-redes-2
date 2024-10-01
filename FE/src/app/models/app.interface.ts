@@ -51,29 +51,28 @@ export interface SearchGame {
     limit: number;
 };
 
-export interface GameInfo{
-    id:string;
-    player:string;
-    owner:string;
-    password:string;
+export interface GameInfo {
+    id: string;
+    player: string;
+    owner: string;
+    password: string;
 };
 
 // lo que manda el jugador en el request
-export interface AllRoundsInfoRequest{
-    gameId:string;
-    password?:string;
-    player:string;
+export interface AllRoundsInfoRequest {
+    gameId: string;
+    password?: string;
+    player: string;
 };
 
 
 // lo que manda el jugador en el request
-export interface RoundInfoRequest{
-    gameId:string;
-    roundId:string;
-    password?:string;
-    player:string;
+export interface RoundInfoRequest {
+    gameId: string;
+    roundId: string;
+    password?: string;
+    player: string;
 };
-
 
 // muestra el contenido de uno o varios rounds
 export interface RoundResponse {
@@ -84,14 +83,14 @@ export interface RoundResponse {
 
 
 // lo que se le muestra al jugador acerca del round
-export interface RoundInfoData{
-    roundId:string;
-    leader:string;
-    status:string
-    result:string;
-    phase:string;
-    group:string[]; // players
-    votes:boolean[];
+export interface RoundInfoData {
+    roundId: string;
+    leader: string;
+    status: string
+    result: string;
+    phase: string;
+    group: string[]; // players
+    votes: boolean[];
 };
 
 export interface ProposeRound{

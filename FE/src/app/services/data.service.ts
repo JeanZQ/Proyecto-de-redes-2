@@ -61,7 +61,8 @@ export class DataService {
     }
 
     getRound(payload: RoundInfoRequest): Observable<RoundResponse> {
-        return this.http.get<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
+        console.log(payload);
+        return this.http.get<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId === '0000000000000000000000000' ? '' : payload.roundId}`,
             {
                 headers: {
                     'player': payload.player,
