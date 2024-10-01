@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule, ReactiveFormsModule, FormBuilder } from "@angular/forms";
 import { SelectRoundGroupComponent } from "../select-round-group/select-round-group.component";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 
 @Component({
@@ -78,7 +79,8 @@ export class LobbyComponent implements OnDestroy {
 
     constructor(
         private dataService: DataService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private _snackBar: MatSnackBar
     ) {
         if (typeof localStorage !== 'undefined') {
             this.gameResponse = localStorage.getItem('GameResponse');
@@ -108,8 +110,6 @@ export class LobbyComponent implements OnDestroy {
             this.subscription = interval(5000).subscribe(() => {
 
                 this.getRound();
-                console.log('ENEMIGOS:' + this.enemies);
-
 
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
@@ -150,53 +150,38 @@ export class LobbyComponent implements OnDestroy {
     updatePlayers(response: any) {
         this.players = response.data.players; // Actualiza la lista de jugadores
         localStorage.setItem('GameResponse', JSON.stringify(response.data)); // Actualiza el localStorage
-        console.log('Players updated:', this.players);
         this.cdr.detectChanges(); // Actualiza la vista
         this.enemies = response.data.enemies; // Suponiendo que los enemigos están en response.data.enemies
 
         if (!this.leader && this.game.player == response.data.owner) {
-            console.log('El jugador es el dueño de la sala');
             this.leader = true;
         }
-
-        if (this.isCurrentPlayerEnemy()) {
-            console.log(`${this.game.player} es un enemigo.`);
-        } else {
-            console.log(`${this.game.player} NO es un enemigo.`);
-        }
-
     }
 
 
     getRound() {
-
-        console.log('PAYLOAD: ' + this.gameResponse);
-
         //si tiene password, añadirlo al payload
         if (this.hasPassword) {
             this.roundPayload.password = this.game.password;
         }
-
-        console.log('PAYLOAD: ');
-        console.log(this.roundPayload);
         // if(this.roundPayload.player == undefined) {
         //    this.roundPayload.player = this.gameResponse ? JSON.parse(this.gameResponse).player : '';
         //    this.game.player = this.gameResponse ? JSON.parse(this.gameResponse).player : '';
         // }
 
-
-
         this.dataService.getRound(this.roundPayload).subscribe({
-
+            
             next: (response: any) => {
                 this.roundResponse = response; // Actualiza la ronda
                 localStorage.setItem('RoundResponse', JSON.stringify(response.data)); // Guarda la ronda en localStorage
                 this.roundLeader = response.data.leader; // Actualiza el líder de la ronda
-                console.log('Round obtained:', this.roundResponse);
                 this.cdr.detectChanges(); // Actualiza la vista
             },
             error: (error: any) => {
-                console.error('Error al obtener la ronda:', error);
+                console.log('Round payload:', this.roundPayload);
+                this._snackBar.open('Error al obtener la ronda', 'ok', {
+                    duration: 5000,
+                });
             }
         });
 
