@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, Input } from "@angular/core";
 import { Observable } from "rxjs";
 
-import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD, RoundInfoData, RoundResponse, AllRoundsInfoRequest, RoundInfoRequest } from "../models/app.interface";
+import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD, RoundInfoData, RoundResponse, AllRoundsInfoRequest, RoundInfoRequest, ProposeRound } from "../models/app.interface";
 
 
 
@@ -84,5 +84,21 @@ export class DataService {
         );
        
 
+    }
+
+    proposeGroup(payload: ProposeRound){
+        console.log("Payload de proponer grupo");
+        console.log(payload);
+        return this.http.patch<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
+            {
+                group: payload.group
+            },
+            {
+                headers:{
+                    'player': payload.player,
+                    ...(payload.password && { 'password': payload.password })
+                }
+            }
+        );
     }
 }
