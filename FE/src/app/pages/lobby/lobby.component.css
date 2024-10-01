@@ -105,6 +105,28 @@ img {
     margin-top: 20px;
 }
 
+.gameTitle{
+    color: #000000;
+    font-size: 50px;
+    padding-top: 1rem;
+    margin: 20px;
+    text-align: center;
+} 
+
+.button-container {
+    position: absolute;    /* Utiliza posición absoluta para permitir coordenadas */
+    top: 3%;             /* Sitúa el contenedor a la mitad de la altura de la ventana */
+    left: 2%;            /* Sitúa el contenedor a la mitad de la anchura de la ventana */
+}
+
+
+.enemy-card {
+    border: 2px solid red; /* Ajusta el grosor y el color del borde según tus necesidades */
+}
+
+ /* Opción para centrar verticalmente en toda la pantalla */
+    
+
 @media only screen and (max-width: 768px) {
     .lobby-grid {
         grid-template-columns: repeat(2, 1fr);

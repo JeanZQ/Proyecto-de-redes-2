@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, Input } from "@angular/core";
 import { Observable } from "rxjs";
 
-import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD } from "../models/app.interface";
+import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD, RoundInfoData, RoundResponse, AllRoundsInfoRequest, RoundInfoRequest } from "../models/app.interface";
 
 
 
@@ -22,13 +22,13 @@ export class DataService {
         return this.http.post<ServerGameResponse>(this.urlAPI, payload);
     }
 
-    getGame(payload: JoinGame): Observable<ServerGameResponse> {
-        return this.http.get<ServerGameResponse>(`${this.urlAPI}/${payload.id}`,
-            {
-                headers: {
-                    'password': payload.password, 'player': payload.owner
-                }
-            });
+    getGame(payload: StartGame): Observable<ServerGameResponse> {
+        const headers = new HttpHeaders({
+            'player': payload.player,
+            ...(payload.password && { 'password': payload.password })
+        });
+
+        return this.http.get<ServerGameResponse>(`${this.urlAPI}/${payload.id}`, { headers });
     }
 
     joinGame(payload: JoinGame): Observable<ServerGameResponse> {
@@ -58,5 +58,31 @@ export class DataService {
                 }
             }
         );
+    }
+
+    getRound(payload: RoundInfoRequest): Observable<RoundResponse> {
+        return this.http.get<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
+            {
+                headers: {
+                    'player': payload.player,
+                    ...(payload.password && { 'password': payload.password })
+                }
+            }
+        );
+    }
+
+    // retorna todos los rounds de un juego
+    getAllRounds(payload: AllRoundsInfoRequest): Observable<RoundResponse> {
+        return this.http.get<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds`,
+
+            {
+                headers: {  
+                    'player': payload.player
+                }
+            }
+
+        );
+       
+
     }
 }

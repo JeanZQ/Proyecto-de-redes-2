@@ -76,6 +76,7 @@ export class CreateRoomComponent {
       const newRoom: any = {
         name,
         owner,
+        player: owner,
       };
 
       // Añadir la contraseña solo si no está vacía
@@ -83,8 +84,12 @@ export class CreateRoomComponent {
       newRoom.password = password;
     }
 
+    console.log(newRoom);
+
     // Enviar la información al servicio
     this.datasvc.createRoom(newRoom).subscribe({
+      
+
       next: (response: any) => {
         localStorage.setItem('GameResponse', JSON.stringify(response.data));
         localStorage.setItem('PlayerInfo', JSON.stringify(newRoom));

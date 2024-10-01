@@ -1,3 +1,5 @@
+import exp from "constants";
+
 export const DEFAULT_PASSWORD = 'Shazam!';
 
 
@@ -21,6 +23,7 @@ export interface GameResponse {
     id: string;
 };
 
+
 export interface NewGame {
     name: string;
     owner: string;
@@ -38,7 +41,7 @@ export interface JoinGame {
 export interface StartGame {
     id: string;
     player: string;
-    password: string;
+    password?: string;
 };
 
 export interface SearchGame {
@@ -54,6 +57,43 @@ export interface GameInfo{
     owner:string;
     password:string;
 };
+
+// lo que manda el jugador en el request
+export interface AllRoundsInfoRequest{
+    gameId:string;
+    password?:string;
+    player:string;
+};
+
+
+// lo que manda el jugador en el request
+export interface RoundInfoRequest{
+    gameId:string;
+    roundId:string;
+    password?:string;
+    player:string;
+};
+
+
+// muestra el contenido de uno o varios rounds
+export interface RoundResponse {
+    status: number;
+    msg: string;
+    data: RoundInfoData;
+};
+
+
+// lo que se le muestra al jugador acerca del round
+export interface RoundInfoData{
+    roundId:string;
+    leader:string;
+    status:string
+    result:string;
+    phase:string;
+    group:string[]; // players
+    votes:boolean[];
+};
+
 
 
 

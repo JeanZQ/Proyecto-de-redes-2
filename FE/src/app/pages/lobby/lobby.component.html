@@ -1,9 +1,24 @@
-<div class="btnContainer" *ngIf="game.player == undefined">
+<div>
+    <h2 class="gameTitle">Lobby room: {{ gameName }}</h2>
+</div>
+
+<div class="btnContainer" *ngIf="leader">
     <startGame></startGame>
 </div>
+<div class="selectGrpContainer" *ngIf="roundLeader != undefined && roundLeader == this.game.player && !groupDefined">
+    <button class="startBtn" mat-raised-button color="primary" (click)="selectGroup()">Send group</button>
+</div>
+
 <div class="lobby-grid">
-    <div *ngFor="let player of players; let i = index" class="card">
-        <div class="card-photo">
+    <div *ngFor="let player of players" 
+         class="card"
+         [formGroup]= "selectedPlayers" 
+         [ngClass]="{ 'enemy-card': enemies.includes(player) }"> <!-- Clase condicional para enemigos -->
+        <div class="groupSelect" *ngIf="roundLeader != undefined && roundLeader == this.game.player && !groupDefined">
+            <mat-checkbox formControlName={{player}} (change)="onPlayerSelect(player, $event.checked)"></mat-checkbox>
+        </div>
+
+         <div class="card-photo">
             <img mat-card-image [src]="'https://robohash.org/' + player + '?set=set4'" alt="avatar">
         </div>
         <div class="card-title">
@@ -11,18 +26,48 @@
         </div>
         <div class="button">
             <button class="game-btn check">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path
-                        d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z" />
-                </svg>
+                <!-- SVG icon -->
             </button>
             <button class="game-btn sabotage">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path
-                        d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c-9.4 9.4-9.4 24.6 0 33.9l47 47-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47 47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47 47-47c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47-47-47c-9.4-9.4-24.6-9.4-33.9 0z" />
-                </svg>
+                <!-- SVG icon -->
             </button>
         </div>
     </div>
 
+    <div class="button-container">
+        <button mat-mini-fab>
+            <mat-icon>menu</mat-icon>
+        </button>
+    </div>
 </div>
+
+<!-- 
+    <div *ngFor="let player of players" 
+         class="card"
+         [formGroup]= "selectedPlayers" 
+         [ngClass]="{ 'enemy-card': enemies.includes(player) }"> <!-- Clase condicional para enemigos -->
+        <!-- <div class="groupSelect">
+            <mat-checkbox formControlName={{player}}></mat-checkbox>
+        </div> -->
+<!-- 
+         <div class="card-photo">
+            <img mat-card-image [src]="'https://robohash.org/' + player + '?set=set4'" alt="avatar">
+        </div>
+        <div class="card-title">
+            {{ player }} <br>
+        </div>
+        <div class="button">
+            <button class="game-btn check">
+                 SVG icon -->
+            <!-- </button>
+            <button class="game-btn sabotage">
+                 SVG icon -->
+            <!-- </button>
+        </div> -->
+    <!-- </div> --> 
+
+    <!-- <div class="button-container">
+        <button mat-mini-fab>
+            <mat-icon>menu</mat-icon>
+        </button>
+    </div> --> 
