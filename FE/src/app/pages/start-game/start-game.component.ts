@@ -12,14 +12,13 @@ import { MatButton } from '@angular/material/button';
 })
 export class StartGameComponent {
 
-  name = 'StartGameComponent';
+  public leader:boolean = false;
 
   constructor(
     private datasvc : DataService,
   ) { }
 
   
-
   // Cambiar el payload para que tome los valores del local storage y solo se haga cuando es el dueño
   payload = {
     id: localStorage.getItem('GameResponse') ? JSON.parse(localStorage.getItem('GameResponse') as string).id : '',
