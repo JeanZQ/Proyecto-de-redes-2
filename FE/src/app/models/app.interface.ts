@@ -84,13 +84,15 @@ export interface RoundResponse {
 
 // lo que se le muestra al jugador acerca del round
 export interface RoundInfoData {
-    roundId: string;
-    leader: string;
     status: string
-    result: string;
     phase: string;
+    result: string;
+    leader: string;
+    createdAt: string;
+    updatedAt: string;
     group: string[]; // players
     votes: boolean[];
+    id: string;
 };
 
 export interface ProposeRound{
