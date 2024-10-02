@@ -240,4 +240,38 @@ export class LobbyComponent implements OnDestroy {
     })
     }
 
+    apoyar(player: string) {
+        console.log(`Apoyando a ${player}`);
+
+        // Llamada al servicio con la acción 'true' para apoyar
+        this.dataService.votePlayer(this.game.id, player, true).subscribe({
+            next: (response: any) => {
+                console.log(`Has apoyado a ${player}. Respuesta del servidor:`, response);
+                // Lógica adicional después de apoyar
+            },
+            error: (error: any) => {
+                console.error('Error al intentar apoyar al jugador:', error);
+            }
+        });
+    }
+
+    sabotear(player: string) {
+        if (this.enemies.includes(player)) {
+            console.log(`Saboteando a ${player}`);
+
+            // Llamada al servicio con la acción 'false' para sabotear
+            this.dataService.votePlayer(this.game.id, player, false).subscribe({
+                next: (response: any) => {
+                    console.log(`Has saboteado a ${player}. Respuesta del servidor:`, response);
+                    // Lógica adicional después de sabotear
+                },
+                error: (error: any) => {
+                    console.error('Error al intentar sabotear al jugador:', error);
+                }
+            });
+        } else {
+            console.log(`${player} no es un enemigo, no puedes sabotearlo.`);
+        }
+    }
+
 }

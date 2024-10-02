@@ -102,4 +102,19 @@ export class DataService {
             }
         );
     }
+
+    votePlayer(gameId: string, player: string, action: boolean): Observable<any> {
+        const url = `${this.urlAPI}/${gameId}/vote`;
+
+        const payload = {
+            player: player,
+            action: action  // true para apoyar, false para sabotear
+        };
+
+        return this.http.put<any>(url, payload, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
 }
