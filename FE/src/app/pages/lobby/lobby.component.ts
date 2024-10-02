@@ -10,6 +10,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule, ReactiveFormsModule, FormBuilder } from "@angular/forms";
 import { SelectRoundGroupComponent } from "../select-round-group/select-round-group.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { voteGroupComponent } from "../voteGroup/voteGroup.component";
 
 
 @Component({
@@ -24,7 +25,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
         MatCheckboxModule,
         ReactiveFormsModule,
         FormsModule,
-        SelectRoundGroupComponent
+        SelectRoundGroupComponent,
+        voteGroupComponent
     ],
     templateUrl: './lobby.component.html',
     styleUrls: ['./lobby.component.css'],
@@ -82,6 +84,7 @@ export class LobbyComponent implements OnDestroy {
         private cdr: ChangeDetectorRef,
         private _snackBar: MatSnackBar
     ) {
+        
         if (typeof localStorage !== 'undefined') {
             this.gameResponse = localStorage.getItem('GameResponse');
             this.gameInfo = localStorage.getItem('PlayerInfo');
@@ -108,9 +111,8 @@ export class LobbyComponent implements OnDestroy {
 
             // Llama al servicio cada 5 segundos
             this.subscription = interval(5000).subscribe(() => {
-
                 this.getRound();
-
+                console.log('Game:' + this.roundResponse.data.roundId);
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
                         // Actualiza los jugadores sin recargar la página
@@ -128,7 +130,6 @@ export class LobbyComponent implements OnDestroy {
                         console.log(error);
                     }
                 });
-
 
 
             });

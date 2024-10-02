@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, Input } from "@angular/core";
 import { Observable } from "rxjs";
 
-import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD, RoundInfoData, RoundResponse, AllRoundsInfoRequest, RoundInfoRequest } from "../models/app.interface";
+import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD, RoundInfoData, RoundResponse, AllRoundsInfoRequest, RoundInfoRequest, VoteGroup } from "../models/app.interface";
 
 
 
@@ -62,7 +62,7 @@ export class DataService {
 
     getRound(payload: RoundInfoRequest): Observable<RoundResponse> {
         console.log(payload);
-        return this.http.get<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId === '0000000000000000000000000' ? '' : payload.roundId}`,
+        return this.http.get<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
             {
                 headers: {
                     'player': payload.player,
@@ -77,13 +77,28 @@ export class DataService {
         return this.http.get<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds`,
 
             {
-                headers: {  
+                headers: {
                     'player': payload.player
                 }
             }
 
         );
-       
-
     }
+
+    // Vota por el grupo
+    postVoteGroup(payload: VoteGroup): Observable<RoundResponse> {
+        const headers = new HttpHeaders({
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'password': payload.password,
+            'player': payload.player
+        });
+
+        return this.http.post<RoundResponse>(
+            `${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
+            {vote: payload.vote},
+            { headers: headers }
+        );
+    }
+
 }
