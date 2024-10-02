@@ -51,8 +51,8 @@
       />
     </div>
     <div class="card-title">{{ player }} <br /></div>
-    <div class="selectGrpContainer" *ngIf="!groupDefined">
-      <div class="button">
+
+    <div class="button" *ngIf="game.player == player && roundResponse.data.status == 'waiting-on-group'">
         <button (click)="voting(true)" class="game-btn check">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
             <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
@@ -73,7 +73,6 @@
         </div>
       </div>
     </div>
-  </div>
 
   <div class="button-container">
     <button mat-mini-fab>

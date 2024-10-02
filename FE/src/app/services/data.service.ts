@@ -114,18 +114,18 @@ export class DataService {
         );
     }
 
-    votePlayer(gameId: string, player: string, action: boolean): Observable<any> {
-        const url = `${this.urlAPI}/${gameId}/vote`;
-
-        const payload = {
-            player: player,
-            action: action  // true para apoyar, false para sabotear
-        };
-
-        return this.http.put<any>(url, payload, {
-            headers: {
-                'Content-Type': 'application/json'
+    votePlayer(payload: VoteGroup): Observable<any> {
+        console.log("Player voted ",payload);
+        return this.http.post<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
+            {
+                action: payload.vote
+            },
+            {
+                headers: {
+                    'player': payload.player,
+                    ...(payload.password && { 'password': payload.password })
+                }
             }
-        });
+        );
     }
 }
