@@ -113,7 +113,6 @@ export class LobbyComponent implements OnDestroy {
 
             // Llama al servicio cada 5 segundos
             this.subscription = interval(5000).subscribe(() => {
-                this.getRound();
                 console.log('Game:' + localStorage.getItem('RoundResponse'));
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
@@ -132,7 +131,7 @@ export class LobbyComponent implements OnDestroy {
                         console.log(error);
                     }
                 });
-
+                this.getRound();
 
             });
         } else {
