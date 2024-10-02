@@ -4,7 +4,7 @@
             <p class="text-content">the group is {{group}}<br>Do you agree?</p>
             <div class="icons-box">
                 <div class="icons">
-                    <label class="btn-label" for="like-checkbox" (click)="voteGroup(true)">
+                    <label class="btn-label" for="like-checkbox" (click)="voteGroup(true, $event)"  >
                         <input class="input-box" id="like-checkbox" type="checkbox">
                         <svg class="svgs" id="icon-like-solid" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                             <path
@@ -23,7 +23,7 @@
                     </label>
                 </div>
                 <div class="icons">
-                    <label class="btn-label" for="dislike-checkbox" (click)="voteGroup(false)">
+                    <label class="btn-label" for="dislike-checkbox" (click)="voteGroup(false, $event)">
                         <input class="input-box" id="dislike-checkbox" type="checkbox">
                         <div class="fireworks">
                             <div class="checked-dislike-fx"></div>

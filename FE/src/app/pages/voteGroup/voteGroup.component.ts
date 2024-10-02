@@ -42,14 +42,20 @@ export class voteGroupComponent {
             vote: false
         };
     }
-    voteGroup(vote: boolean) {
+    voteGroup(vote: boolean, event: Event) {
+        event.preventDefault();
+        event.stopPropagation();
         this.updateVoteGroupData();
+        console.log('VOTE GROUP DATA ESTADO', this.voteGroupData);
         this.voteGroupData.vote = vote;
         this.dataService.postVoteGroup(this.voteGroupData).subscribe(
             (response) => {
                 vote = true;
             },
             (error) => {
+
+                console.log('AQUI ENTRA AL ERROR ', error);
+
                 switch (error.status) {
                     case 401:
                         this._snackBar.open('The client must authenticate itself to get the requested response', 'ok', {
