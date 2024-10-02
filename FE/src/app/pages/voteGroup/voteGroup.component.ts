@@ -50,12 +50,14 @@ export class voteGroupComponent {
         this.voteGroupData.vote = vote;
         this.dataService.postVoteGroup(this.voteGroupData).subscribe(
             (response) => {
-                vote = true;
+                if(response.status == 200) {
+                    this.voting = true;
+                    this._snackBar.open('Voting in progress', 'ok', {
+                        duration: 5000,
+                    });
+                }
             },
             (error) => {
-
-                console.log('AQUI ENTRA AL ERROR ', error);
-
                 switch (error.status) {
                     case 401:
                         this._snackBar.open('The client must authenticate itself to get the requested response', 'ok', {
