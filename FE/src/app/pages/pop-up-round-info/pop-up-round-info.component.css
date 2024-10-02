@@ -1,0 +1,40 @@
+.round-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #4a4a4a;
+    margin-bottom: 16px;
+}
+
+.round-details {
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+}
+
+.sub-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 24px;  /* Espacio arriba del título */
+    margin-bottom: 12px; /* Espacio abajo del título */
+}
+
+.player-list, .vote-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.player-item, .vote-item {
+    background-color: #e0f7fa;
+    border: 1px solid #b2ebf2;
+    border-radius: 3px;
+    padding: 8px;
+    margin-bottom: 4px;
+    transition: background-color 0.3s;
+}
+
+.player-item:hover, .vote-item:hover {
+    background-color: #b2ebf2;
+}
