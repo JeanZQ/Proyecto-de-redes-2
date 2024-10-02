@@ -100,4 +100,15 @@ export interface VoteGroup {
     player: string;
     vote: boolean;
 };
+export interface ProposeRound{
+    gameId:string;
+    roundId:string;
+    player:string;
+    password?:string;
+    group:string[];
+};
+
+
+
+
 

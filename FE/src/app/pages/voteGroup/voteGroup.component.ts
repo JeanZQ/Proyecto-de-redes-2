@@ -1,32 +1,44 @@
-import { Component } from "@angular/core";
-import { GameResponse, VoteGroup } from "../../models/app.interface";
+import { Component, Input, input } from "@angular/core";
+import { GameResponse, RoundInfoRequest, VoteGroup } from "../../models/app.interface";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { DataService } from "../../services/data.service";
+import { ComponentFixture } from "@angular/core/testing";
+import { CommonModule } from "@angular/common";
 
 @Component({
     selector: 'voteGroup',
     standalone: true,
     imports: [
+        CommonModule
     ],
     templateUrl: './voteGroup.component.html',
     styleUrl: './voteGroup.component.css'
 })
 export class voteGroupComponent {
-    private local: GameResponse = JSON.parse(localStorage.getItem('RoundResponse') || '{}') as GameResponse;
+    @Input() roundPayload: RoundInfoRequest = {
+        gameId: '',
+        roundId: '',
+        player: ''
+    };
+    @Input() password = '';
+    @Input() group: string[] = [];
+    public voting : boolean = false;
     private voteGroupData: VoteGroup = {
-        gameId: this.local.id,
-        roundId: this.local.currentRound,
-        password: "123",
-        player: this.local.owner,
+        gameId: '',
+        roundId: '',
+        password: '',
+        player: '',
         vote: false
     };
-    constructor(private dataService: DataService, private _snackBar: MatSnackBar) { }
-    updateVoteGroupData(){
+    constructor(private dataService: DataService, private _snackBar: MatSnackBar) {
+
+    }
+    updateVoteGroupData() {
         this.voteGroupData = {
-            gameId: this.local.id,
-            roundId: this.local.currentRound,
-            password: "123",
-            player: this.local.owner,
+            gameId: this.roundPayload.gameId,
+            roundId: this.roundPayload.roundId,
+            password: this.password,
+            player: this.roundPayload.player,
             vote: false
         };
     }
@@ -35,7 +47,7 @@ export class voteGroupComponent {
         this.voteGroupData.vote = vote;
         this.dataService.postVoteGroup(this.voteGroupData).subscribe(
             (response) => {
-                console.log(response);
+                vote = true;
             },
             (error) => {
                 switch (error.status) {

@@ -48,6 +48,7 @@ export class LobbyComponent implements OnDestroy {
     public roundLeader: string | '' | undefined;
     public groupDefined: boolean = false;
     public leader: boolean = false;
+    public gameStarted: boolean = false;
     public roundPayload: RoundInfoRequest = {
         gameId: '',
         roundId: '',
@@ -78,13 +79,12 @@ export class LobbyComponent implements OnDestroy {
         }
     }
 
-
     constructor(
         private dataService: DataService,
         private cdr: ChangeDetectorRef,
         private _snackBar: MatSnackBar
     ) {
-        
+
         if (typeof localStorage !== 'undefined') {
             this.gameResponse = localStorage.getItem('GameResponse');
             this.gameInfo = localStorage.getItem('PlayerInfo');
@@ -112,7 +112,7 @@ export class LobbyComponent implements OnDestroy {
             // Llama al servicio cada 5 segundos
             this.subscription = interval(5000).subscribe(() => {
                 this.getRound();
-                console.log('Game:' + this.roundResponse.data.roundId);
+                console.log('Game:' + localStorage.getItem('RoundResponse'));
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
                         // Actualiza los jugadores sin recargar la página
@@ -157,7 +157,19 @@ export class LobbyComponent implements OnDestroy {
         if (!this.leader && this.game.player == response.data.owner) {
             this.leader = true;
         }
+        console.log('Status: ' + response.data.status);
+        if (!this.gameStarted && response.data.status === "rounds") {
+            this.gameStarted = true;
+        }
+
+        if (this.isCurrentPlayerEnemy()) {
+            console.log(`${this.game.player} es un enemigo.`);
+        } else {
+            console.log(`${this.game.player} NO es un enemigo.`);
+        }
+
     }
+
 
 
     getRound() {
@@ -171,7 +183,7 @@ export class LobbyComponent implements OnDestroy {
         // }
 
         this.dataService.getRound(this.roundPayload).subscribe({
-            
+
             next: (response: any) => {
                 this.roundResponse = response; // Actualiza la ronda
                 localStorage.setItem('RoundResponse', JSON.stringify(response.data)); // Guarda la ronda en localStorage
@@ -208,6 +220,24 @@ export class LobbyComponent implements OnDestroy {
 
     selectGroup() {
         console.log('Round group:', this.roundGroup);
+
+        const payload = {
+            gameId: this.roundPayload.gameId,
+            roundId: this.roundPayload.roundId,
+            player: this.roundPayload.player,
+            password: this.game.password,
+            group: this.roundGroup
+        };
+
+        this.dataService.proposeGroup(payload).subscribe({
+            next: (response: any) => {
+                console.log('Group proposed:', response);
+                this.groupDefined = true;
+            },
+            error: (error: any) => {
+                console.error('Error proposing group:', error);
+            }
+        })
     }
 
 }

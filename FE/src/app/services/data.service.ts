@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, Input } from "@angular/core";
 import { Observable } from "rxjs";
 
-import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD, RoundInfoData, RoundResponse, AllRoundsInfoRequest, RoundInfoRequest, VoteGroup } from "../models/app.interface";
+import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD, RoundInfoData, RoundResponse, AllRoundsInfoRequest, RoundInfoRequest, ProposeRound, VoteGroup } from "../models/app.interface";
 
 
 
@@ -61,7 +61,6 @@ export class DataService {
     }
 
     getRound(payload: RoundInfoRequest): Observable<RoundResponse> {
-        console.log(payload);
         return this.http.get<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
             {
                 headers: {
@@ -86,19 +85,32 @@ export class DataService {
     }
 
     // Vota por el grupo
-    postVoteGroup(payload: VoteGroup): Observable<RoundResponse> {
-        const headers = new HttpHeaders({
-            'accept': 'application/json',
-            'Content-Type': 'application/json',
-            'password': payload.password,
-            'player': payload.player
-        });
-
-        return this.http.post<RoundResponse>(
-            `${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
-            {vote: payload.vote},
-            { headers: headers }
+    postVoteGroup(payload: VoteGroup) {
+        console.log("vote",payload);
+        return this.http.post<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
+            {
+                vote: payload.vote
+            },
+            {
+                headers: {
+                    'player': payload.player,
+                    ...(payload.password && { 'password': payload.password })
+                }
+            }
         );
     }
 
+    proposeGroup(payload: ProposeRound) {
+        return this.http.patch<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
+            {
+                group: payload.group
+            },
+            {
+                headers: {
+                    'player': payload.player,
+                    ...(payload.password && { 'password': payload.password })
+                }
+            }
+        );
+    }
 }
