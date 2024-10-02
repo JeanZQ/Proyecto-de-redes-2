@@ -1,7 +1,7 @@
 import { NgFor, CommonModule } from "@angular/common";
 import { booleanAttribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Inject, OnDestroy } from "@angular/core";
 import { StartGameComponent } from "../start-game/start-game.component";
-import { RoundInfoRequest, RoundResponse, StartGame, VoteGroup } from "../../models/app.interface";
+import { RoundInfoRequest, RoundResponse, ServerGameResponse, StartGame, VoteGroup } from "../../models/app.interface";
 import { DataService } from "../../services/data.service";
 import { interval, Subscription } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -243,7 +243,6 @@ export class LobbyComponent implements OnDestroy {
     }
 
     voting(vote: boolean) {
-        console.log(`Votaste a ${this.game.player}`);
         this.playerVote = {
             gameId: this.roundPayload.gameId,
             roundId: this.roundPayload.roundId,
@@ -251,10 +250,9 @@ export class LobbyComponent implements OnDestroy {
             password: this.game.password || '',
             vote: vote
         };
-
         this.dataService.votePlayer(this.playerVote).subscribe({
-            next: (response: any) => {
-                console.log('Voto:', response);
+            next: (response: ServerGameResponse) => {
+                console.log('Voto:', response.data);
                 if (response.status == 200) {
                     if (this.playerVote.vote == true) {
                         this._snackBar.open('Has apoyado', 'Ok', {
@@ -299,6 +297,11 @@ export class LobbyComponent implements OnDestroy {
                       duration: 5000,
                     });
                     break;
+
+                    default:
+                    this._snackBar.open('An error occurred', 'Ok', {
+                      duration: 5000,
+                    });
                 }
               }
         });
