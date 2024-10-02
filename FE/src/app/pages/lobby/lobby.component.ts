@@ -1,7 +1,7 @@
 import { NgFor, CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Inject, OnDestroy } from "@angular/core";
+import { booleanAttribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Inject, OnDestroy } from "@angular/core";
 import { StartGameComponent } from "../start-game/start-game.component";
-import { RoundInfoRequest, RoundResponse, StartGame } from "../../models/app.interface";
+import { RoundInfoRequest, RoundResponse, StartGame, VoteGroup } from "../../models/app.interface";
 import { DataService } from "../../services/data.service";
 import { interval, Subscription } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -78,6 +78,8 @@ export class LobbyComponent implements OnDestroy {
             votes: []
         }
     }
+
+    playerVote : VoteGroup = { gameId: '', roundId: '', player: '', password: '', vote: false };
 
     constructor(
         private dataService: DataService,
@@ -225,7 +227,7 @@ export class LobbyComponent implements OnDestroy {
             gameId: this.roundPayload.gameId,
             roundId: this.roundPayload.roundId,
             player: this.roundPayload.player,
-            password: this.game.password,
+            password: this.game.password || '',
             group: this.roundGroup
         };
 
@@ -238,6 +240,68 @@ export class LobbyComponent implements OnDestroy {
                 console.error('Error proposing group:', error);
             }
         })
+    }
+
+    voting(vote: boolean) {
+        console.log(`Votaste a ${this.game.player}`);
+        this.playerVote = {
+            gameId: this.roundPayload.gameId,
+            roundId: this.roundPayload.roundId,
+            player: this.roundPayload.player,
+            password: this.game.password || '',
+            vote: vote
+        };
+
+        this.dataService.votePlayer(this.playerVote).subscribe({
+            next: (response: any) => {
+                console.log('Voto:', response);
+                if (response.status == 200) {
+                    if (this.playerVote.vote == true) {
+                        this._snackBar.open('Has apoyado', 'Ok', {
+                            duration: 5000,
+                          });
+                    } else {
+                        this._snackBar.open('Has saboteado', 'Ok', {
+                            duration: 5000,
+                          });
+                        
+                    }
+                }
+            },
+            error: (e) => {
+                switch (e.status) {
+                  case 401:
+                    this._snackBar.open('The client must authenticate itself to get the requested response', 'Ok', {
+                      duration: 5000,
+                    });
+                    break;
+        
+                  case 403:
+                    this._snackBar.open('The client does not have access rights to the content. Unlike 401 Unauthorized, the clients identity is known to the server.', 'Ok', {
+                      duration: 5000,
+                    });
+                    break;
+        
+                  case 404:
+                    this._snackBar.open('The specified resource was not found', 'Ok', {
+                      duration: 5000,
+                    });
+                    break;
+        
+                  case 409:
+                    this._snackBar.open('This response is sent when a request conflicts with the current state of the server.', 'Ok', {
+                      duration: 5000,
+                    });
+                    break;
+                
+                    case 429:
+                    this._snackBar.open('The origin server requires the request to be conditional. This response is intended to prevent the "lost update" problem, where a client GETs a resources state, modifies it and PUTs it back to the server, when meanwhile a third party has modified the state on the server, leading to a conflict.', 'Ok', {
+                      duration: 5000,
+                    });
+                    break;
+                }
+              }
+        });
     }
 
 }

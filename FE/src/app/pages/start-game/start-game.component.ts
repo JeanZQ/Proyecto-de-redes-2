@@ -37,25 +37,25 @@ export class StartGameComponent {
       error: (e) => {
         switch (e.status) {
           case 401:
-            this._snackBar.open('Unauthorized', 'ok', {
+            this._snackBar.open('Unauthorized', 'Ok', {
               duration: 5000,
             });
             break;
 
           case 403:
-            this._snackBar.open('Forbidden', 'ok', {
+            this._snackBar.open('Forbidden', 'Ok', {
               duration: 5000,
             });
             break;
 
           case 404:
-            this._snackBar.open('Game not found', 'ok', {
+            this._snackBar.open('Game not found', 'Ok', {
               duration: 5000,
             });
             break;
 
           case 428:
-            this._snackBar.open('Need 5 players to start', 'ok', {
+            this._snackBar.open('Need 5 players to start', 'Ok', {
               duration: 5000,
             });
             break;

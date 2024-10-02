@@ -113,4 +113,19 @@ export class DataService {
             }
         );
     }
+
+    votePlayer(payload: VoteGroup): Observable<any> {
+        console.log("Player voted ",payload);
+        return this.http.post<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
+            {
+                action: payload.vote
+            },
+            {
+                headers: {
+                    'player': payload.player,
+                    ...(payload.password && { 'password': payload.password })
+                }
+            }
+        );
+    }
 }
