@@ -86,8 +86,7 @@ export class DataService {
 
     // Vota por el grupo
     postVoteGroup(payload: VoteGroup) {
-        console.log("vote",payload);
-        return this.http.post<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
+        return this.http.post<ServerGameResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
             {
                 vote: payload.vote
             },
@@ -114,9 +113,9 @@ export class DataService {
         );
     }
 
-    votePlayer(payload: VoteGroup): Observable<any> {
-        console.log("Player voted ",payload);
-        return this.http.post<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
+    votePlayer(payload: VoteGroup) {
+        console.log('votePlayer: ',payload);
+        return this.http.put<ServerGameResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
             {
                 action: payload.vote
             },
