@@ -213,7 +213,7 @@ export class LobbyComponent implements OnDestroy {
                 this.cdr.detectChanges(); // Actualiza la vista
                 console.log('Actualizando ronda');
                 console.log(response);
-                if(response.data.result != 'citizens' || response.data.result != 'enemies') {
+                if(response.data.result == 'citizens' || response.data.result == 'enemies') {
                     window.location.reload();
                 }
             },
