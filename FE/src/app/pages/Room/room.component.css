@@ -66,7 +66,7 @@ li {
     color: white;
     overflow: hidden;
     margin-top: 5px;
-    
+
 }
 
 .selected {
@@ -157,4 +157,53 @@ li {
 
 .select:has(.options input[type="radio"]#option-2:checked) .selected::before {
     content: attr(data-two);
+}
+
+/*Pagination*/
+.paginator {
+    display: flex;
+    justify-content: center;
+    /* Centra los elementos en el contenedor */
+    align-items: center;
+    /* Alinea verticalmente los elementos */
+    margin: 20px 0;
+    /* Espacio alrededor del contenedor */
+}
+
+button svg {
+    width: 20px;
+}
+
+.button {
+    background-color: transparent;
+    border: none;
+    /* Sin borde */
+    border-radius: 5px;
+    /* Bordes redondeados */
+    padding: 10px 15px;
+    /* Espacio interno */
+    margin: 0 5px;
+    /* Espacio entre botones */
+    cursor: pointer;
+    /* Cambia el cursor al pasar sobre el botón */
+    transition: background-color 0.3s;
+    /* Transición suave para el color de fondo */
+}
+
+.button svg:hover {
+    transform: scale(1.2);
+}
+
+.button:disabled {
+    background-color: #ccc;
+    /* Color para el botón deshabilitado */
+    cursor: not-allowed;
+    /* Cambia el cursor para indicar que no se puede hacer clic */
+}
+
+.page-info {
+    margin: 0 15px;
+    /* Espacio entre los botones y el texto */
+    font-weight: bold;
+    /* Texto en negrita */
 }
