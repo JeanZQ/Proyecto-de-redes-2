@@ -10,8 +10,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule, ReactiveFormsModule, FormBuilder } from "@angular/forms";
 import { SelectRoundGroupComponent } from "../select-round-group/select-round-group.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatDialog, MatDialogModule  } from "@angular/material/dialog";
+import { PopUpRoundInfoComponent } from "../pop-up-round-info/pop-up-round-info.component";
 import { voteGroupComponent } from "../voteGroup/voteGroup.component";
 import { Console } from "console";
+
 
 
 @Component({
@@ -27,7 +30,9 @@ import { Console } from "console";
         ReactiveFormsModule,
         FormsModule,
         SelectRoundGroupComponent,
+        MatDialogModule
         voteGroupComponent
+
     ],
     templateUrl: './lobby.component.html',
     styleUrls: ['./lobby.component.css'],
@@ -36,6 +41,7 @@ import { Console } from "console";
 
 
 export class LobbyComponent implements OnDestroy {
+    dialogRef: any;
     readonly gameResponse: string | null;
     players: any[] = []; // Lista de jugadores
     readonly gameInfo: any;
@@ -73,13 +79,15 @@ export class LobbyComponent implements OnDestroy {
         status: 0,
         msg: '',
         data: {
-            roundId: '',
-            leader: '',
-            status: '',
-            result: '',
-            phase: '',
-            group: [],
-            votes: []
+            leader: '',         
+            status: '',         
+            result: '',         
+            phase: '',          
+            createdAt: '',      
+            updatedAt: '',      
+            group: [],          
+            votes: [],          
+            id: ''             
         }
     }
 
@@ -88,7 +96,8 @@ export class LobbyComponent implements OnDestroy {
     constructor(
         private dataService: DataService,
         private cdr: ChangeDetectorRef,
-        private _snackBar: MatSnackBar
+        private _snackBar: MatSnackBar,
+        private dialog: MatDialog
     ) {
 
         if (typeof localStorage !== 'undefined') {
@@ -116,8 +125,10 @@ export class LobbyComponent implements OnDestroy {
             }
 
             // Llama al servicio cada 5 segundos
+
             this.subscription = interval(2000).subscribe(() => {
                 console.log('Game:' + localStorage.getItem('RoundResponse'));
+                console.log('ID ROUND:' + this.roundResponse.data.id);
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
                         // Actualiza los jugadores sin recargar la página
@@ -322,6 +333,21 @@ export class LobbyComponent implements OnDestroy {
                 }
               }
         });
+
     }
+
+    openDialog() {
+        const dialogRef = this.dialog.open(PopUpRoundInfoComponent, {
+            data: this.roundResponse,
+            width: '80%',     // 80% del ancho de la pantalla
+            height: '70vh',   // 70% de la altura del viewport
+            maxWidth: '600px', // Ancho máximo
+            maxHeight: '500px'
+        }); 
+
+      
+    }
+
+
 
 }

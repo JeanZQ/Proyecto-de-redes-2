@@ -1,0 +1,18 @@
+<h3>Detalles del Round:</h3>
+<p>Estado: {{ data.data.status }}</p>
+<p>Fase: {{ data.data.phase }}</p>
+<p>Resultado: {{ data.data.result }}</p>
+<p>Líder: {{ data.data.leader }}</p>
+<p>Creado en: {{ data.data.createdAt }}</p>
+<p>Actualizado en: {{ data.data.updatedAt }}</p>
+<p>Round ID: {{ data.data.id }}</p>
+
+<h4>Grupo de jugadores:</h4>
+<ul>
+  <li *ngFor="let player of data.data.group">{{ player }}</li>
+</ul>
+
+<h4>Votos:</h4>
+<ul>
+  <li *ngFor="let vote of data.data.votes">{{ vote }}</li>
+</ul>
