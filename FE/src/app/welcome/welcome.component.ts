@@ -11,6 +11,9 @@ import { CreateRoomComponent } from '../pages/createRoom/createRoom.component';
 })
 export class WelcomeComponent {
   constructor() {
-    localStorage.clear();
+    if(typeof window !== 'undefined'){
+      localStorage.clear();
+    }
+
   }
 }
