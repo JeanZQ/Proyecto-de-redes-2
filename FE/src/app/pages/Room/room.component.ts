@@ -48,24 +48,8 @@ export class RoomComponent implements OnInit {
     constructor(private datasvc: DataService) { }
 
     ngOnInit() {
-        this.loadRooms(this.currentPage, this.pageSize);
-    }
-
-    loadRooms(page: number, pageSize: number) {
-        this.datasvc.getRooms(page, pageSize).subscribe(
-            response => {
-                this.serverData = response;
-                this.filteredResults = this.serverData.data;
-            },
-            error => {
-                console.error("Error loading rooms:", error);
-            }
-        );
-    }
-
-    onPageChange(event: any) {
-        this.currentPage = event.pageIndex;
-        this.loadRooms(this.currentPage, this.pageSize);
+        this.currentPage = 0;
+        this.pagination(this.currentPage);
     }
 
     onInput() {
@@ -96,4 +80,18 @@ export class RoomComponent implements OnInit {
         this.selectedOption = option;
         this.searchRooms();
     }
+
+    pagination(page: number) {
+        this.currentPage = page;
+        this.datasvc.getRooms(this.currentPage, this.pageSize).subscribe(
+            response => {
+                this.serverData = response;
+                this.filteredResults = this.serverData.data;
+            },
+            error => {
+                console.error("Error loading rooms:", error);
+            }
+        );
+    }
+
 }

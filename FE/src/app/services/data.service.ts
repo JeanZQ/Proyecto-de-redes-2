@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable, Input } from "@angular/core";
 import { Observable } from "rxjs";
 
-import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD, RoundInfoData, RoundResponse, AllRoundsInfoRequest, RoundInfoRequest, ProposeRound } from "../models/app.interface";
+import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_PASSWORD, RoundInfoData, RoundResponse, AllRoundsInfoRequest, RoundInfoRequest, ProposeRound, VoteGroup } from "../models/app.interface";
 
 
 
@@ -14,8 +14,8 @@ export class DataService {
     constructor(private http: HttpClient) { }
 
     getRooms(page: number, limit: number): Observable<ServerGameResponse> {
+        console.log('getRooms: ',page,limit);
         return this.http.get<ServerGameResponse>(`${this.urlAPI}?page=${page}&limit=${limit}`);
-
     }
 
     createRoom(payload: NewGame): Observable<ServerGameResponse> {
@@ -61,7 +61,6 @@ export class DataService {
     }
 
     getRound(payload: RoundInfoRequest): Observable<RoundResponse> {
-        console.log(payload);
         return this.http.get<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
             {
                 headers: {
@@ -77,25 +76,51 @@ export class DataService {
         return this.http.get<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds`,
 
             {
-                headers: {  
+                headers: {
                     'player': payload.player
                 }
             }
 
         );
-       
-
     }
 
-    proposeGroup(payload: ProposeRound){
-        console.log("Payload de proponer grupo");
-        console.log(payload);
+    // Vota por el grupo
+    postVoteGroup(payload: VoteGroup) {
+        return this.http.post<ServerGameResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
+            {
+                vote: payload.vote
+            },
+            {
+                headers: {
+                    'player': payload.player,
+                    ...(payload.password && { 'password': payload.password })
+                }
+            }
+        );
+    }
+
+    proposeGroup(payload: ProposeRound) {
         return this.http.patch<RoundResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
             {
                 group: payload.group
             },
             {
-                headers:{
+                headers: {
+                    'player': payload.player,
+                    ...(payload.password && { 'password': payload.password })
+                }
+            }
+        );
+    }
+
+    votePlayer(payload: VoteGroup) {
+        console.log('votePlayer: ',payload);
+        return this.http.put<ServerGameResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
+            {
+                action: payload.vote
+            },
+            {
+                headers: {
                     'player': payload.player,
                     ...(payload.password && { 'password': payload.password })
                 }
