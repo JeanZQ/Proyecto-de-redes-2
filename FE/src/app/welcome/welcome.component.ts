@@ -10,7 +10,7 @@ import { CreateRoomComponent } from '../pages/createRoom/createRoom.component';
   styleUrl: './welcome.component.css'
 })
 export class WelcomeComponent {
-  // constructor() {
-  //   localStorage.clear();
-  // }
+  constructor() {
+    localStorage.clear();
+  }
 }
