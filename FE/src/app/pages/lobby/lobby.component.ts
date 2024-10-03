@@ -1,7 +1,7 @@
 import { NgFor, CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Inject, OnDestroy } from "@angular/core";
+import { booleanAttribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Inject, OnDestroy } from "@angular/core";
 import { StartGameComponent } from "../start-game/start-game.component";
-import { RoundInfoRequest, RoundResponse, StartGame } from "../../models/app.interface";
+import { RoundInfoRequest, RoundResponse, ServerGameResponse, StartGame, VoteGroup } from "../../models/app.interface";
 import { DataService } from "../../services/data.service";
 import { interval, Subscription } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +10,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule, ReactiveFormsModule, FormBuilder } from "@angular/forms";
 import { SelectRoundGroupComponent } from "../select-round-group/select-round-group.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { voteGroupComponent } from "../voteGroup/voteGroup.component";
+import { Console } from "console";
 
 
 @Component({
@@ -24,7 +26,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
         MatCheckboxModule,
         ReactiveFormsModule,
         FormsModule,
-        SelectRoundGroupComponent
+        SelectRoundGroupComponent,
+        voteGroupComponent
     ],
     templateUrl: './lobby.component.html',
     styleUrls: ['./lobby.component.css'],
@@ -52,6 +55,9 @@ export class LobbyComponent implements OnDestroy {
         roundId: '',
         player: ''
     };
+    public enemieDecades: number = 0;
+    public alyDecades: number = 0;
+
 
     readonly game: StartGame = {
         id: '',
@@ -77,12 +83,14 @@ export class LobbyComponent implements OnDestroy {
         }
     }
 
+    playerVote : VoteGroup = { gameId: '', roundId: '', player: '', password: '', vote: false };
 
     constructor(
         private dataService: DataService,
         private cdr: ChangeDetectorRef,
         private _snackBar: MatSnackBar
     ) {
+
         if (typeof localStorage !== 'undefined') {
             this.gameResponse = localStorage.getItem('GameResponse');
             this.gameInfo = localStorage.getItem('PlayerInfo');
@@ -108,10 +116,8 @@ export class LobbyComponent implements OnDestroy {
             }
 
             // Llama al servicio cada 5 segundos
-            this.subscription = interval(5000).subscribe(() => {
-
-                this.getRound();
-
+            this.subscription = interval(2000).subscribe(() => {
+                console.log('Game:' + localStorage.getItem('RoundResponse'));
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
                         // Actualiza los jugadores sin recargar la página
@@ -122,15 +128,17 @@ export class LobbyComponent implements OnDestroy {
                                 roundId: JSON.parse(this.gameResponse).currentRound,
                                 player: this.game.player
                             };
+                            console.log("Payload de la ronda");
+                            console.log(this.gameResponse);
                         }
-
+                    console.log("Actualizar ronda, jugador y juego");
+                    console.log(this.roundPayload);
                     },
                     error: (error: any) => {
                         console.log(error);
                     }
                 });
-
-
+                this.getRound();
 
             });
         } else {
@@ -152,13 +160,14 @@ export class LobbyComponent implements OnDestroy {
         this.players = response.data.players; // Actualiza la lista de jugadores
         localStorage.setItem('GameResponse', JSON.stringify(response.data)); // Actualiza el localStorage
         this.cdr.detectChanges(); // Actualiza la vista
+        
         this.enemies = response.data.enemies; // Suponiendo que los enemigos están en response.data.enemies
 
         if (!this.leader && this.game.player == response.data.owner) {
             this.leader = true;
         }
         console.log('Status: ' + response.data.status);
-        if(!this.gameStarted && response.data.status === "rounds") {	
+        if (!this.gameStarted && response.data.status === "rounds") {
             this.gameStarted = true;
         }
 
@@ -170,7 +179,7 @@ export class LobbyComponent implements OnDestroy {
 
     }
 
-    
+
 
     getRound() {
         //si tiene password, añadirlo al payload
@@ -183,12 +192,19 @@ export class LobbyComponent implements OnDestroy {
         // }
 
         this.dataService.getRound(this.roundPayload).subscribe({
-            
+
             next: (response: any) => {
+                
                 this.roundResponse = response; // Actualiza la ronda
+                localStorage.removeItem('RoundResponse'); // Elimina la ronda anterior
                 localStorage.setItem('RoundResponse', JSON.stringify(response.data)); // Guarda la ronda en localStorage
                 this.roundLeader = response.data.leader; // Actualiza el líder de la ronda
                 this.cdr.detectChanges(); // Actualiza la vista
+                console.log('Actualizando ronda');
+                console.log(response);
+                if(response.data.result == 'citizens' || response.data.result == 'enemies' && this.alyDecades != 3 && this.enemieDecades != 3) {
+                    window.location.reload();
+                }
             },
             error: (error: any) => {
                 console.log('Round payload:', this.roundPayload);
@@ -220,14 +236,17 @@ export class LobbyComponent implements OnDestroy {
 
     selectGroup() {
         console.log('Round group:', this.roundGroup);
-        
+
         const payload = {
             gameId: this.roundPayload.gameId,
             roundId: this.roundPayload.roundId,
             player: this.roundPayload.player,
-            password: this.game.password,
+            password: this.game.password || '',
             group: this.roundGroup
         };
+
+        console.log('Proposing group:');
+        console.log(payload);
 
         this.dataService.proposeGroup(payload).subscribe({
             next: (response: any) => {
@@ -237,7 +256,72 @@ export class LobbyComponent implements OnDestroy {
             error: (error: any) => {
                 console.error('Error proposing group:', error);
             }
-    })
+        })
+    }
+
+    voting(vote: boolean) {
+        this.playerVote = {
+            gameId: this.roundPayload.gameId,
+            roundId: this.roundPayload.roundId,
+            player: this.roundPayload.player,
+            password: this.game.password || '',
+            vote: vote
+        };
+        this.dataService.votePlayer(this.playerVote).subscribe({
+            next: (response: ServerGameResponse) => {
+                console.log('Voto:', response.data);
+                if (response.status == 200) {
+                    if (this.playerVote.vote == true) {
+                        this._snackBar.open('Has apoyado', 'Ok', {
+                            duration: 5000,
+                          });
+                    } else {
+                        this._snackBar.open('Has saboteado', 'Ok', {
+                            duration: 5000,
+                          });
+                        
+                    }
+                }
+            },
+            error: (e) => {
+                switch (e.status) {
+                  case 401:
+                    this._snackBar.open('The client must authenticate itself to get the requested response', 'Ok', {
+                      duration: 5000,
+                    });
+                    break;
+        
+                  case 403:
+                    this._snackBar.open('The client does not have access rights to the content. Unlike 401 Unauthorized, the clients identity is known to the server.', 'Ok', {
+                      duration: 5000,
+                    });
+                    break;
+        
+                  case 404:
+                    this._snackBar.open('The specified resource was not found', 'Ok', {
+                      duration: 5000,
+                    });
+                    break;
+        
+                  case 409:
+                    this._snackBar.open('This response is sent when a request conflicts with the current state of the server.', 'Ok', {
+                      duration: 5000,
+                    });
+                    break;
+                
+                    case 429:
+                    this._snackBar.open('The origin server requires the request to be conditional. This response is intended to prevent the "lost update" problem, where a client GETs a resources state, modifies it and PUTs it back to the server, when meanwhile a third party has modified the state on the server, leading to a conflict.', 'Ok', {
+                      duration: 5000,
+                    });
+                    break;
+
+                    default:
+                    this._snackBar.open('An error occurred', 'Ok', {
+                      duration: 5000,
+                    });
+                }
+              }
+        });
     }
 
 }
