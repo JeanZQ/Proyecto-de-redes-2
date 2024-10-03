@@ -249,7 +249,15 @@ export class LobbyComponent implements OnDestroy {
         }
 
         this.dataService.getAllRounds(this.allRoundsPayload).subscribe({
-      
+
+            next: (response: any) => {
+                this.allRoundsResponse = response;
+                this.cdr.detectChanges();
+                console.log('All rounds:', response);
+            },
+            error: (error: any) => {
+                console.error('Error getting all rounds:', error);
+            }
           
         });
 
