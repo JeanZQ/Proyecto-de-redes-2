@@ -1,7 +1,7 @@
 import { NgFor, CommonModule } from "@angular/common";
 import { booleanAttribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Inject, OnDestroy } from "@angular/core";
 import { StartGameComponent } from "../start-game/start-game.component";
-import { RoundInfoRequest, RoundResponse, ServerGameResponse, StartGame, VoteGroup } from "../../models/app.interface";
+import { RoundInfoRequest, AllRoundsInfoRequest, RoundResponse, AllRoundsResponse,  ServerGameResponse, StartGame, VoteGroup } from "../../models/app.interface";
 import { DataService } from "../../services/data.service";
 import { interval, Subscription } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -56,14 +56,16 @@ export class LobbyComponent implements OnDestroy {
     public groupDefined: boolean = false;
     public leader: boolean = false;
     public gameStarted: boolean = false;
+   
     public roundPayload: RoundInfoRequest = {
         gameId: '',
         roundId: '',
         player: ''
     };
-    public enemieDecades: number = 0;
-    public alyDecades: number = 0;
 
+    public enemieDecades: number = 0;
+   
+    public alyDecades: number = 0;
 
     readonly game: StartGame = {
         id: '',
@@ -90,6 +92,17 @@ export class LobbyComponent implements OnDestroy {
             id: ''             
         }
     }
+
+    allRoundsResponse: AllRoundsResponse = {
+        status: 0,
+        msg: '',
+        data: []
+    }
+
+    public allRoundsPayload: AllRoundsInfoRequest = {
+        gameId: '',
+        player: ''
+    };
 
     playerVote : VoteGroup = { gameId: '', roundId: '', player: '', password: '', vote: false };
 
@@ -228,6 +241,21 @@ export class LobbyComponent implements OnDestroy {
 
     }
 
+    // retorna todos los rounds de un juego
+    getAllRounds() {
+
+        if (this.hasPassword) {
+            this.allRoundsPayload.password = this.game.password;
+        }
+
+        this.dataService.getAllRounds(this.allRoundsPayload).subscribe({
+      
+          
+        });
+
+        
+    }
+
     // devuelve si el player actual es enemigo
     isCurrentPlayerEnemy(): boolean {
         return this.enemies.includes(this.game.player);
@@ -336,6 +364,7 @@ export class LobbyComponent implements OnDestroy {
 
     }
 
+    // pop up para mostrar el round 
     openDialog() {
         const dialogRef = this.dialog.open(PopUpRoundInfoComponent, {
             data: this.roundResponse,

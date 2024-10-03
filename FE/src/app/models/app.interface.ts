@@ -74,6 +74,14 @@ export interface RoundInfoRequest {
     player: string;
 };
 
+// muestra el contenido de todos los rounds de un game
+export interface AllRoundsResponse {
+    status: number;
+    msg: string;
+    data: RoundInfoData[];
+
+}
+
 // muestra el contenido de uno o varios rounds
 export interface RoundResponse {
     status: number;
