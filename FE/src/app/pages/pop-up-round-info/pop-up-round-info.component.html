@@ -1,18 +1,20 @@
-<h3>Detalles del Round:</h3>
-<p>Estado: {{ data.data.status }}</p>
-<p>Fase: {{ data.data.phase }}</p>
-<p>Resultado: {{ data.data.result }}</p>
-<p>Líder: {{ data.data.leader }}</p>
-<p>Creado en: {{ data.data.createdAt }}</p>
-<p>Actualizado en: {{ data.data.updatedAt }}</p>
-<p>Round ID: {{ data.data.id }}</p>
+<h3 class="round-title">Detalles del Round</h3>
+<div class="round-details">
+    <p><strong>Estado:</strong> {{ data.data.status }}</p>
+    <p><strong>Fase:</strong> {{ data.data.phase }}</p>
+    <p><strong>Resultado:</strong> {{ data.data.result }}</p>
+    <p><strong>Líder:</strong> {{ data.data.leader }}</p>
+    <p><strong>Creado en:</strong> {{ data.data.createdAt }}</p>
+    <p><strong>Actualizado en:</strong> {{ data.data.updatedAt }}</p>
+    <p><strong>Round ID:</strong> {{ data.data.id }}</p>
+</div>
 
-<h4>Grupo de jugadores:</h4>
-<ul>
-  <li *ngFor="let player of data.data.group">{{ player }}</li>
+<h4 class="sub-title">Grupo de jugadores</h4>
+<ul class="player-list">
+    <li *ngFor="let player of data.data.group" class="player-item">{{ player }}</li>
 </ul>
 
-<h4>Votos:</h4>
-<ul>
-  <li *ngFor="let vote of data.data.votes">{{ vote }}</li>
+<h4 class="sub-title">Votos</h4>
+<ul class="vote-list">
+    <li *ngFor="let vote of data.data.votes" class="vote-item">{{ vote }}</li>
 </ul>

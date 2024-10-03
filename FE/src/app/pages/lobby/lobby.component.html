@@ -59,13 +59,10 @@
 
 
     <div class="button-container">
-        <!-- <button mat-mini-fab (click)="openDialog()">
+        <button mat-mini-fab (click)="openDialog()">
             <mat-icon>menu</mat-icon>
-        </button> -->
-
-        <button (click)="openDialog()">
-            Presiona
         </button>
+
     </div>
     <div class="selectGrpContainer" *ngIf="roundResponse.data.status == 'voting'">
         <voteGroup [roundPayload]="roundPayload" [password]="game.password ? game.password : ''"
