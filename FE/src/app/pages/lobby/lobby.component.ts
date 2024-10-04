@@ -42,7 +42,7 @@ import { Console } from "console";
 
 export class LobbyComponent implements OnDestroy {
     dialogRef: any;
-    readonly gameResponse: string | null;
+    public gameResponse: string | null;
     players: any[] = []; // Lista de jugadores
     readonly gameInfo: any;
     private subscription: Subscription | null = null;
@@ -63,7 +63,7 @@ export class LobbyComponent implements OnDestroy {
     };
     public enemieDecades: number = 0;
     public alyDecades: number = 0;
-
+    public gameStatus:string = '';
 
     readonly game: StartGame = {
         id: '',
@@ -109,8 +109,9 @@ export class LobbyComponent implements OnDestroy {
             this.players = this.gameResponse ? JSON.parse(this.gameResponse).players : [];
             this.gameName = this.gameResponse ? JSON.parse(this.gameResponse).name : '';
             let roundId = this.gameResponse ? JSON.parse(this.gameResponse).currentRound : '';
+            this.gameStatus = this.gameResponse ? JSON.parse(this.gameResponse).status : '';
 
-            // payload para obtener una ronda
+
             this.roundPayload = {
                 gameId: this.game.id,
                 roundId: roundId,
@@ -124,21 +125,35 @@ export class LobbyComponent implements OnDestroy {
                 this.hasPassword = true;
             }
 
+           
+
             // Llama al servicio cada 5 segundos
 
-            this.subscription = interval(2000).subscribe(() => {
+            this.subscription = interval(5000).subscribe(() => {
                 console.log('Game:' + localStorage.getItem('RoundResponse'));
                 console.log('ID ROUND:' + this.roundResponse.data.id);
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
+                        console.log('Response de getGame');
+                        console.log(response);
                         // Actualiza los jugadores sin recargar la página
-                        this.updatePlayers(response);
+                        
+
+                        if(this.gameStatus == 'lobby') {
+                            this.updatePlayers(response);
+                        }
+
+
+
                         if (this.gameResponse) {
                             this.roundPayload = {
                                 gameId: this.game.id,
-                                roundId: JSON.parse(this.gameResponse).currentRound,
+                                roundId: response.data.currentRound,
                                 player: this.game.player
                             };
+
+                            console.log("RoundId actualizado" + response.data.currentRound);
+
                             console.log("Payload de la ronda");
                             console.log(this.gameResponse);
                         }
@@ -173,7 +188,7 @@ export class LobbyComponent implements OnDestroy {
         this.cdr.detectChanges(); // Actualiza la vista
         
         this.enemies = response.data.enemies; // Suponiendo que los enemigos están en response.data.enemies
-
+        this
         if (!this.leader && this.game.player == response.data.owner) {
             this.leader = true;
         }
@@ -189,6 +204,12 @@ export class LobbyComponent implements OnDestroy {
         }
 
     }
+
+    gameStatusChange(response:any){
+        this.gameStatus = response.data.status;
+        this.cdr.detectChanges();
+    }
+
 
 
 
