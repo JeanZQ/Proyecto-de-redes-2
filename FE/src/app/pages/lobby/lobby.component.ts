@@ -14,6 +14,7 @@ import { MatDialog, MatDialogModule  } from "@angular/material/dialog";
 import { PopUpRoundInfoComponent } from "../pop-up-round-info/pop-up-round-info.component";
 import { voteGroupComponent } from "../voteGroup/voteGroup.component";
 import { Console } from "console";
+import { waitForAsync } from "@angular/core/testing";
 
 
 
@@ -139,24 +140,37 @@ export class LobbyComponent implements OnDestroy {
                         // Actualiza los jugadores sin recargar la página
                         
 
+                        this.gameStatusChange(response);
                         if(this.gameStatus == 'lobby') {
                             this.updatePlayers(response);
+                            this.gameStarted = false;
+                        }else if(this.gameStatus == 'rounds') {
+                            this.setRoundId(response.data.currentRound);
+                            if (this.gameResponse) {
+                                this.roundPayload = {
+                                    gameId: this.game.id,
+                                    roundId: response.data.currentRound,
+                                    player: this.game.player
+                                };
+    
+                                console.log("RoundId actualizado" + response.data.currentRound);
+    
+                                console.log("Payload de la ronda");
+                                console.log(this.gameResponse);
+                            }
+                            this.getRound();
+                        }
+                        else if(this.gameStatus == 'ended') {
+                            console.log('Game ended');
+                            this._snackBar.open('El juego ha terminado', 'Ok', {
+                                duration: 5000,
+                            });
+                            this.ngOnDestroy();
                         }
 
 
 
-                        if (this.gameResponse) {
-                            this.roundPayload = {
-                                gameId: this.game.id,
-                                roundId: response.data.currentRound,
-                                player: this.game.player
-                            };
-
-                            console.log("RoundId actualizado" + response.data.currentRound);
-
-                            console.log("Payload de la ronda");
-                            console.log(this.gameResponse);
-                        }
+                        
                     console.log("Actualizar ronda, jugador y juego");
                     console.log(this.roundPayload);
                     },
@@ -164,7 +178,7 @@ export class LobbyComponent implements OnDestroy {
                         console.log(error);
                     }
                 });
-                this.getRound();
+                
 
             });
         } else {
@@ -210,6 +224,10 @@ export class LobbyComponent implements OnDestroy {
         this.cdr.detectChanges();
     }
 
+    setRoundId(roundId: string) {
+        this.roundPayload.roundId = roundId;
+    }
+
 
 
 
@@ -237,6 +255,7 @@ export class LobbyComponent implements OnDestroy {
                 if(response.data.result == 'citizens' || response.data.result == 'enemies') {
                     window.location.reload();
                 }
+                
             },
             error: (error: any) => {
                 console.log('Round payload:', this.roundPayload);
