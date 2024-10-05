@@ -14,7 +14,8 @@ import { MatDialog, MatDialogModule  } from "@angular/material/dialog";
 import { PopUpRoundInfoComponent } from "../pop-up-round-info/pop-up-round-info.component";
 import { voteGroupComponent } from "../voteGroup/voteGroup.component";
 import { Console } from "console";
-
+import { NgModule } from "@angular/core";
+import { MatCard } from "@angular/material/card";
 
 
 @Component({
@@ -31,7 +32,8 @@ import { Console } from "console";
         FormsModule,
         SelectRoundGroupComponent,
         MatDialogModule,
-        voteGroupComponent
+        voteGroupComponent,
+        MatCard
 
     ],
     templateUrl: './lobby.component.html',
@@ -130,6 +132,11 @@ export class LobbyComponent implements OnDestroy {
                 player: this.game.player
             };
 
+            this.allRoundsPayload = {
+                gameId: this.game.id,
+                player: this.game.player
+            };
+
 
 
             // verifica si tiene password
@@ -152,8 +159,7 @@ export class LobbyComponent implements OnDestroy {
                                 roundId: JSON.parse(this.gameResponse).currentRound,
                                 player: this.game.player
                             };
-                            console.log("Payload de la ronda");
-                            console.log(this.gameResponse);
+                            console.log("Payload de la ronda", this.gameResponse);
                         }
                     console.log("Actualizar ronda, jugador y juego");
                     console.log(this.roundPayload);
@@ -163,6 +169,9 @@ export class LobbyComponent implements OnDestroy {
                     }
                 });
                 this.getRound();
+                this.getAllRounds();
+
+                // console.log('TODAS LAS RONDAS: ', this.allRoundsResponse);
 
             });
         } else {
@@ -224,8 +233,7 @@ export class LobbyComponent implements OnDestroy {
                 localStorage.setItem('RoundResponse', JSON.stringify(response.data)); // Guarda la ronda en localStorage
                 this.roundLeader = response.data.leader; // Actualiza el líder de la ronda
                 this.cdr.detectChanges(); // Actualiza la vista
-                console.log('Actualizando ronda');
-                console.log(response);
+                console.log('Actualizando ronda', response);
                 if(response.data.result == 'citizens' || response.data.result == 'enemies') {
                     window.location.reload();
                 }
@@ -244,6 +252,7 @@ export class LobbyComponent implements OnDestroy {
     // retorna todos los rounds de un juego
     getAllRounds() {
 
+        // verifica si tiene password y la añade al payload
         if (this.hasPassword) {
             this.allRoundsPayload.password = this.game.password;
         }
@@ -292,8 +301,7 @@ export class LobbyComponent implements OnDestroy {
             group: this.roundGroup
         };
 
-        console.log('Proposing group:');
-        console.log(payload);
+        console.log('Proposing group:', payload);
 
         this.dataService.proposeGroup(payload).subscribe({
             next: (response: any) => {
