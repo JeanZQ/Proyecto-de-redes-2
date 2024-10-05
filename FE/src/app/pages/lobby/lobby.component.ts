@@ -33,7 +33,6 @@ import { MatCard } from "@angular/material/card";
         SelectRoundGroupComponent,
         MatDialogModule,
         voteGroupComponent,
-        MatCard
 
     ],
     templateUrl: './lobby.component.html',
