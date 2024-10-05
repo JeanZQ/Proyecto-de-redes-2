@@ -77,7 +77,8 @@ export class DataService {
 
             {
                 headers: {
-                    'player': payload.player
+                    'player': payload.player,
+                    ...(payload.password && { 'password': payload.password })
                 }
             }
 

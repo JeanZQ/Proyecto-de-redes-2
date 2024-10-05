@@ -63,6 +63,12 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "ssl": true,
+         "sslKey": "D:/Proyecto Redes ll/Proyecto-de-redes-2/FE/src/mkcert/localhost-key.pem",
+         "sslCert": "D:/Proyecto Redes ll/Proyecto-de-redes-2/FE/src/mkcert/localhost.pem",
+            "port": 4200,
+            "host": "localhost"},
           "configurations": {
             "production": {
               "buildTarget": "FE:build:production"
