@@ -33,6 +33,7 @@ export class StartGameComponent {
     this.datasvc.startGame(this.payload).subscribe({
       next: (response: any) => {
         localStorage.setItem('GameResponse', JSON.stringify(response.data));
+        // window.location.reload();
       },
       error: (e) => {
         switch (e.status) {
