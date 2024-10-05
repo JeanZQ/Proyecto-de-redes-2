@@ -152,14 +152,19 @@ export class LobbyComponent implements OnDestroy {
                                     roundId: response.data.currentRound,
                                     player: this.game.player
                                 };
-                                
-                                console.log("RoundId actualizado" + response.data.currentRound);
+                                console.log("Variables de la ronda");
+                                console.log(this.roundPayload);
     
                                 console.log("Payload de la ronda");
                                 console.log(this.gameResponse);
                             }
+                            this.updatePlayers(response);
+                            // this.isCurrentPlayerEnemy();
 
                             this.getRound();
+
+
+
                         }
                         else if(this.gameStatus == 'ended') {
                             console.log('Game ended');
@@ -203,7 +208,7 @@ export class LobbyComponent implements OnDestroy {
         this.cdr.detectChanges(); // Actualiza la vista
         
         this.enemies = response.data.enemies; // Suponiendo que los enemigos están en response.data.enemies
-        this
+
         if (!this.leader && this.game.player == response.data.owner) {
             this.leader = true;
         }
@@ -254,9 +259,17 @@ export class LobbyComponent implements OnDestroy {
                 console.log('Actualizando ronda');
                 console.log(response);
 
-                if(response.data.group == undefined) {
+                if(response.data.status === 'waiting-on-leader') {
                     this.groupDefined = false;
+                }else{
+                    this.groupDefined = true;
                 }
+
+                console.log('Grupo definido?:', this.groupDefined);
+
+                this.gameStarted = true;
+
+
 
                 if(response.data.result == 'citizens' || response.data.result == 'enemies') {
                     window.location.reload();
@@ -308,7 +321,6 @@ export class LobbyComponent implements OnDestroy {
         this.dataService.proposeGroup(payload).subscribe({
             next: (response: any) => {
                 console.log('Group proposed:', response);
-                this.groupDefined = true;
             },
             error: (error: any) => {
                 console.error('Error proposing group:', error);
