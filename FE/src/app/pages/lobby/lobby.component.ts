@@ -3,7 +3,7 @@ import { booleanAttribute, ChangeDetectionStrategy, ChangeDetectorRef, Component
 import { StartGameComponent } from "../start-game/start-game.component";
 import { RoundInfoRequest, RoundResponse, ServerGameResponse, StartGame, VoteGroup } from "../../models/app.interface";
 import { DataService } from "../../services/data.service";
-import { interval, Subscription } from 'rxjs';
+import { empty, interval, Subscription } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -152,12 +152,13 @@ export class LobbyComponent implements OnDestroy {
                                     roundId: response.data.currentRound,
                                     player: this.game.player
                                 };
-    
+                                
                                 console.log("RoundId actualizado" + response.data.currentRound);
     
                                 console.log("Payload de la ronda");
                                 console.log(this.gameResponse);
                             }
+
                             this.getRound();
                         }
                         else if(this.gameStatus == 'ended') {
@@ -243,7 +244,7 @@ export class LobbyComponent implements OnDestroy {
 
         this.dataService.getRound(this.roundPayload).subscribe({
 
-            next: (response: any) => {
+            next: (response: RoundResponse) => {
                 
                 this.roundResponse = response; // Actualiza la ronda
                 localStorage.removeItem('RoundResponse'); // Elimina la ronda anterior
@@ -252,6 +253,11 @@ export class LobbyComponent implements OnDestroy {
                 this.cdr.detectChanges(); // Actualiza la vista
                 console.log('Actualizando ronda');
                 console.log(response);
+
+                if(response.data.group == undefined) {
+                    this.groupDefined = false;
+                }
+
                 if(response.data.result == 'citizens' || response.data.result == 'enemies') {
                     window.location.reload();
                 }
