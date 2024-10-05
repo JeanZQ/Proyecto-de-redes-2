@@ -160,7 +160,6 @@ export class LobbyComponent implements OnDestroy {
                             }
                             this.updatePlayers(response);
                             // this.isCurrentPlayerEnemy();
-
                             this.getRound();
 
 
@@ -272,6 +271,7 @@ export class LobbyComponent implements OnDestroy {
 
 
                 if(response.data.result == 'citizens' || response.data.result == 'enemies') {
+                    this.roundGroup = [];
                     window.location.reload();
                 }
                 
