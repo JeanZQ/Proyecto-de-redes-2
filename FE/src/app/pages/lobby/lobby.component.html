@@ -5,6 +5,9 @@
 <div class="btnContainer" *ngIf="leader && !gameStarted">
     <startGame></startGame>
 </div>
+<div class="" *ngIf="winner">
+    <end-game [title]="nameWinner"/>
+</div>
 <div class="selectGrpContainer" *ngIf="
     roundLeader != undefined && roundLeader == this.game.player && !groupDefined
   ">

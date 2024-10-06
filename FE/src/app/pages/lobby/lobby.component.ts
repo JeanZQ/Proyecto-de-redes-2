@@ -1,7 +1,7 @@
 import { NgFor, CommonModule } from "@angular/common";
 import { booleanAttribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Inject, OnDestroy } from "@angular/core";
 import { StartGameComponent } from "../start-game/start-game.component";
-import { RoundInfoRequest, AllRoundsInfoRequest, RoundResponse, AllRoundsResponse,  ServerGameResponse, StartGame, VoteGroup } from "../../models/app.interface";
+import { RoundInfoRequest, AllRoundsInfoRequest, RoundResponse, AllRoundsResponse, ServerGameResponse, StartGame, VoteGroup } from "../../models/app.interface";
 import { DataService } from "../../services/data.service";
 import { empty, interval, Subscription } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,13 +10,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule, ReactiveFormsModule, FormBuilder } from "@angular/forms";
 import { SelectRoundGroupComponent } from "../select-round-group/select-round-group.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatDialog, MatDialogModule  } from "@angular/material/dialog";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { PopUpRoundInfoComponent } from "../pop-up-round-info/pop-up-round-info.component";
 import { voteGroupComponent } from "../voteGroup/voteGroup.component";
 import { Console } from "console";
 import { NgModule } from "@angular/core";
 import { MatCard } from "@angular/material/card";
 import { waitForAsync } from "@angular/core/testing";
+import { EndGameComponent } from "../endGame/endGame.component";
 
 
 
@@ -36,6 +37,7 @@ import { waitForAsync } from "@angular/core/testing";
         SelectRoundGroupComponent,
         MatDialogModule,
         voteGroupComponent,
+        EndGameComponent
 
     ],
     templateUrl: './lobby.component.html',
@@ -60,7 +62,8 @@ export class LobbyComponent implements OnDestroy {
     public groupDefined: boolean = false;
     public leader: boolean = false;
     public gameStarted: boolean = false;
-   
+    public winner = true;
+    public nameWinner = "None";
     public roundPayload: RoundInfoRequest = {
         gameId: '',
         roundId: '',
@@ -68,10 +71,10 @@ export class LobbyComponent implements OnDestroy {
     };
 
     public enemieDecades: number = 0;
-   
+
     public alyDecades: number = 0;
 
-    public gameStatus:string = '';
+    public gameStatus: string = '';
 
 
     readonly game: StartGame = {
@@ -88,15 +91,15 @@ export class LobbyComponent implements OnDestroy {
         status: 0,
         msg: '',
         data: {
-            leader: '',         
-            status: '',         
-            result: '',         
-            phase: '',          
-            createdAt: '',      
-            updatedAt: '',      
-            group: [],          
-            votes: [],          
-            id: ''             
+            leader: '',
+            status: '',
+            result: '',
+            phase: '',
+            createdAt: '',
+            updatedAt: '',
+            group: [],
+            votes: [],
+            id: ''
         }
     }
 
@@ -111,7 +114,7 @@ export class LobbyComponent implements OnDestroy {
         player: ''
     };
 
-    playerVote : VoteGroup = { gameId: '', roundId: '', player: '', password: '', vote: false };
+    playerVote: VoteGroup = { gameId: '', roundId: '', player: '', password: '', vote: false };
 
     constructor(
         private dataService: DataService,
@@ -150,7 +153,7 @@ export class LobbyComponent implements OnDestroy {
                 this.hasPassword = true;
             }
 
-           
+
 
             // Llama al servicio cada 5 segundos
 
@@ -164,10 +167,10 @@ export class LobbyComponent implements OnDestroy {
                         // Actualiza los jugadores sin recargar la página                        
 
                         this.gameStatusChange(response);
-                        if(this.gameStatus == 'lobby') {
+                        if (this.gameStatus == 'lobby') {
                             this.updatePlayers(response);
                             this.gameStarted = false;
-                        }else if(this.gameStatus == 'rounds') {
+                        } else if (this.gameStatus == 'rounds') {
                             this.setRoundId(response.data.currentRound);
                             if (this.gameResponse) {
                                 this.roundPayload = {
@@ -177,7 +180,7 @@ export class LobbyComponent implements OnDestroy {
                                 };
                                 console.log("Variables de la ronda");
                                 console.log(this.roundPayload);
-    
+
                                 console.log("Payload de la ronda");
                                 console.log(this.gameResponse);
                             }
@@ -188,20 +191,26 @@ export class LobbyComponent implements OnDestroy {
 
 
                         }
-                        else if(this.gameStatus == 'ended') {
+                        else if (this.gameStatus == 'ended') {
                             console.log('Game ended');
                             this._snackBar.open('El juego ha terminado', 'Ok', {
                                 duration: 5000,
                             });
                             this.ngOnDestroy();
-
+                            this.winner = true;
+                            this.nameWinner = Object.entries(this.allRoundsResponse.data.map((round) => round.result).reduce((acc: { [key: string]: number }, curr: string) => {
+                                acc[curr] = (acc[curr] || 0) + 1;
+                                return acc;
+                            }, {})).reduce((a, b) => a[1] > b[1] ? a : b)[0];
+                            console.log('Winner:', this.nameWinner);
+                            localStorage.clear();
                         }
 
 
 
-                        
-                    console.log("Actualizar ronda, jugador y juego");
-                    console.log(this.roundPayload);
+
+                        console.log("Actualizar ronda, jugador y juego");
+                        console.log(this.roundPayload);
                     },
                     error: (error: any) => {
                         console.log(error);
@@ -230,7 +239,7 @@ export class LobbyComponent implements OnDestroy {
         this.players = response.data.players; // Actualiza la lista de jugadores
         localStorage.setItem('GameResponse', JSON.stringify(response.data)); // Actualiza el localStorage
         this.cdr.detectChanges(); // Actualiza la vista
-        
+
         this.enemies = response.data.enemies; // Suponiendo que los enemigos están en response.data.enemies
 
         if (!this.leader && this.game.player == response.data.owner) {
@@ -249,7 +258,7 @@ export class LobbyComponent implements OnDestroy {
 
     }
 
-    gameStatusChange(response:any){
+    gameStatusChange(response: any) {
         this.gameStatus = response.data.status;
         this.cdr.detectChanges();
     }
@@ -274,7 +283,7 @@ export class LobbyComponent implements OnDestroy {
         this.dataService.getRound(this.roundPayload).subscribe({
 
             next: (response: RoundResponse) => {
-                
+
                 this.roundResponse = response; // Actualiza la ronda
                 localStorage.removeItem('RoundResponse'); // Elimina la ronda anterior
                 localStorage.setItem('RoundResponse', JSON.stringify(response.data)); // Guarda la ronda en localStorage
@@ -284,9 +293,9 @@ export class LobbyComponent implements OnDestroy {
                 console.log('Actualizando ronda');
                 console.log(response);
 
-                if(response.data.status === 'waiting-on-leader') {
+                if (response.data.status === 'waiting-on-leader') {
                     this.groupDefined = false;
-                }else{
+                } else {
                     this.groupDefined = true;
                 }
 
@@ -296,11 +305,11 @@ export class LobbyComponent implements OnDestroy {
 
 
 
-                if(response.data.result == 'citizens' || response.data.result == 'enemies') {
+                if (response.data.result == 'citizens' || response.data.result == 'enemies') {
                     this.roundGroup = [];
                     window.location.reload();
                 }
-                
+
             },
             error: (error: any) => {
                 console.log('Round payload:', this.roundPayload);
@@ -331,10 +340,10 @@ export class LobbyComponent implements OnDestroy {
             error: (error: any) => {
                 console.error('Error getting all rounds:', error);
             }
-          
+
         });
 
-        
+
     }
 
     // devuelve si el player actual es enemigo
@@ -392,53 +401,20 @@ export class LobbyComponent implements OnDestroy {
                     if (this.playerVote.vote == true) {
                         this._snackBar.open('Has apoyado', 'Ok', {
                             duration: 5000,
-                          });
+                        });
                     } else {
                         this._snackBar.open('Has saboteado', 'Ok', {
                             duration: 5000,
-                          });
-                        
+                        });
+
                     }
                 }
             },
             error: (e) => {
-                switch (e.status) {
-                  case 401:
-                    this._snackBar.open('The client must authenticate itself to get the requested response', 'Ok', {
-                      duration: 5000,
-                    });
-                    break;
-        
-                  case 403:
-                    this._snackBar.open('The client does not have access rights to the content. Unlike 401 Unauthorized, the clients identity is known to the server.', 'Ok', {
-                      duration: 5000,
-                    });
-                    break;
-        
-                  case 404:
-                    this._snackBar.open('The specified resource was not found', 'Ok', {
-                      duration: 5000,
-                    });
-                    break;
-        
-                  case 409:
-                    this._snackBar.open('This response is sent when a request conflicts with the current state of the server.', 'Ok', {
-                      duration: 5000,
-                    });
-                    break;
-                
-                    case 429:
-                    this._snackBar.open('The origin server requires the request to be conditional. This response is intended to prevent the "lost update" problem, where a client GETs a resources state, modifies it and PUTs it back to the server, when meanwhile a third party has modified the state on the server, leading to a conflict.', 'Ok', {
-                      duration: 5000,
-                    });
-                    break;
-
-                    default:
-                    this._snackBar.open('An error occurred', 'Ok', {
-                      duration: 5000,
-                    });
-                }
-              }
+                this._snackBar.open(e.msg, 'Ok', {
+                    duration: 5000,
+                });
+            }
         });
 
     }
@@ -451,9 +427,9 @@ export class LobbyComponent implements OnDestroy {
             height: '70vh',   // 70% de la altura del viewport
             maxWidth: '600px', // Ancho máximo
             maxHeight: '500px'
-        }); 
+        });
 
-      
+
     }
 
 
