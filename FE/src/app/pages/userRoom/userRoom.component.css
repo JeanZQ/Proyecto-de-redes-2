@@ -1,5 +1,6 @@
 .example-card {
   margin: 1rem;
+  left: -15px;
   width: 500px;
   height: auto;
 }
