@@ -14,7 +14,7 @@ export class DataService {
     constructor(private http: HttpClient) { }
 
     getRooms(page: number, limit: number): Observable<ServerGameResponse> {
-        console.log('getRooms: ',page,limit);
+        // console.log('getRooms: ',page,limit);
         return this.http.get<ServerGameResponse>(`${this.urlAPI}?page=${page}&limit=${limit}`);
     }
 
@@ -115,7 +115,7 @@ export class DataService {
     }
 
     votePlayer(payload: VoteGroup) {
-        console.log('votePlayer: ',payload);
+        // console.log('votePlayer: ',payload);
         return this.http.put<ServerGameResponse>(`${this.urlAPI}/${payload.gameId}/rounds/${payload.roundId}`,
             {
                 action: payload.vote

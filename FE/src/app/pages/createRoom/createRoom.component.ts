@@ -84,7 +84,7 @@ export class CreateRoomComponent {
       newRoom.password = password;
     }
 
-    console.log(newRoom);
+    // console.log(newRoom);
 
     // Enviar la información al servicio
     this.datasvc.createRoom(newRoom).subscribe({
