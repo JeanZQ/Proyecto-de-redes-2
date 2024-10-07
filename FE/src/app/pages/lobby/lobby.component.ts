@@ -215,7 +215,7 @@ export class LobbyComponent implements OnDestroy {
 
 
                             if(response.data.currentRound === "0000000000000000000000000" ){
-                                console.log('Decade undefined');
+                                // console.log('Decade undefined');
                                 this.playerOnGroup(1, response.data.players.length);
                             }
                             else{
