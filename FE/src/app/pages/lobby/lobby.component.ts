@@ -18,6 +18,7 @@ import { NgModule } from "@angular/core";
 import { MatCard } from "@angular/material/card";
 import { waitForAsync } from "@angular/core/testing";
 import { EndGameComponent } from "../endGame/endGame.component";
+import { unescape } from "querystring";
 
 
 
@@ -70,6 +71,15 @@ export class LobbyComponent implements OnDestroy {
         roundId: '',
         player: ''
     };
+
+    public groupsForDecades = [
+        [2,2,3,3,3,3],
+        [3,3,3,4,4,4],
+        [2,4,3,4,4,4],
+        [3,3,4,5,5,5],
+        [3,4,4,5,5,5]
+    ]
+
 
     public enemieDecades: number = 0;
 
@@ -163,8 +173,10 @@ export class LobbyComponent implements OnDestroy {
                 console.log('ID ROUND:' + this.roundResponse.data.id);
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
-                        console.log('Response de getGame');
-                        console.log(response);
+                    //    console.log('Response de getGame');
+                      //  console.log(response);
+                        console.log('DECADA: ',response.data.decade);
+                        console.log('TOTAL JUGADORES: ',response.data.players.length);
                         // Actualiza los jugadores sin recargar la página                        
 
                         this.gameStatusChange(response);
@@ -195,6 +207,16 @@ export class LobbyComponent implements OnDestroy {
                             // this.isCurrentPlayerEnemy();
                             this.getRound();
 
+                            if(response.data.decade === undefined){
+                                this.playerOnGroup(1, response.data.players.length);
+                                console.log('Player On Group',this.playerOnGroup(1, response.data.players.length));
+                            }
+                            else{
+                                this.playerOnGroup(this.allRoundsResponse.data.length, response.data.players.length);
+                                console.log('Player On Group despues de varias decadas: ',this.allRoundsResponse.data.length, response.data.players.length);    
+                                
+                            }
+                         
 
 
                         }
@@ -434,6 +456,17 @@ export class LobbyComponent implements OnDestroy {
         });
 
     }
+
+    // muestra de cuantos players debe ser el grupo segun la ronda
+    playerOnGroup(decade: number, totalPlayers: number) {
+        
+        // el indice se acomoda a una columna de la matriz
+       const playersIndex = totalPlayers - 5;
+
+
+        return this.groupsForDecades [decade - 1][playersIndex];
+    }
+    
 
 
 
