@@ -48,7 +48,10 @@ export class UserRoomComponent {
     readonly dialog = inject(MatDialog);
     private dataService = inject(DataService);
 
-    constructor(private cdr: ChangeDetectorRef) { }
+    constructor(private cdr: ChangeDetectorRef) {
+        this.password = signal('');
+        this.player = signal('');
+    }
 
     openPopUp(gameId: string): void {
         const dialogRef = this.dialog.open(PopUpComponent,
@@ -78,6 +81,8 @@ export class UserRoomComponent {
                         this.errorMessage = "Could not enter the game.\nPlease try again later.";
                         this.errorTitle = "Error " + error.status;
                         this.cdr.detectChanges();
+                        this.password.set('');
+                        this.player.set('');
                     }
                 });
             }

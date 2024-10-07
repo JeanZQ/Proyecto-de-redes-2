@@ -213,7 +213,9 @@ export class LobbyComponent implements OnDestroy {
                         console.log(this.roundPayload);
                     },
                     error: (error: any) => {
-                        console.log(error);
+                        this._snackBar.open(error.msg, 'ok', {
+                            duration: 5000,
+                        });
                     }
                 });
                 this.getAllRounds();
@@ -313,7 +315,7 @@ export class LobbyComponent implements OnDestroy {
             },
             error: (error: any) => {
                 console.log('Round payload:', this.roundPayload);
-                this._snackBar.open('Error al obtener la ronda', 'ok', {
+                this._snackBar.open(error.msg, 'ok', {
                     duration: 5000,
                 });
             }
@@ -340,10 +342,7 @@ export class LobbyComponent implements OnDestroy {
             error: (error: any) => {
                 console.error('Error getting all rounds:', error);
             }
-
         });
-
-
     }
 
     // devuelve si el player actual es enemigo
@@ -381,7 +380,9 @@ export class LobbyComponent implements OnDestroy {
                 console.log('Group proposed:', response);
             },
             error: (error: any) => {
-                console.error('Error proposing group:', error);
+                this._snackBar.open(error.msg, 'ok', {
+                    duration: 5000,
+                });
             }
         })
     }
