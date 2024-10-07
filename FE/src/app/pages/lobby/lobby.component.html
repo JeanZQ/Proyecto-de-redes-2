@@ -17,14 +17,16 @@
 </div>
 
 <div class="lobby-grid">
+
     <div *ngFor="let player of players" class="card" [formGroup]="selectedPlayers"
         [ngClass]="{ 'enemy-card': enemies.includes(player) }">
         <!-- Clase condicional para enemigos -->
         <div class="groupSelect" *ngIf="
         roundLeader != undefined &&
         roundLeader == this.game.player &&
-        !groupDefined
-      ">
+        !groupDefined"
+      >
+
             <mat-checkbox formControlName="{{ player }}"
                 (change)="onPlayerSelect(player, $event.checked)"></mat-checkbox>
         </div>
@@ -38,9 +40,16 @@
         <div class="card-photo">
             <img mat-card-image [src]="'https://robohash.org/' + player + '?set=set4'" alt="avatar" />
         </div>
-        <div class="card-title">{{ player }} <br /></div>
+        <div class="card-title" *ngIf="player == this.game.player;else justName"> <div style="display: flex;"> {{ player }}  <mat-icon style="">person</mat-icon> </div> <br />
+        </div>
 
-        <div class="button" *ngIf="game.player == player && roundResponse.data.status == 'waiting-on-group'">
+        <ng-template #justName>
+            <div class="card-title">
+                {{ player }}
+            </div>
+        </ng-template>
+
+        <div class="button" *ngIf="game.player == player && roundResponse.data.status == 'waiting-on-group'  && currentPlayerOnGroup(player)">
             <button (click)="voting(true)" class="game-btn check">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
                     <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
@@ -58,6 +67,7 @@
                 </button>
             </div>
         </div>
+        
     </div>
 
 
@@ -71,5 +81,6 @@
         <voteGroup [roundPayload]="roundPayload" [password]="game.password ? game.password : ''"
             [group]="roundResponse.data.group" />
     </div>
+
 </div>
 

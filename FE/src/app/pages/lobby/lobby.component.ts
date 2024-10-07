@@ -62,8 +62,9 @@ export class LobbyComponent implements OnDestroy {
     public groupDefined: boolean = false;
     public leader: boolean = false;
     public gameStarted: boolean = false;
-    public winner = true;
+    public winner = false;
     public nameWinner = "None";
+    public isGroupEmpty: boolean = false;
     public roundPayload: RoundInfoRequest = {
         gameId: '',
         roundId: '',
@@ -157,7 +158,7 @@ export class LobbyComponent implements OnDestroy {
 
             // Llama al servicio cada 5 segundos
 
-            this.subscription = interval(5000).subscribe(() => {
+            this.subscription = interval(3000).subscribe(() => {
                 console.log('Game:' + localStorage.getItem('RoundResponse'));
                 console.log('ID ROUND:' + this.roundResponse.data.id);
                 this.dataService.getGame(this.game).subscribe({
@@ -184,6 +185,12 @@ export class LobbyComponent implements OnDestroy {
                                 console.log("Payload de la ronda");
                                 console.log(this.gameResponse);
                             }
+
+                            if(!this.isGroupEmpty && this.roundGroup.length != 0 && response.data.status === 'waiting-on-leader'){
+                                this.roundGroup.splice(0, this.roundGroup.length);
+                            }
+                            
+
                             this.updatePlayers(response);
                             // this.isCurrentPlayerEnemy();
                             this.getRound();
@@ -306,9 +313,8 @@ export class LobbyComponent implements OnDestroy {
                 this.gameStarted = true;
 
 
-
+               
                 if (response.data.result == 'citizens' || response.data.result == 'enemies') {
-                    this.roundGroup = [];
                     window.location.reload();
                 }
 
@@ -323,6 +329,11 @@ export class LobbyComponent implements OnDestroy {
 
 
     }
+
+    currentPlayerOnGroup(player: string): boolean {
+        return this.roundResponse.data.group.includes(player);
+    }
+
 
     // retorna todos los rounds de un juego
     getAllRounds() {
@@ -348,6 +359,10 @@ export class LobbyComponent implements OnDestroy {
     // devuelve si el player actual es enemigo
     isCurrentPlayerEnemy(): boolean {
         return this.enemies.includes(this.game.player);
+    }
+
+    returnPlayerName():string{
+        return this.game.player;
     }
 
 
@@ -419,6 +434,8 @@ export class LobbyComponent implements OnDestroy {
         });
 
     }
+
+
 
     // pop up para mostrar el round 
     openDialog() {
