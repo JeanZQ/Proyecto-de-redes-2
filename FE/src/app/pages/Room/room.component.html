@@ -2,7 +2,7 @@
     <div class="container">
 
         <div class="header">
-            <input id="searchInput" type="text" name="text" class="input" placeholder="Enter the room name."
+            <input id="searchInput" type="text" name="text" class="input" placeholder="Ingresa el nombre de la sala"
                 [(ngModel)]="searchTerm" (ngModelChange)="onInput()">
 
             <div class="select">
@@ -41,7 +41,7 @@
         <p *ngIf="filteredResults.length === 0">
             <mat-card>
                 <mat-card-header>
-                    <mat-card-title>Oh no! Server not found!</mat-card-title>
+                    <mat-card-title>Oh no! No pudimos encontrar esa sala!</mat-card-title>
                 </mat-card-header>
                 <img mat-card-image src="https://i.imgur.com/z4l5HRa.png" alt="engineer kitten"
                     style="width: 200px; height: auto;">

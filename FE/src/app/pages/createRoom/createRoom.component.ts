@@ -98,8 +98,20 @@ export class CreateRoomComponent {
         });
         window.location.href = '/lobby';
       },
-      error: (error: any) => {
-        alert('Error al unirse al juego');
+      error: (e: any) => {
+        switch (e.status) {
+          case 400:
+            this._snackBar.open('Error del cliente', 'Ok', {
+              duration: 5000,
+            });
+            break;
+
+          case 409:
+            this._snackBar.open('Un juego con ese nombre ya existe', 'Ok', {
+              duration: 5000,
+            });
+            break;
+        }
       }
     });
   }

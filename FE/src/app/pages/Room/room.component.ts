@@ -13,6 +13,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { RouterLink } from "@angular/router";
 import { StartGameComponent } from "../start-game/start-game.component";
 import { MatSelectModule } from "@angular/material/select";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
     selector: 'room',
@@ -45,7 +46,10 @@ export class RoomComponent implements OnInit {
     currentPage: number = 0;
     pageSize: number = 250;
     selectedOption: string = 'lobby';
-    constructor(private datasvc: DataService) { }
+    constructor(
+        private datasvc: DataService,
+        private _snackBar: MatSnackBar
+    ) { }
 
     ngOnInit() {
         this.currentPage = 0;
@@ -68,7 +72,9 @@ export class RoomComponent implements OnInit {
                     this.filteredResults = this.serverData.data;
                 },
                 error => {
-                    alert("Error searching rooms: " + error);
+                    this._snackBar.open('Error buscando la sala', 'ok', {
+                        duration: 5000,
+                      });
                 }
             );
         } else {
@@ -89,7 +95,9 @@ export class RoomComponent implements OnInit {
                 this.filteredResults = this.serverData.data;
             },
             error => {
-                console.error("Error loading rooms:", error);
+                this._snackBar.open('Error cargando las páginas', 'ok', {
+                    duration: 5000,
+                  });
             }
         );
     }

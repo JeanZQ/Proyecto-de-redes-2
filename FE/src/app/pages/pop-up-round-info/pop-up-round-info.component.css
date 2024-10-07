@@ -27,8 +27,8 @@
 }
 
 .player-item, .vote-item {
-    background-color: #5b6061;
-    border: 1px solid #b2ebf2;
+    background-color: #8379a7;
+    border: 1px solid #577757;
     border-radius: 3px;
     padding: 8px;
     margin-bottom: 4px;
@@ -36,5 +36,5 @@
 }
 
 .player-item:hover, .vote-item:hover {
-    background-color: #b2ebf2;
+    background-color: #577757;
 }
