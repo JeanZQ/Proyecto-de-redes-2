@@ -159,12 +159,12 @@ export class LobbyComponent implements OnDestroy {
             // Llama al servicio cada 5 segundos
 
             this.subscription = interval(3000).subscribe(() => {
-                console.log('Game:' + localStorage.getItem('RoundResponse'));
-                console.log('ID ROUND:' + this.roundResponse.data.id);
+                // console.log('Game:' + localStorage.getItem('RoundResponse'));
+                // console.log('ID ROUND:' + this.roundResponse.data.id);
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
-                        console.log('Response de getGame');
-                        console.log(response);
+                        // console.log('Response de getGame');
+                        // console.log(response);
                         // Actualiza los jugadores sin recargar la página                        
 
                         this.gameStatusChange(response);
@@ -179,11 +179,11 @@ export class LobbyComponent implements OnDestroy {
                                     roundId: response.data.currentRound,
                                     player: this.game.player
                                 };
-                                console.log("Variables de la ronda");
-                                console.log(this.roundPayload);
+                                // console.log("Variables de la ronda");
+                                // console.log(this.roundPayload);
 
-                                console.log("Payload de la ronda");
-                                console.log(this.gameResponse);
+                                // console.log("Payload de la ronda");
+                                // console.log(this.gameResponse);
                             }
 
                             if(!this.isGroupEmpty && this.roundGroup.length != 0 && response.data.status === 'waiting-on-leader'){
@@ -199,7 +199,7 @@ export class LobbyComponent implements OnDestroy {
 
                         }
                         else if (this.gameStatus == 'ended') {
-                            console.log('Game ended');
+                            // console.log('Game ended');
                             this._snackBar.open('El juego ha terminado', 'Ok', {
                                 duration: 5000,
                             });
@@ -209,15 +209,15 @@ export class LobbyComponent implements OnDestroy {
                                 acc[curr] = (acc[curr] || 0) + 1;
                                 return acc;
                             }, {})).reduce((a, b) => a[1] > b[1] ? a : b)[0];
-                            console.log('Winner:', this.nameWinner);
+                            // console.log('Winner:', this.nameWinner);
                             localStorage.clear();
                         }
 
 
 
 
-                        console.log("Actualizar ronda, jugador y juego");
-                        console.log(this.roundPayload);
+                        // console.log("Actualizar ronda, jugador y juego");
+                        // console.log(this.roundPayload);
                     },
                     error: (error: any) => {
                         this._snackBar.open(error.msg, 'ok', {
@@ -254,16 +254,16 @@ export class LobbyComponent implements OnDestroy {
         if (!this.leader && this.game.player == response.data.owner) {
             this.leader = true;
         }
-        console.log('Status: ' + response.data.status);
+        // console.log('Status: ' + response.data.status);
         if (!this.gameStarted && response.data.status === "rounds") {
             this.gameStarted = true;
         }
 
-        if (this.isCurrentPlayerEnemy()) {
-            console.log(`${this.game.player} es un enemigo.`);
-        } else {
-            console.log(`${this.game.player} NO es un enemigo.`);
-        }
+        // if (this.isCurrentPlayerEnemy()) {
+        //     // console.log(`${this.game.player} es un enemigo.`);
+        // } else {
+        //     // console.log(`${this.game.player} NO es un enemigo.`);
+        // }
 
     }
 
@@ -299,8 +299,8 @@ export class LobbyComponent implements OnDestroy {
                 this.roundLeader = response.data.leader; // Actualiza el líder de la ronda
                 this.cdr.detectChanges(); // Actualiza la vista
 
-                console.log('Actualizando ronda');
-                console.log(response);
+                // console.log('Actualizando ronda');
+                // console.log(response);
 
                 if (response.data.status === 'waiting-on-leader') {
                     this.groupDefined = false;
@@ -308,7 +308,7 @@ export class LobbyComponent implements OnDestroy {
                     this.groupDefined = true;
                 }
 
-                console.log('Grupo definido?:', this.groupDefined);
+                // console.log('Grupo definido?:', this.groupDefined);
 
                 this.gameStarted = true;
 
@@ -320,7 +320,7 @@ export class LobbyComponent implements OnDestroy {
 
             },
             error: (error: any) => {
-                console.log('Round payload:', this.roundPayload);
+                // console.log('Round payload:', this.roundPayload);
                 this._snackBar.open(error.msg, 'ok', {
                     duration: 5000,
                 });
@@ -348,7 +348,7 @@ export class LobbyComponent implements OnDestroy {
             next: (response: any) => {
                 this.allRoundsResponse = response;
                 this.cdr.detectChanges();
-                console.log('All rounds:', response);
+                // console.log('All rounds:', response);
             },
             error: (error: any) => {
                 console.error('Error getting all rounds:', error);
@@ -367,7 +367,7 @@ export class LobbyComponent implements OnDestroy {
 
 
     onPlayerSelect(player: string, event: boolean) {
-        console.log('Player selected:', player, event);
+        // console.log('Player selected:', player, event);
 
         if (event) {
             this.roundGroup.push(player);
@@ -378,7 +378,7 @@ export class LobbyComponent implements OnDestroy {
 
 
     selectGroup() {
-        console.log('Round group:', this.roundGroup);
+        // console.log('Round group:', this.roundGroup);
 
         const payload = {
             gameId: this.roundPayload.gameId,
@@ -388,11 +388,12 @@ export class LobbyComponent implements OnDestroy {
             group: this.roundGroup
         };
 
-        console.log('Proposing group:', payload);
+        // console.log('Proposing group:', payload);
 
         this.dataService.proposeGroup(payload).subscribe({
             next: (response: any) => {
-                console.log('Group proposed:', response);
+                // console.log('Group proposed:', response);
+                
             },
             error: (error: any) => {
                 this._snackBar.open(error.msg, 'ok', {
@@ -412,7 +413,7 @@ export class LobbyComponent implements OnDestroy {
         };
         this.dataService.votePlayer(this.playerVote).subscribe({
             next: (response: ServerGameResponse) => {
-                console.log('Voto:', response.data);
+                // console.log('Voto:', response.data);
                 if (response.status == 200) {
                     if (this.playerVote.vote == true) {
                         this._snackBar.open('Has apoyado', 'Ok', {

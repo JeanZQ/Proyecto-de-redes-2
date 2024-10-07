@@ -46,7 +46,7 @@ export class voteGroupComponent {
         event.preventDefault();
         event.stopPropagation();
         this.updateVoteGroupData();
-        console.log('VOTE GROUP DATA ESTADO', this.voteGroupData);
+        // console.log('VOTE GROUP DATA ESTADO', this.voteGroupData);
         this.voteGroupData.vote = vote;
         this.dataService.postVoteGroup(this.voteGroupData).subscribe(
             (response) => {

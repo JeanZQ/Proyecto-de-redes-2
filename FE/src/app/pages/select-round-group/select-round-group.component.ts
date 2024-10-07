@@ -15,7 +15,7 @@ export class SelectRoundGroupComponent {
   constructor() { }
 
   selectGroup(){
-    console.log(this.roundGroup);
+    // console.log(this.roundGroup);
   }
 
 }
