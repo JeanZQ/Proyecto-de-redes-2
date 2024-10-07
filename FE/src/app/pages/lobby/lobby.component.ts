@@ -72,6 +72,7 @@ export class LobbyComponent implements OnDestroy {
         player: ''
     };
 
+    // define las reglas de los grupos segun la decada y jugadores
     public groupsForDecades = [
         [2,2,3,3,3,3],
         [3,3,3,4,4,4],
@@ -482,7 +483,5 @@ export class LobbyComponent implements OnDestroy {
 
 
     }
-
-
 
 }
