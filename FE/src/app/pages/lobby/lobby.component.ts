@@ -71,6 +71,8 @@ export class LobbyComponent implements OnDestroy {
         roundId: '',
         player: ''
     };
+    public groupSize:number = 0;
+
 
     // define las reglas de los grupos segun la decada y jugadores
     public groupsForDecades = [
@@ -210,11 +212,12 @@ export class LobbyComponent implements OnDestroy {
 
 
 
-                            if(response.data.decade === undefined){
+                            if(response.data.currentRound === "0000000000000000000000000" ){
+                                console.log('Decade undefined');
                                 this.playerOnGroup(1, response.data.players.length);
                             }
                             else{
-                                this.playerOnGroup(this.allRoundsResponse.data.length, response.data.players.length);
+                                this.playerOnGroup(this.allRoundsResponse.data.length-1, response.data.players.length);
 
                             }
                          
@@ -462,10 +465,16 @@ export class LobbyComponent implements OnDestroy {
     playerOnGroup(decade: number, totalPlayers: number) {
         
         // el indice se acomoda a una columna de la matriz
-       const playersIndex = totalPlayers - 5;
+        const playersIndex = totalPlayers - 5;
+        // this.groupSize = this.groupsForDecades[decade - 1][playersIndex];
+        console.log('Grupo:', playersIndex);
+        console.log('Decada:', decade);
 
+        console.log(this.groupsForDecades [decade][playersIndex]);
 
-        return this.groupsForDecades [decade - 1][playersIndex];
+        this.groupSize = this.groupsForDecades[decade][playersIndex];
+
+        // return this.groupsForDecades [decade - 1][playersIndex];
     }
     
 

@@ -11,6 +11,7 @@
 <div class="selectGrpContainer" *ngIf="
     roundLeader != undefined && roundLeader == this.game.player && !groupDefined
   ">
+    <h3>Please select a group of {{groupSize}}</h3>
     <button class="startBtn" mat-raised-button color="primary" (click)="selectGroup()">
         Send group
     </button>
