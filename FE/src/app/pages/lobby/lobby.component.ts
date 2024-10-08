@@ -8,7 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule, ReactiveFormsModule, FormBuilder } from "@angular/forms";
-import { SelectRoundGroupComponent } from "../select-round-group/select-round-group.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { PopUpRoundInfoComponent } from "../pop-up-round-info/pop-up-round-info.component";
@@ -35,7 +34,6 @@ import { unescape } from "querystring";
         MatCheckboxModule,
         ReactiveFormsModule,
         FormsModule,
-        SelectRoundGroupComponent,
         MatDialogModule,
         voteGroupComponent,
         EndGameComponent
@@ -85,7 +83,6 @@ export class LobbyComponent implements OnDestroy {
 
 
     public enemieDecades: number = 0;
-
     public alyDecades: number = 0;
 
     public gameStatus: string = '';
@@ -174,6 +171,7 @@ export class LobbyComponent implements OnDestroy {
             this.subscription = interval(3000).subscribe(() => {
                 // console.log('Game:' + localStorage.getItem('RoundResponse'));
                 // console.log('ID ROUND:' + this.roundResponse.data.id);
+                console.log(this.getAllRounds);
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
 
@@ -206,6 +204,9 @@ export class LobbyComponent implements OnDestroy {
                             if(!this.isGroupEmpty && this.roundGroup.length != 0 && response.data.status === 'waiting-on-leader'){
                                 this.roundGroup.splice(0, this.roundGroup.length);
                             }
+
+                            // console.log('Grupo:', this.roundGroup);
+                            
                             
 
                             this.updatePlayers(response);
