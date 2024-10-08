@@ -48,7 +48,8 @@ export class UserRoomComponent {
     readonly dialog = inject(MatDialog);
     private dataService = inject(DataService);
 
-    constructor(private cdr: ChangeDetectorRef) {
+    constructor(private cdr: ChangeDetectorRef
+    ) {
         this.password = signal('');
         this.player = signal('');
     }
@@ -77,12 +78,54 @@ export class UserRoomComponent {
                         window.location.href = '/lobby';
                     },
                     error: (error: any) => {
-                        this.showError = true;
-                        this.errorMessage = "Could not enter the game.\nPlease try again later.";
-                        this.errorTitle = "Error " + error.status;
-                        this.cdr.detectChanges();
-                        this.password.set('');
-                        this.player.set('');
+                        switch (error.status) {
+                            case 401:
+                                this.showError = true;
+                                this.errorMessage = "Credenciales inválidas.\nIntenta de nuevo más tarde.";
+                                this.errorTitle = "Error " + error.status;
+                                this.cdr.detectChanges();
+                                this.password.set('');
+                                this.player.set('')
+                              break;
+
+                            case 404:
+                                this.showError = true;
+                                this.errorMessage = "No se encontró el juego.\nIntenta de nuevo más tarde.";
+                                this.errorTitle = "Error " + error.status;
+                                this.cdr.detectChanges();
+                                this.password.set('');
+                                this.player.set('')
+                              break;
+
+                              case 409:
+                                this.showError = true;
+                                this.errorMessage = "Ya existe un jugador con ese nombre.";
+                                this.errorTitle = "Error " + error.status;
+                                this.cdr.detectChanges();
+                                this.password.set('');
+                                this.player.set('')
+                              break;
+
+                              case 428:
+                                this.showError = true;
+                                this.errorMessage = "No puedes hacer esto en este momento.\nIntenta de nuevo más tarde.";
+                                this.errorTitle = "Error " + error.status;
+                                this.cdr.detectChanges();
+                                this.password.set('');
+                                this.player.set('')
+                              break;
+
+                              default:
+                                this.showError = true;
+                                this.errorMessage = "Error.\nIntenta de nuevo más tarde.";
+                                this.errorTitle = "Error " + error.status;
+                                this.cdr.detectChanges();
+                                this.password.set('');
+                                this.player.set('');
+                                break;
+                  
+
+                          };
                     }
                 });
             }

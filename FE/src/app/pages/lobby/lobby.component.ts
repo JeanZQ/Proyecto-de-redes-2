@@ -8,7 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule, ReactiveFormsModule, FormBuilder } from "@angular/forms";
-import { SelectRoundGroupComponent } from "../select-round-group/select-round-group.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { PopUpRoundInfoComponent } from "../pop-up-round-info/pop-up-round-info.component";
@@ -35,7 +34,6 @@ import { unescape } from "querystring";
         MatCheckboxModule,
         ReactiveFormsModule,
         FormsModule,
-        SelectRoundGroupComponent,
         MatDialogModule,
         voteGroupComponent,
         EndGameComponent
@@ -64,7 +62,7 @@ export class LobbyComponent implements OnDestroy {
     public leader: boolean = false;
     public gameStarted: boolean = false;
     public winner = false;
-    public nameWinner = "None";
+    public nameWinner = "enemies";
     public isGroupEmpty: boolean = false;
     public roundPayload: RoundInfoRequest = {
         gameId: '',
@@ -85,7 +83,6 @@ export class LobbyComponent implements OnDestroy {
 
 
     public enemieDecades: number = 0;
-
     public alyDecades: number = 0;
 
     public gameStatus: string = '';
@@ -174,6 +171,7 @@ export class LobbyComponent implements OnDestroy {
             this.subscription = interval(3000).subscribe(() => {
                 // console.log('Game:' + localStorage.getItem('RoundResponse'));
                 // console.log('ID ROUND:' + this.roundResponse.data.id);
+                console.log(this.getAllRounds);
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
 
@@ -206,6 +204,9 @@ export class LobbyComponent implements OnDestroy {
                             if(!this.isGroupEmpty && this.roundGroup.length != 0 && response.data.status === 'waiting-on-leader'){
                                 this.roundGroup.splice(0, this.roundGroup.length);
                             }
+
+                            // console.log('Grupo:', this.roundGroup);
+                            
                             
 
                             this.updatePlayers(response);
@@ -215,7 +216,7 @@ export class LobbyComponent implements OnDestroy {
 
 
                             if(response.data.currentRound === "0000000000000000000000000" ){
-                                console.log('Decade undefined');
+                                // console.log('Decade undefined');
                                 this.playerOnGroup(1, response.data.players.length);
                             }
                             else{
@@ -238,6 +239,7 @@ export class LobbyComponent implements OnDestroy {
                                 return acc;
                             }, {})).reduce((a, b) => a[1] > b[1] ? a : b)[0];
                             // console.log('Winner:', this.nameWinner);
+
                             localStorage.clear();
                         }
 
@@ -420,13 +422,41 @@ export class LobbyComponent implements OnDestroy {
 
         this.dataService.proposeGroup(payload).subscribe({
             next: (response: any) => {
-                // console.log('Group proposed:', response);
+                this._snackBar.open('Grupo propuesto', 'ok', {
+                    duration: 5000,
+                  });
                 
             },
-            error: (error: any) => {
-                this._snackBar.open(error.msg, 'ok', {
-                    duration: 5000,
-                });
+            error: (e: any) => {
+                switch (e.status) {
+                    case 401:
+                      this._snackBar.open('Credenciales inválidas', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+          
+                    case 403:
+                      this._snackBar.open('No eres parte del juego', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+          
+                    case 404:
+                      this._snackBar.open('Juego no encontrado', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+                    case 409:
+                        this._snackBar.open('Ya se creo el grupo', 'Ok', {
+                          duration: 5000,
+                        });
+                        break;
+                    case 428:
+                      this._snackBar.open('Tamaño incorrecto del grupo', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+                  }
             }
         })
     }
@@ -456,9 +486,38 @@ export class LobbyComponent implements OnDestroy {
                 }
             },
             error: (e) => {
-                this._snackBar.open(e.msg, 'Ok', {
-                    duration: 5000,
-                });
+                switch (e.status) {
+                    case 401:
+                      this._snackBar.open('Credenciales invalidas', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+          
+                    case 403:
+                      this._snackBar.open('No eres parte del juego', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+          
+                    case 404:
+                      this._snackBar.open('Juego no encontrado', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+
+                    case 409:
+                        this._snackBar.open('Ya hiciste una acción', 'Ok', {
+                          duration: 5000,
+                        });
+                        break;
+          
+                    case 428:
+                      this._snackBar.open('No puedes hacer eso en este momento', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+
+                  }
             }
         });
 
@@ -470,10 +529,10 @@ export class LobbyComponent implements OnDestroy {
         // el indice se acomoda a una columna de la matriz
         const playersIndex = totalPlayers - 5;
         // this.groupSize = this.groupsForDecades[decade - 1][playersIndex];
-        console.log('Grupo:', playersIndex);
-        console.log('Decada:', decade);
+        // console.log('Grupo:', playersIndex);
+        // console.log('Decada:', decade);
 
-        console.log(this.groupsForDecades [decade][playersIndex]);
+        // console.log(this.groupsForDecades [decade][playersIndex]);
 
         this.groupSize = this.groupsForDecades[decade][playersIndex];
 

@@ -4,11 +4,11 @@
     </div>
     <form>
         <div class="form-group">
-            <input matInput [(ngModel)]="player" name="username" id="username" type="text" placeholder="Name" />
+            <input matInput [(ngModel)]="player" name="username" id="username" type="text" placeholder="Nombre" />
         </div>
         <div class="form-group">
             <input matInput [(ngModel)]="password" name="password" id="password" type="password"
-                placeholder="Room Password" />
+                placeholder="Contraseña de la sala" />
         </div>
         <div class="form-group">
             <button [mat-dialog-close]="{ player, password }" cdkFocusInitial>
