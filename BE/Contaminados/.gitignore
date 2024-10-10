@@ -1,0 +1,77 @@
+# Compiled object files
+*.o
+*.i
+*.s
+*.ii
+*.ll
+*.bc
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*.pdb
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# .NET files
+project.lock.json
+project.fragment.lock.json
+artifacts/
+project.json
+project.json.lock
+global.json
+*.nuget.props
+*.nuget.targets
+
+# Build Folders
+bin/
+obj/
+out/
+TestResults/
+*.user
+.vscode/
+*.vs/
+.vs/
+.vscode/
+
+# Debugging files
+*.pdb
+*.mdb
+
+# Resharper and Rider
+_ReSharper.Caches/
+*.DotSettings.user
+.idea/
+
+# Entity Framework
+Migrations/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# macOS files
+.DS_Store
+.AppleDouble
+.LSOverride
