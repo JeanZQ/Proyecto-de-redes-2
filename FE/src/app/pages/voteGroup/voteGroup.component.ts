@@ -46,13 +46,13 @@ export class voteGroupComponent {
         event.preventDefault();
         event.stopPropagation();
         this.updateVoteGroupData();
-        console.log('VOTE GROUP DATA ESTADO', this.voteGroupData);
+        // console.log('VOTE GROUP DATA ESTADO', this.voteGroupData);
         this.voteGroupData.vote = vote;
         this.dataService.postVoteGroup(this.voteGroupData).subscribe(
             (response) => {
                 if(response.status == 200) {
                     this.voting = true;
-                    this._snackBar.open('Voting in progress', 'ok', {
+                    this._snackBar.open('Votación en progreso', 'ok', {
                         duration: 5000,
                     });
                 }
@@ -60,27 +60,27 @@ export class voteGroupComponent {
             (error) => {
                 switch (error.status) {
                     case 401:
-                        this._snackBar.open('The client must authenticate itself to get the requested response', 'ok', {
+                        this._snackBar.open('Jugador no autenticado', 'ok', {
                             duration: 5000,
                         }); break;
                     case 403:
-                        this._snackBar.open('The client does not have access rights to the content. Unlike 401 Unauthorized, the clients identity is known to the server.', 'ok', {
+                        this._snackBar.open('No tienes permiso de hacer eso en este momento', 'ok', {
                             duration: 5000,
                         }); break;
                     case 404:
-                        this._snackBar.open('The specified resource was not found', 'ok', {
+                        this._snackBar.open('No se encontro el recurso', 'ok', {
                             duration: 5000,
                         }); break;
                     case 409:
-                        this._snackBar.open('This response is sent when a request conflicts with the current state of the server.', 'ok', {
+                        this._snackBar.open('ERROR: conflictos con el estado del servidor.', 'ok', {
                             duration: 5000,
                         }); break;
                     case 428:
-                        this._snackBar.open('The origin server requires the request to be conditional. This response is intended to prevent the (lost update) problem, where a client GETs a resources state, modifies it and PUTs it back to the server, when meanwhile a third party has modified the state on the server, leading to a conflict.', 'ok', {
+                        this._snackBar.open('Conflicto con el servidor', 'ok', {
                             duration: 5000,
                         }); break;
                     default:
-                        this._snackBar.open('An error occurred', 'ok', {
+                        this._snackBar.open('Ocurrio un error', 'ok', {
                             duration: 5000,
                         }); break;
                 }

@@ -8,7 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule, ReactiveFormsModule, FormBuilder } from "@angular/forms";
-import { SelectRoundGroupComponent } from "../select-round-group/select-round-group.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { PopUpRoundInfoComponent } from "../pop-up-round-info/pop-up-round-info.component";
@@ -18,6 +17,7 @@ import { NgModule } from "@angular/core";
 import { MatCard } from "@angular/material/card";
 import { waitForAsync } from "@angular/core/testing";
 import { EndGameComponent } from "../endGame/endGame.component";
+import { unescape } from "querystring";
 
 
 
@@ -34,7 +34,6 @@ import { EndGameComponent } from "../endGame/endGame.component";
         MatCheckboxModule,
         ReactiveFormsModule,
         FormsModule,
-        SelectRoundGroupComponent,
         MatDialogModule,
         voteGroupComponent,
         EndGameComponent
@@ -63,16 +62,27 @@ export class LobbyComponent implements OnDestroy {
     public leader: boolean = false;
     public gameStarted: boolean = false;
     public winner = false;
-    public nameWinner = "None";
+    public nameWinner = "enemies";
     public isGroupEmpty: boolean = false;
     public roundPayload: RoundInfoRequest = {
         gameId: '',
         roundId: '',
         player: ''
     };
+    public groupSize:number = 0;
+
+
+    // define las reglas de los grupos segun la decada y jugadores
+    public groupsForDecades = [
+        [2,2,3,3,3,3],
+        [3,3,3,4,4,4],
+        [2,4,3,4,4,4],
+        [3,3,4,5,5,5],
+        [3,4,4,5,5,5]
+    ]
+
 
     public enemieDecades: number = 0;
-
     public alyDecades: number = 0;
 
     public gameStatus: string = '';
@@ -159,12 +169,17 @@ export class LobbyComponent implements OnDestroy {
             // Llama al servicio cada 5 segundos
 
             this.subscription = interval(3000).subscribe(() => {
-                console.log('Game:' + localStorage.getItem('RoundResponse'));
-                console.log('ID ROUND:' + this.roundResponse.data.id);
+                // console.log('Game:' + localStorage.getItem('RoundResponse'));
+                // console.log('ID ROUND:' + this.roundResponse.data.id);
+                console.log(this.getAllRounds);
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
-                        console.log('Response de getGame');
-                        console.log(response);
+
+                      //  console.log('DECADA: ',response.data.decade);
+                      //   console.log('TOTAL JUGADORES: ',response.data.players.length);
+                        // console.log('Response de getGame');
+                        // console.log(response);
+
                         // Actualiza los jugadores sin recargar la página                        
 
                         this.gameStatusChange(response);
@@ -179,16 +194,19 @@ export class LobbyComponent implements OnDestroy {
                                     roundId: response.data.currentRound,
                                     player: this.game.player
                                 };
-                                console.log("Variables de la ronda");
-                                console.log(this.roundPayload);
+                                // console.log("Variables de la ronda");
+                                // console.log(this.roundPayload);
 
-                                console.log("Payload de la ronda");
-                                console.log(this.gameResponse);
+                                // console.log("Payload de la ronda");
+                                // console.log(this.gameResponse);
                             }
 
                             if(!this.isGroupEmpty && this.roundGroup.length != 0 && response.data.status === 'waiting-on-leader'){
                                 this.roundGroup.splice(0, this.roundGroup.length);
                             }
+
+                            // console.log('Grupo:', this.roundGroup);
+                            
                             
 
                             this.updatePlayers(response);
@@ -197,9 +215,20 @@ export class LobbyComponent implements OnDestroy {
 
 
 
+                            if(response.data.currentRound === "0000000000000000000000000" ){
+                                // console.log('Decade undefined');
+                                this.playerOnGroup(1, response.data.players.length);
+                            }
+                            else{
+                                this.playerOnGroup(this.allRoundsResponse.data.length-1, response.data.players.length);
+
+                            }
+                         
+
+
                         }
                         else if (this.gameStatus == 'ended') {
-                            console.log('Game ended');
+                            // console.log('Game ended');
                             this._snackBar.open('El juego ha terminado', 'Ok', {
                                 duration: 5000,
                             });
@@ -209,15 +238,16 @@ export class LobbyComponent implements OnDestroy {
                                 acc[curr] = (acc[curr] || 0) + 1;
                                 return acc;
                             }, {})).reduce((a, b) => a[1] > b[1] ? a : b)[0];
-                            console.log('Winner:', this.nameWinner);
+                            // console.log('Winner:', this.nameWinner);
+
                             localStorage.clear();
                         }
 
 
 
 
-                        console.log("Actualizar ronda, jugador y juego");
-                        console.log(this.roundPayload);
+                        // console.log("Actualizar ronda, jugador y juego");
+                        // console.log(this.roundPayload);
                     },
                     error: (error: any) => {
                         this._snackBar.open(error.msg, 'ok', {
@@ -254,16 +284,16 @@ export class LobbyComponent implements OnDestroy {
         if (!this.leader && this.game.player == response.data.owner) {
             this.leader = true;
         }
-        console.log('Status: ' + response.data.status);
+        // console.log('Status: ' + response.data.status);
         if (!this.gameStarted && response.data.status === "rounds") {
             this.gameStarted = true;
         }
 
-        if (this.isCurrentPlayerEnemy()) {
-            console.log(`${this.game.player} es un enemigo.`);
-        } else {
-            console.log(`${this.game.player} NO es un enemigo.`);
-        }
+        // if (this.isCurrentPlayerEnemy()) {
+        //     // console.log(`${this.game.player} es un enemigo.`);
+        // } else {
+        //     // console.log(`${this.game.player} NO es un enemigo.`);
+        // }
 
     }
 
@@ -299,8 +329,8 @@ export class LobbyComponent implements OnDestroy {
                 this.roundLeader = response.data.leader; // Actualiza el líder de la ronda
                 this.cdr.detectChanges(); // Actualiza la vista
 
-                console.log('Actualizando ronda');
-                console.log(response);
+                // console.log('Actualizando ronda');
+                // console.log(response);
 
                 if (response.data.status === 'waiting-on-leader') {
                     this.groupDefined = false;
@@ -308,7 +338,7 @@ export class LobbyComponent implements OnDestroy {
                     this.groupDefined = true;
                 }
 
-                console.log('Grupo definido?:', this.groupDefined);
+                // console.log('Grupo definido?:', this.groupDefined);
 
                 this.gameStarted = true;
 
@@ -320,7 +350,7 @@ export class LobbyComponent implements OnDestroy {
 
             },
             error: (error: any) => {
-                console.log('Round payload:', this.roundPayload);
+                // console.log('Round payload:', this.roundPayload);
                 this._snackBar.open(error.msg, 'ok', {
                     duration: 5000,
                 });
@@ -348,7 +378,7 @@ export class LobbyComponent implements OnDestroy {
             next: (response: any) => {
                 this.allRoundsResponse = response;
                 this.cdr.detectChanges();
-                console.log('All rounds:', response);
+                // console.log('All rounds:', response);
             },
             error: (error: any) => {
                 console.error('Error getting all rounds:', error);
@@ -367,7 +397,7 @@ export class LobbyComponent implements OnDestroy {
 
 
     onPlayerSelect(player: string, event: boolean) {
-        console.log('Player selected:', player, event);
+        // console.log('Player selected:', player, event);
 
         if (event) {
             this.roundGroup.push(player);
@@ -378,7 +408,7 @@ export class LobbyComponent implements OnDestroy {
 
 
     selectGroup() {
-        console.log('Round group:', this.roundGroup);
+        // console.log('Round group:', this.roundGroup);
 
         const payload = {
             gameId: this.roundPayload.gameId,
@@ -388,16 +418,45 @@ export class LobbyComponent implements OnDestroy {
             group: this.roundGroup
         };
 
-        console.log('Proposing group:', payload);
+        // console.log('Proposing group:', payload);
 
         this.dataService.proposeGroup(payload).subscribe({
             next: (response: any) => {
-                console.log('Group proposed:', response);
-            },
-            error: (error: any) => {
-                this._snackBar.open(error.msg, 'ok', {
+                this._snackBar.open('Grupo propuesto', 'ok', {
                     duration: 5000,
-                });
+                  });
+                
+            },
+            error: (e: any) => {
+                switch (e.status) {
+                    case 401:
+                      this._snackBar.open('Credenciales inválidas', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+          
+                    case 403:
+                      this._snackBar.open('No eres parte del juego', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+          
+                    case 404:
+                      this._snackBar.open('Juego no encontrado', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+                    case 409:
+                        this._snackBar.open('Ya se creo el grupo', 'Ok', {
+                          duration: 5000,
+                        });
+                        break;
+                    case 428:
+                      this._snackBar.open('Tamaño incorrecto del grupo', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+                  }
             }
         })
     }
@@ -412,7 +471,7 @@ export class LobbyComponent implements OnDestroy {
         };
         this.dataService.votePlayer(this.playerVote).subscribe({
             next: (response: ServerGameResponse) => {
-                console.log('Voto:', response.data);
+                // console.log('Voto:', response.data);
                 if (response.status == 200) {
                     if (this.playerVote.vote == true) {
                         this._snackBar.open('Has apoyado', 'Ok', {
@@ -427,14 +486,59 @@ export class LobbyComponent implements OnDestroy {
                 }
             },
             error: (e) => {
-                this._snackBar.open(e.msg, 'Ok', {
-                    duration: 5000,
-                });
+                switch (e.status) {
+                    case 401:
+                      this._snackBar.open('Credenciales invalidas', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+          
+                    case 403:
+                      this._snackBar.open('No eres parte del juego', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+          
+                    case 404:
+                      this._snackBar.open('Juego no encontrado', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+
+                    case 409:
+                        this._snackBar.open('Ya hiciste una acción', 'Ok', {
+                          duration: 5000,
+                        });
+                        break;
+          
+                    case 428:
+                      this._snackBar.open('No puedes hacer eso en este momento', 'Ok', {
+                        duration: 5000,
+                      });
+                      break;
+
+                  }
             }
         });
 
     }
 
+    // muestra de cuantos players debe ser el grupo segun la ronda
+    playerOnGroup(decade: number, totalPlayers: number) {
+        
+        // el indice se acomoda a una columna de la matriz
+        const playersIndex = totalPlayers - 5;
+        // this.groupSize = this.groupsForDecades[decade - 1][playersIndex];
+        // console.log('Grupo:', playersIndex);
+        // console.log('Decada:', decade);
+
+        // console.log(this.groupsForDecades [decade][playersIndex]);
+
+        this.groupSize = this.groupsForDecades[decade][playersIndex];
+
+        // return this.groupsForDecades [decade - 1][playersIndex];
+    }
+    
 
 
     // pop up para mostrar el round 
@@ -449,7 +553,5 @@ export class LobbyComponent implements OnDestroy {
 
 
     }
-
-
 
 }

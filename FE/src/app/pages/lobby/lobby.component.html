@@ -1,5 +1,5 @@
 <div>
-    <h2 class="gameTitle">Lobby room: {{ gameName }}</h2>
+    <h2 class="gameTitle">Nombre de la sala: {{ gameName }}</h2>
 </div>
 
 <div class="btnContainer" *ngIf="leader && !gameStarted">
@@ -10,9 +10,10 @@
 </div>
 <div class="selectGrpContainer" *ngIf="
     roundLeader != undefined && roundLeader == this.game.player && !groupDefined
-  ">
+  && groupSize > 0">
+    <h3 class="gameTitle">Selecciona un grupo de {{groupSize}} jugadores</h3>
     <button class="startBtn" mat-raised-button color="primary" (click)="selectGroup()">
-        Send group
+        Proponer grupo
     </button>
 </div>
 
