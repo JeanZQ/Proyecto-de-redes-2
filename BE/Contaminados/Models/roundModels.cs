@@ -5,7 +5,7 @@ namespace Models.roundModels
     public class Round
     {
         [Key]
-        public Guid Id { get; set; }
+        public required Guid Id { get; set; }
         public required Guid LeaderId { get; set; }
         public required RoundStatus Status { get; set; }
         public required RoundResult Result { get; set; }

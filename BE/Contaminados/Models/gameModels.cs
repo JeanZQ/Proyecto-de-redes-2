@@ -5,7 +5,7 @@ namespace Models.gameModels
     public class Game
     {
         [Key]
-        public Guid Id { get; set; }
+        public required Guid Id { get; set; }
 
         [StringLength(20, MinimumLength = 3)]
         public required string GameName { get; set; }

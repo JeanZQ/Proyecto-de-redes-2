@@ -10,7 +10,7 @@ namespace DB
 {
     public sealed class DbContextClass : DbContext
     {
-        protected readonly IConfiguration Configuration;
+        private readonly IConfiguration Configuration;
 
         public DbContextClass(IConfiguration configuration)
         {

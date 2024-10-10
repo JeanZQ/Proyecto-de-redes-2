@@ -7,6 +7,6 @@ namespace Models.roundVoteModels
         [Key]
         public required Guid Id { get; set; }
         public required Guid RoundId { get; set; }
-        public bool Vote { get; set; }
+        public required bool Vote { get; set; }
     }
 }
