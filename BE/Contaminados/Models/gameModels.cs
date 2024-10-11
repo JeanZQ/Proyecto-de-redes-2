@@ -1,27 +1,20 @@
 using System.ComponentModel.DataAnnotations;
+using Models.Common;
 
 namespace Models.gameModels
 {
     public class Game
     {
         [Key]
-        public required Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [StringLength(20, MinimumLength = 3)]
-        public required string GameName { get; set; }
-
+        public required string Name { get; set; }
         public required Status GameStatus { get; set; }
-        
+
         [StringLength(20, MinimumLength = 3)]
-        public required string GamePassword { get; set; }
+        public required string Password { get; set; }
 
         public Guid? CurrentRoundId { get; set; }
-
-        public enum Status
-        {
-            Lobby,
-            Rounds,
-            Ended
-        }
     }
 }

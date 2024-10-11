@@ -1,13 +1,25 @@
 using Microsoft.EntityFrameworkCore;
-using DB;
-
+using Contaminados.Repositories.IRepository;
+using Contaminados.Repositories.Repository;
+using Contaminados.Aplication.Handlers;
+using Models.gameModels;
+using Contaminados.DB;
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
 builder.Services.AddDbContext<DbContextClass>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add services to the container.
+
+// Inyección de dependencias Repositories----------------------------
+builder.Services.AddScoped(typeof(IGameRepository<Game>), typeof(GameRepository));
+
+// Inyección de dependencias Handlers--------------------------------
+builder.Services.AddScoped<CreateGameHandler>();
+builder.Services.AddScoped<GetGameByIdHandler>();
+
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

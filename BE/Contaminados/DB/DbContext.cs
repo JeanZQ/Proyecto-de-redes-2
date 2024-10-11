@@ -6,7 +6,7 @@ using Models.roundGroupModels;
 using Models.roundModels;
 using Models.roundVoteModels;
 
-namespace DB
+namespace Contaminados.DB
 {
     public sealed class DbContextClass : DbContext
     {

@@ -4,7 +4,13 @@ https://localhost:<port>/swagger/index.html
 Para ejecutar la aplicacion con https
 dotnet run --launch-profile https
 
+Migracion a la DB
+Cuando se modifica Models se puede ejecutar el siguiente comando para crear una img
+dotnet ef migrations add InitialCreate
+Despues de la img se manda a la DB de la U
+dotnet ef database update
 
+Diagrama de la DB
 +------------------+
 |       Game       |
 +------------------+
@@ -27,7 +33,6 @@ dotnet run --launch-profile https
 | PlayerName       |   <-- Nombre del participante (minLength: 3, maxLength: 20)
 | IsEnemy          |   <-- Indica si es un enemigo (boolean)
 +------------------+
-
         |
         |
         | 1
@@ -41,9 +46,8 @@ dotnet run --launch-profile https
 | Status           |   <-- Estado de la ronda
 | Result           |   <-- Resultado de la ronda
 | Phase            |   <-- Fase actual de la ronda
-| GameId (FK)     |   <-- Identificador del juego al que pertenece la ronda (gameId)
+| GameId (FK)      |   <-- Identificador del juego al que pertenece la ronda (gameId)
 +------------------+
-
         |
         |
         | 1
@@ -56,7 +60,6 @@ dotnet run --launch-profile https
 | RoundId (FK)     |   <-- Identificador de la ronda (roundId)
 | PlayerName       |   <-- Nombre del jugador en el grupo (minLength: 3, maxLength: 20)
 +------------------+
-
         |
         |
         | 1
@@ -69,7 +72,6 @@ dotnet run --launch-profile https
 | RoundId (FK)     |   <-- Identificador de la ronda (roundId)
 | Vote             |   <-- Resultado del voto (boolean)
 +------------------+
-
         |
         |
         | 1
