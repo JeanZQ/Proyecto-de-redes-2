@@ -4,6 +4,8 @@ using Contaminados.Repositories.Repository;
 using Contaminados.Aplication.Handlers;
 using Models.gameModels;
 using Contaminados.DB;
+using Models.playersModels;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,6 +15,7 @@ builder.Services.AddDbContext<DbContextClass>(options =>
 
 // Inyección de dependencias Repositories----------------------------
 builder.Services.AddScoped(typeof(IGameRepository<Game>), typeof(GameRepository));
+builder.Services.AddScoped(typeof(IPlayerRepository<Players>), typeof(PlayerRepository));
 
 // Inyección de dependencias Handlers--------------------------------
 builder.Services.AddScoped<CreateGameHandler>();

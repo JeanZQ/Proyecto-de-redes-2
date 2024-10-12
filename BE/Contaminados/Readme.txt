@@ -1,3 +1,13 @@
+Pasos QORS
+1. Models
+2. IRepository
+3. Repository
+4. Query
+5. Command
+6. Handler
+7. Controller/API
+8. Program.cs
+
 Para entrar al swagger
 https://localhost:<port>/swagger/index.html
 

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Contaminados.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/games")]
     public class GameController : ControllerBase
     {
         private readonly GetGameByIdHandler _getGameByIdHandler;

@@ -13,7 +13,7 @@ namespace Models.gameModels
         public required Status GameStatus { get; set; }
 
         [StringLength(20, MinimumLength = 3)]
-        public required string Password { get; set; }
+        public string? Password { get; set; }
 
         public Guid? CurrentRoundId { get; set; }
     }

@@ -28,5 +28,6 @@ namespace Contaminados.DB
         public DbSet<Game> Game { get; set; }
         public DbSet<ErrorMessages> ErrorMessages { get; set; }
         public DbSet<RoundGroup> RoundGroup { get; set; }
+        
     }
 }
