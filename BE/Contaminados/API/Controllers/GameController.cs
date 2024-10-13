@@ -3,6 +3,8 @@ using Contaminados.Aplication.Queries;
 using Contaminados.Aplication.Commands;
 using Microsoft.AspNetCore.Mvc;
 using Contaminados.Models.Common;
+using Models.gameModels;
+using Models.playersModels;
 
 namespace Contaminados.Api.Controllers
 {
@@ -32,21 +34,7 @@ namespace Contaminados.Api.Controllers
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(query);
                 var players = await _getPlayersByGameIdHandler.HandleAsync(new GetPlayersByGameIdQuery(gameId));
 
-                var result = new StatusCodesOk
-                {
-                    Status = 200,
-                    Msg = "Game Found",
-                    Data = new Data
-                    {
-                        Id = game.Id.ToString(),
-                        Name = game.Name,
-                        Status = game.GameStatus.ToString(),
-                        Password = game.Password?.Length != 0,
-                        CurrentRound = game.CurrentRoundId,
-                        Players = players.Where(p => p.GameId == game.Id).Select(p => p.PlayerName.ToString()).ToArray(),
-                        Enemies = players.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
-                    }
-                };
+                var result = CreateResult(game, players);
                 return Ok(result);
             }
             catch (CustomException ex)
@@ -63,27 +51,33 @@ namespace Contaminados.Api.Controllers
                 var game = await _createGameHandler.HandleAsync(command);
                 var players = await _getPlayersByGameIdHandler.HandleAsync(new GetPlayersByGameIdQuery(game.Id));
 
-                var result = new StatusCodesOk
-                {
-                    Status = 200,
-                    Msg = "Game Found",
-                    Data = new Data
-                    {
-                        Id = game.Id.ToString(),
-                        Name = game.Name,
-                        Status = game.GameStatus.ToString(),
-                        Password = game.Password?.Length != 0,
-                        CurrentRound = game.CurrentRoundId,
-                        Players = players.Where(p => p.GameId == game.Id).Select(p => p.PlayerName.ToString()).ToArray(),
-                        Enemies = players.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
-                    }
-                };
+                var result = CreateResult(game, players);
                 return Ok(result);
             }
             catch (CustomException ex)
             {
                 return BadRequest(new { message = ex.Message, status = ex.Status });
             }
+        }
+
+        //No hacer el metodo ASYNC ni llamar a ningun Handler
+        private StatusCodesOk CreateResult(Game game, IEnumerable<Players> players)
+        {
+            return new StatusCodesOk
+            {
+                Status = 200,
+                Msg = "Game Found",
+                Data = new Data
+                {
+                    Id = game.Id.ToString(),
+                    Name = game.Name,
+                    Status = game.GameStatus.ToString(),
+                    Password = game.Password?.Length != 0,
+                    CurrentRound = game.CurrentRoundId,
+                    Players = players.Select(p => p.PlayerName.ToString()).ToArray(),
+                    Enemies = players.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
+                }
+            };
         }
     }
 }
