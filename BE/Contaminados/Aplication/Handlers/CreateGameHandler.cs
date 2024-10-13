@@ -17,7 +17,7 @@ namespace Contaminados.Aplication.Handlers
             _playerRepository = playerRepository ?? throw new ArgumentNullException(nameof(playerRepository));
         }
 
-        public async Task<Guid> HandleAsync(CreateGameCommand command)
+        public async Task<Game> HandleAsync(CreateGameCommand command)
         {
             if (command.Name == null || command.Owner == null
             || command.Name.Length is < 3 or > 20
@@ -49,7 +49,7 @@ namespace Contaminados.Aplication.Handlers
             {
                 await _gameRepository.CreateGameAsync(game);
                 await _playerRepository.CreatePlayerAsync(players);
-                return game.Id;
+                return game;
             }
             catch (Exception)
             {

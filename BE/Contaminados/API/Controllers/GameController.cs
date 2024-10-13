@@ -38,6 +38,7 @@ namespace Contaminados.Api.Controllers
                     Msg = "Game Found",
                     Data = new Data
                     {
+                        Id = game.Id.ToString(),
                         Name = game.Name,
                         Status = game.GameStatus.ToString(),
                         Password = game.Password?.Length != 0,
@@ -59,8 +60,25 @@ namespace Contaminados.Api.Controllers
         {
             try
             {
-                var id = await _createGameHandler.HandleAsync(command);
-                return Ok();
+                var game = await _createGameHandler.HandleAsync(command);
+                var players = await _getPlayersByGameIdHandler.HandleAsync(new GetPlayersByGameIdQuery(game.Id));
+
+                var result = new StatusCodesOk
+                {
+                    Status = 200,
+                    Msg = "Game Found",
+                    Data = new Data
+                    {
+                        Id = game.Id.ToString(),
+                        Name = game.Name,
+                        Status = game.GameStatus.ToString(),
+                        Password = game.Password?.Length != 0,
+                        CurrentRound = game.CurrentRoundId,
+                        Players = players.Where(p => p.GameId == game.Id).Select(p => p.PlayerName.ToString()).ToArray(),
+                        Enemies = players.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
+                    }
+                };
+                return Ok(result);
             }
             catch (CustomException ex)
             {
