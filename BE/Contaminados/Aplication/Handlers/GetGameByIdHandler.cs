@@ -13,9 +13,9 @@ namespace Contaminados.Aplication.Handlers
         }
         public async Task<Game> HandleAsync(GetGameByIdQuery request)
         {
-            if (request.Id == Guid.Empty)
-            {
-                throw new ArgumentException("El ID del juego no puede estar vacío.", nameof(request.Id));
+            ArgumentNullException.ThrowIfNull(request);
+            if(request.Id == Guid.Empty){
+                throw new ArgumentNullException("Id is empty");
             }
 
             var game = await _gameRepository.GetGameByIdAsync(request.Id) ?? throw new KeyNotFoundException($"Game with id {request.Id} not found.");

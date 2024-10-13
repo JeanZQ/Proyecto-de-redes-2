@@ -18,6 +18,17 @@ namespace Contaminados.Aplication.Handlers
 
         public async Task<Guid> HandleAsync(CreateGameCommand command)
         {
+            ArgumentNullException.ThrowIfNull(command);
+            if(command.Name == null || command.Password == null || command.Owner == null){
+                throw new ArgumentNullException("Name, Password or Owner is null");
+            } else if(command.Name == "" || command.Password == "" || command.Owner == ""){
+                throw new ArgumentNullException("Name, Password or Owner is empty");
+            } else if(command.Name.Length < 3 || command.Password.Length < 3 || command.Owner.Length < 3){
+                throw new ArgumentNullException("Name, Password or Owner is too short");
+            } else if(command.Name.Length > 20 || command.Password.Length > 20 || command.Owner.Length > 20){
+                throw new ArgumentNullException("Name, Password or Owner is too long");
+            }
+            
             var game = new Game
             {
                 Name = command.Name,

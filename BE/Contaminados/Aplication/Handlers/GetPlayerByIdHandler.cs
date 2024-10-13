@@ -13,10 +13,12 @@ namespace Contaminados.Aplication.Handlers
         }
         public async Task<Players> HandleAsync(GetPlayerByIdQuery request)
         {
+            ArgumentNullException.ThrowIfNull(request);
             if (request.Id == Guid.Empty)
             {
-                throw new ArgumentException("El ID del jugador no puede estar vacío.", nameof(request.Id));
+                throw new ArgumentNullException("Id is empty");
             }
+
             var player = await _playerRepository.GetPlayerByIdAsync(request.Id) ?? throw new KeyNotFoundException($"Player with id {request.Id} not found.");
             return player;
         }
