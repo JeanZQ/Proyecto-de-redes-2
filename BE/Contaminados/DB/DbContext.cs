@@ -21,6 +21,13 @@ namespace Contaminados.DB
             optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Game>()
+                .HasIndex(g => g.Name)
+                .IsUnique();
+        }
+
         public DbSet<Players> Players { get; set; }
         public DbSet<Round> Round { get; set; }
         public DbSet<RoundVote> RoundVote { get; set; }

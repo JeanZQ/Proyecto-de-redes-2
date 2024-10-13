@@ -4,19 +4,19 @@ using Models.playersModels;
 
 namespace Contaminados.Aplication.Handlers
 {
-    public class GetPlayerByIdHandler
+    public class GetPlayersByGameIdHandler
     {
         private readonly IPlayerRepository<Players> _playerRepository;
-        public GetPlayerByIdHandler(IPlayerRepository<Players> playerRepository)
+        public GetPlayersByGameIdHandler(IPlayerRepository<Players> playerRepository)
         {
             _playerRepository = playerRepository ?? throw new ArgumentNullException(nameof(playerRepository));
         }
-        public async Task<Players> HandleAsync(GetPlayerByIdQuery request)
+        public async Task<IEnumerable<Players>> HandleAsync(GetPlayersByGameIdQuery request)
         {
             //Falta validaciones-------------------------------------
 
-            var player = await _playerRepository.GetPlayerByIdAsync(request.Id);
-            return player;
+            var players = await _playerRepository.GetPlayersByGameIdAsync(request.GameId);
+            return players;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Contaminados.Models.Common
         public required string Status { get; set; }
         public required string Result { get; set; }
         public required string Phase { get; set; }
-        public required string[] Group { get; set; }
-        public required bool[] Votes { get; set; }
+        public required IEnumerable<string> Group { get; set; }
+        public required IEnumerable<bool> Votes { get; set; }
     }
 }

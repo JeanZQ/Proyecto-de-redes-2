@@ -1,26 +1,41 @@
 namespace Contaminados.Models.Common
 {
-    public class ErrorMessages
+    public class CustomException : Exception
     {
-        public int Status { get; set; }
-        public required string Message { get; set; }
-        public static readonly Dictionary<int, ErrorMessages> Errors = new Dictionary<int, ErrorMessages>
-        {
-            { 401, new ErrorMessages { Status = 401, Message = "Invalid credentials" } }, //Unauthorized()
-            { 403, new ErrorMessages { Status = 403, Message = "Not part of the game" } }, //StatusCode(403)
-            { 404, new ErrorMessages { Status = 404, Message = "The specified resource was not found" } }, //NotFound()
-            { 409, new ErrorMessages { Status = 409, Message = "Asset already exists" } }, //Conflict()
-            { 428, new ErrorMessages { Status = 428, Message = "This action is not allowed at this time" } }, //StatusCode(428)
-            { 100, new ErrorMessages { Status = 100, Message = "this error does not exist in the dictionary" } } //StatusCode(100)
-        };
+        public int Status { get; set;}
 
-        public static ErrorMessages GetErrorMessage(int statusCode)
+        public CustomException(int status, string message) : base(message)
         {
-            if (Errors.ContainsKey(statusCode))
-            {
-                return Errors[statusCode];
-            }
-            return Errors[100];
+            Status = status;
         }
+    }
+    public class ClientException : CustomException
+    {
+        public ClientException() : base(400, "Client Error") { }
+    }
+
+    public class UnauthorizedException : CustomException
+    {
+        public UnauthorizedException() : base(401, "Invalid credentials") { }
+    }
+
+    public class ForbiddenException : CustomException
+    {
+        public ForbiddenException() : base(403, "Not part of the game") { }
+    }
+
+    public class NotFoundException : CustomException
+    {
+        public NotFoundException() : base(404, "The specified resource was not found") { }
+    }
+
+    public class ConflictException : CustomException
+    {
+        public ConflictException() : base(409, "Asset already exists") { }
+    }
+
+    public class PreconditionRequiredException : CustomException
+    {
+        public PreconditionRequiredException() : base(428, "This action is not allowed at this time") { }
     }
 }

@@ -10,40 +10,28 @@ namespace Contaminados.Api.Controllers
     [Route("api/games")]
     public class GameController : ControllerBase
     {
-        private readonly GetGameByIdHandler _getGameByIdByPasswordByOwnerHandler;
+        private readonly GetGameByIdByPasswordByPlayerHandler _getGameByIdByPasswordByOwnerHandler;
         private readonly CreateGameHandler _createGameHandler;
-        private readonly GetPlayerByIdHandler _getPlayerByIdHandler;
+        private readonly GetPlayersByGameIdHandler _getPlayersByGameIdHandler;
         public GameController(
-            GetGameByIdHandler getGameByIdByPasswordByOwnerHandler,
+            GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
-            GetPlayerByIdHandler getPlayerByIdHandler)
+            GetPlayersByGameIdHandler getPlayersByGameIdHandler)
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
             _createGameHandler = createGameHandler;
-            _getPlayerByIdHandler = getPlayerByIdHandler;
+            _getPlayersByGameIdHandler = getPlayersByGameIdHandler;
         }
 
         [HttpGet("{gameId}")]
-        public async Task<IActionResult> GetGame(Guid gameId, string password, string player)
+        public async Task<IActionResult> GetGame(Guid gameId, string? password, string player)
         {
             try
             {
-                var query = new GetGameByIdQuery(gameId);
+                var query = new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player);
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(query);
+                var players = await _getPlayersByGameIdHandler.HandleAsync(new GetPlayersByGameIdQuery(gameId));
 
-                //Validaciones
-                if (game.Password != password)
-                {
-                    var error = ErrorMessages.GetErrorMessage(401);
-                    return Unauthorized(new { msg = error.Message, status = error.Status });
-                }
-                if (game.Owner != player)
-                {
-                    var error = ErrorMessages.GetErrorMessage(403);
-                    return StatusCode(403, new { msg = error.Message, status = error.Status });
-                }
-
-                //Respuesta
                 var result = new StatusCodesOk
                 {
                     Status = 200,
@@ -52,28 +40,32 @@ namespace Contaminados.Api.Controllers
                     {
                         Name = game.Name,
                         Status = game.GameStatus.ToString(),
-                        Password = game.Password != null ? true : false,
+                        Password = game.Password?.Length != 0,
                         CurrentRound = game.CurrentRoundId,
-                        Players = ["buscar jugadores"],
-                        Enemies = ["buscar enemigos"]
+                        Players = players.Where(p => p.GameId == game.Id).Select(p => p.PlayerName.ToString()).ToArray(),
+                        Enemies = players.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
                     }
                 };
                 return Ok(result);
             }
-            
-            //No se encontró el juego
-            catch (KeyNotFoundException)
+            catch (CustomException ex)
             {
-                var error = ErrorMessages.GetErrorMessage(404);
-                return NotFound(new { msg = error.Message, status = error.Status });
+                return BadRequest(new { message = ex.Message, status = ex.Status });
             }
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateGame([FromBody] CreateGameCommand command)
         {
-            var id = await _createGameHandler.HandleAsync(command);
-            return Ok(id);
+            try
+            {
+                var id = await _createGameHandler.HandleAsync(command);
+                return Ok();
+            }
+            catch (CustomException ex)
+            {
+                return BadRequest(new { message = ex.Message, status = ex.Status });
+            }
         }
     }
 }

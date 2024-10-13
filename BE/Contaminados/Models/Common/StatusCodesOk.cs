@@ -12,7 +12,7 @@ namespace Contaminados.Models.Common
         public required string Status { get; set; }
         public required bool Password { get; set; }
         public required Guid? CurrentRound { get; set; }
-        public required string[] Players { get; set; }
-        public required string[] Enemies { get; set; }
+        public required IEnumerable<string> Players { get; set; }
+        public required IEnumerable<string> Enemies { get; set; }
     }
 }
