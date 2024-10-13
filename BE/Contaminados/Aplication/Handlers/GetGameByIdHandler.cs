@@ -19,7 +19,7 @@ namespace Contaminados.Aplication.Handlers
             }
 
             var game = await _gameRepository.GetGameByIdAsync(request.Id) ?? throw new KeyNotFoundException($"Game with id {request.Id} not found.");
-            
+
             return game;
         }
     }

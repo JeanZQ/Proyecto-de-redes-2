@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Models.Common;
+using Contaminados.Models.Common;
 
 namespace Models.roundModels
 {

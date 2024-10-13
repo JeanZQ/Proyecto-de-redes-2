@@ -29,6 +29,7 @@ Diagrama de la DB
 | Status           |   <-- Estado del juego (gameStatus)
 | gamePwd          |   <-- Contraseña del juego (minLength: 3, maxLength: 20)
 | CurrentRoundId   |   <-- Identificador de la ronda actual (FK)
+| IdOwner          |   <-- Dueno de la sala
 +------------------+
         |
         |

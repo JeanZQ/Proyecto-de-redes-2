@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Models.Common;
+using Contaminados.Models.Common;
 
 namespace Models.gameModels
 {
@@ -16,5 +16,6 @@ namespace Models.gameModels
         public string? Password { get; set; }
 
         public Guid? CurrentRoundId { get; set; }
+        public required string Owner { get; set; }
     }
 }

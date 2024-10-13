@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Models.errorMessagesModels;
 using Models.gameModels;
 using Models.playersModels;
 using Models.roundGroupModels;
@@ -26,8 +25,7 @@ namespace Contaminados.DB
         public DbSet<Round> Round { get; set; }
         public DbSet<RoundVote> RoundVote { get; set; }
         public DbSet<Game> Game { get; set; }
-        public DbSet<ErrorMessages> ErrorMessages { get; set; }
         public DbSet<RoundGroup> RoundGroup { get; set; }
-        
+
     }
 }

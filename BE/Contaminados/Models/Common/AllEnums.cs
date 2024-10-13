@@ -1,4 +1,4 @@
-namespace Models.Common
+namespace Contaminados.Models.Common
 {
     public enum Status
     {
@@ -17,6 +17,7 @@ namespace Models.Common
 
     public enum RoundsResult
     {
+        none,
         Citizens,
         Enemies
     }

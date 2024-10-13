@@ -14,7 +14,7 @@ namespace Contaminados.Aplication.Handlers
         public async Task<Guid> HandleAsync(CreatePlayerCommand command)
         {
             ArgumentNullException.ThrowIfNull(command);
-            if(command.Name == null || command.GameId == null){
+            if(command.Name == null){
                 throw new ArgumentNullException("Name or GameId is null");
             } else if(command.Name == "" || command.GameId == Guid.Empty){
                 throw new ArgumentNullException("Name or GameId is empty");
@@ -23,7 +23,7 @@ namespace Contaminados.Aplication.Handlers
             } else if(command.Name.Length > 20){
                 throw new ArgumentNullException("Name is too long");
             }
-            
+
             var player = new Players{
                 PlayerName = command.Name,
                 GameId = command.GameId

@@ -20,6 +20,8 @@ builder.Services.AddScoped(typeof(IPlayerRepository<Players>), typeof(PlayerRepo
 // Inyección de dependencias Handlers--------------------------------
 builder.Services.AddScoped<CreateGameHandler>();
 builder.Services.AddScoped<GetGameByIdHandler>();
+builder.Services.AddScoped<CreatePlayerHandler>();
+builder.Services.AddScoped<GetPlayerByIdHandler>();
 
 builder.Services.AddControllers();
 

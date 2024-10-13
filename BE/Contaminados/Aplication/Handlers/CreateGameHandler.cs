@@ -22,7 +22,8 @@ namespace Contaminados.Aplication.Handlers
             {
                 Name = command.Name,
                 Password = command.Password,
-                GameStatus = Models.Common.Status.Lobby
+                GameStatus = Models.Common.Status.Lobby,
+                Owner = command.Owner   
             };
 
             var players = new Players{
