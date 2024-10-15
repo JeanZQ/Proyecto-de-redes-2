@@ -14,7 +14,6 @@ namespace Contaminados.Aplication.Handlers
         public async Task<Players> HandleAsync(GetPlayerByIdQuery request)
         {
             //Falta validaciones-------------------------------------
-
             var player = await _playerRepository.GetPlayerByIdAsync(request.Id);
             return player;
         }

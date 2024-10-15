@@ -11,11 +11,11 @@ namespace Contaminados.Aplication.Handlers
         {
             _playerRepository = playerRepository ?? throw new ArgumentNullException(nameof(playerRepository));
         }
-        public async Task<IEnumerable<Players>> HandleAsync(GetPlayersByGameIdQuery request)
+        public async Task<IEnumerable<Players>> HandleAsync(GetAllPlayersByGameIdQuery request)
         {
             //Falta validaciones-------------------------------------
 
-            var players = await _playerRepository.GetPlayersByGameIdAsync(request.GameId);
+            var players = await _playerRepository.GetAllPlayersByGameIdAsync(request.GameId);
             return players;
         }
     }

@@ -42,7 +42,7 @@ namespace Contaminados.Repositories.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Players>> GetPlayersByGameIdAsync(Guid gameId)
+        public async Task<IEnumerable<Players>> GetAllPlayersByGameIdAsync(Guid gameId)
         {
             return await _context.Set<Players>().Where(x => x.GameId == gameId).ToListAsync();
         }

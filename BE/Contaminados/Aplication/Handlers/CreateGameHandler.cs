@@ -1,7 +1,6 @@
 using Contaminados.Aplication.Commands;
 using Contaminados.Models.Common;
 using Contaminados.Repositories.IRepository;
-using Contaminados.Repositories.Repository;
 using Models.gameModels;
 using Models.playersModels;
 

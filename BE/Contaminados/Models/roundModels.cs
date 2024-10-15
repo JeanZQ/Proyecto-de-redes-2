@@ -6,8 +6,8 @@ namespace Models.roundModels
     public class Round
     {
         [Key]
-        public required Guid Id { get; set; } = Guid.NewGuid();
-        public required Guid LeaderId { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public required string Leader { get; set; }
         public required RoundsStatus Status { get; set; }
         public required RoundsResult Result { get; set; }
         public required RoundsPhase Phase { get; set; }

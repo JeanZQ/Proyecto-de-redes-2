@@ -52,11 +52,11 @@ Diagrama de la DB
 +------------------+
 |      Round       |
 +------------------+
-| Id (PK)          |   <-- Identificador único de la ronda (roundId)
-| Leader           |   <-- Nombre del líder de la ronda (debe ser un PlayerName)
-| Status           |   <-- Estado de la ronda
-| Result           |   <-- Resultado de la ronda
-| Phase            |   <-- Fase actual de la ronda
+| Id (PK)*          |   <-- Identificador único de la ronda (roundId)
+| Leader*           |   <-- Nombre del líder de la ronda (debe ser un PlayerName)
+| Status*           |   <-- Estado de la ronda
+| Result*           |   <-- Resultado de la ronda
+| Phase*            |   <-- Fase actual de la ronda
 | GameId (FK)      |   <-- Identificador del juego al que pertenece la ronda (gameId)
 +------------------+
         |
@@ -69,7 +69,7 @@ Diagrama de la DB
 +------------------+
 | Id (PK)          |   <-- Identificador único del grupo
 | RoundId (FK)     |   <-- Identificador de la ronda (roundId)
-| PlayerName       |   <-- Nombre del jugador en el grupo (minLength: 3, maxLength: 20)
+| PlayerName*       |   <-- Nombre del jugador en el grupo (minLength: 3, maxLength: 20)
 +------------------+
         |
         |
@@ -81,17 +81,5 @@ Diagrama de la DB
 +------------------+
 | Id (PK)          |   <-- Identificador único del voto
 | RoundId (FK)     |   <-- Identificador de la ronda (roundId)
-| Vote             |   <-- Resultado del voto (boolean)
+| Vote*             |   <-- Resultado del voto (boolean)
 +------------------+
-        |
-        |
-        | 1
-        |
-        | N
-+---------------------+
-|     ErrorMessages    |
-+---------------------+
-| Id (PK)             |   <-- Identificador único del mensaje de error
-| Message             |   <-- Mensaje de error amigable
-| Code                |   <-- Código de estado HTTP
-+---------------------+

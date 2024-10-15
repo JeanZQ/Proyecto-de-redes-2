@@ -1,9 +1,9 @@
 namespace Contaminados.Aplication.Queries
 {
-    public class GetPlayersByGameIdQuery
+    public class GetAllPlayersByGameIdQuery
     {
         public Guid GameId { get; }
-        public GetPlayersByGameIdQuery(Guid gameId)
+        public GetAllPlayersByGameIdQuery(Guid gameId)
         {
             GameId = gameId;
         }
