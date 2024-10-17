@@ -17,7 +17,7 @@ namespace Contaminados.Api.Controllers
     {
         private readonly GetGameByIdByPasswordByPlayerHandler _getGameByIdByPasswordByOwnerHandler;
         private readonly CreateGameHandler _createGameHandler;
-        private readonly GetPlayersByGameIdHandler _getPlayersByGameIdHandler;
+        private readonly GetAllPlayersByGameIdHandler _getAllPlayersByGameIdHandler;
         private readonly GetPlayerByIdHandler _getPlayerByIdHandler;
         private readonly GetAllRoundByGameIdHandler _getAllRoundByGameIdHandler;
         private readonly GetAllRoundGroupByRoundIdHandler _getAllRoundGroupByRoundIdHandler;
@@ -26,7 +26,7 @@ namespace Contaminados.Api.Controllers
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
-            GetPlayersByGameIdHandler getPlayersByGameIdHandler,
+            GetAllPlayersByGameIdHandler getAllPlayersByGameIdHandler,
             GetPlayerByIdHandler getPlayerByIdHandler,
             GetAllRoundByGameIdHandler getAllRoundByGameIdHandler,
             GetAllRoundGroupByRoundIdHandler getAllRoundGroupByRoundIdHandler,
@@ -35,7 +35,7 @@ namespace Contaminados.Api.Controllers
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
             _createGameHandler = createGameHandler;
-            _getPlayersByGameIdHandler = getPlayersByGameIdHandler;
+            _getAllPlayersByGameIdHandler = getAllPlayersByGameIdHandler;
             _getPlayerByIdHandler = getPlayerByIdHandler;
             _getAllRoundByGameIdHandler = getAllRoundByGameIdHandler;
             _getAllRoundGroupByRoundIdHandler = getAllRoundGroupByRoundIdHandler;
@@ -50,7 +50,7 @@ namespace Contaminados.Api.Controllers
             {
                 var query = new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player);
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(query);
-                var players = await _getPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
+                var players = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
 
                 var result = CreateResult(game, players);
                 return Ok(result);
@@ -67,7 +67,7 @@ namespace Contaminados.Api.Controllers
             try
             {
                 var game = await _createGameHandler.HandleAsync(command);
-                var players = await _getPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(game.Id));
+                var players = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(game.Id));
 
                 var result = CreateResult(game, players);
                 return Ok(result);

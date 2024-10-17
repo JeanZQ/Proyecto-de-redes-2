@@ -4,10 +4,10 @@ using Models.playersModels;
 
 namespace Contaminados.Aplication.Handlers
 {
-    public class GetPlayersByGameIdHandler
+    public class GetAllPlayersByGameIdHandler
     {
         private readonly IPlayerRepository<Players> _playerRepository;
-        public GetPlayersByGameIdHandler(IPlayerRepository<Players> playerRepository)
+        public GetAllPlayersByGameIdHandler(IPlayerRepository<Players> playerRepository)
         {
             _playerRepository = playerRepository ?? throw new ArgumentNullException(nameof(playerRepository));
         }
