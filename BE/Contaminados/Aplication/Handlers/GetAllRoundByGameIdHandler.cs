@@ -11,10 +11,10 @@ namespace Contaminados.Aplication.Handlers
         {
             _roundRepository = roundRepository ?? throw new ArgumentNullException(nameof(roundRepository));
         }
-        public async Task<IEnumerable<Round>> HandleAsync(GetAllRoundByGameIdQuery request)
+        public async Task<IEnumerable<Round>> HandleAsync(GetAllRoundByGameIdQuery query)
         {
             //Falta validaciones-------------------------------------
-            var rounds = await _roundRepository.GetAllRoundByGameIdAsync(request.GameId);
+            var rounds = await _roundRepository.GetAllRoundByGameIdAsync(query.GameId);
             return rounds;
         }
     }

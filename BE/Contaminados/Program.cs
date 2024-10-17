@@ -22,6 +22,7 @@ builder.Services.AddScoped(typeof(IPlayerRepository<Players>), typeof(PlayerRepo
 builder.Services.AddScoped(typeof(IRoundGroupRepository<RoundGroup>), typeof(RoundGroupRepository));
 builder.Services.AddScoped(typeof(IRoundRepository<Round>), typeof(RoundRepository));
 builder.Services.AddScoped(typeof(IRoundVoteRepository<RoundVote>), typeof(RoundVoteRepository));
+// -------------------------------------------------------------------
 
 // Inyección de dependencias Handlers--------------------------------
 // Game
@@ -42,6 +43,7 @@ builder.Services.AddScoped<GetAllRoundGroupByRoundIdHandler>();
 // RoundVote
 builder.Services.AddScoped<CreateRoundVoteHandler>();
 builder.Services.AddScoped<GetAllRoundVoteByRoundIdHandler>();
+// -------------------------------------------------------------------
 
 builder.Services.AddControllers();
 
