@@ -23,6 +23,7 @@ builder.Services.AddScoped<CreatePlayerHandler>();
 builder.Services.AddScoped<GetGameByIdByPasswordByPlayerHandler>();
 builder.Services.AddScoped<GetPlayerByIdHandler>();
 builder.Services.AddScoped<GetPlayersByGameIdHandler>();
+builder.Services.AddScoped<GetGamesHandler>();
 
 builder.Services.AddControllers();
 

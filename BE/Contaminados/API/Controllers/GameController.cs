@@ -15,14 +15,18 @@ namespace Contaminados.Api.Controllers
         private readonly GetGameByIdByPasswordByPlayerHandler _getGameByIdByPasswordByOwnerHandler;
         private readonly CreateGameHandler _createGameHandler;
         private readonly GetPlayersByGameIdHandler _getPlayersByGameIdHandler;
+        private readonly GetGamesHandler _getGamesHandler;
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
-            GetPlayersByGameIdHandler getPlayersByGameIdHandler)
+            GetPlayersByGameIdHandler getPlayersByGameIdHandler,
+            GetGamesHandler getGamesHandler
+            )
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
             _createGameHandler = createGameHandler;
             _getPlayersByGameIdHandler = getPlayersByGameIdHandler;
+            _getGamesHandler = getGamesHandler;
         }
 
         [HttpGet("{gameId}")]
@@ -79,5 +83,26 @@ namespace Contaminados.Api.Controllers
                 }
             };
         }
+
+
+        //Obtener los juegos que hayan
+        [HttpGet]
+        public async Task<IActionResult> GetGames()
+        {
+            try
+            {
+                var query = new GetGamesPossibleQuery("", Status.Lobby, 0, 0);
+                var games = await _getGamesHandler.HandleAsync(query);
+                // var players = await _getPlayersByGameIdHandler.HandleAsync(new GetPlayersByGameIdQuery(games.id));
+
+                //var result = CreateResult(game, players)
+                return Ok(games);
+            }
+            catch (CustomException ex)
+            {
+                return BadRequest(new { message = ex.Message, status = ex.Status });
+            }
+        }
+
     }
 }

@@ -1,3 +1,5 @@
+using Models.gameModels;
+
 namespace Contaminados.Repositories.IRepository
 {
     public interface IGameRepository<T>
@@ -6,6 +8,6 @@ namespace Contaminados.Repositories.IRepository
         Task UpdateGameAsync(T game);
         Task DeleteGameAsync(Guid id);
         Task<T> GetGameByIdAsync(Guid id);
-        Task<IEnumerable<T>> GetAllGamesAsync();
+        Task<IEnumerable<Game>> GetAllGamesAsync();
     }
 }
