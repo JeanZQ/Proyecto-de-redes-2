@@ -9,6 +9,6 @@ namespace Contaminados.Repositories.IRepository
         Task DeletePlayerAsync(Guid id);
         Task<Players> GetPlayerByIdAsync(Guid id);
         Task<IEnumerable<Players>> GetAllPlayerAsync();
-        Task<IEnumerable<Players>> GetPlayersByGameIdAsync(Guid gameId);
+        Task<IEnumerable<Players>> GetAllPlayersByGameIdAsync(Guid gameId);
     }
 }
