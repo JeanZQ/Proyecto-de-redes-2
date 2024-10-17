@@ -97,7 +97,7 @@ namespace Contaminados.Api.Controllers
                 }));
                 
                 var result = CreateResultRounds(round, votes, playerName);
-                return Ok();
+                return Ok(result);
 
             }
             catch (CustomException ex)
@@ -130,7 +130,8 @@ namespace Contaminados.Api.Controllers
                 }
             };
         }
-
+        //-------------------------------------------------------------------------------------
+        //No hacer el metodo ASYNC ni llamar a ningun Handler
         private StatusCodesOkRounds CreateResultRounds(Round round, IEnumerable<RoundVote>? votes, IEnumerable<string>? group)
         {
 
