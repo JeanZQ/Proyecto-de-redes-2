@@ -1,6 +1,7 @@
 using Contaminados.DB;
 using Contaminados.Repositories.IRepository;
 using Models.roundGroupModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace Contaminados.Repositories.Repository
 {
@@ -18,9 +19,9 @@ namespace Contaminados.Repositories.Repository
             await _context.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<RoundGroup>> GetAllRoundGroupByRoundIdAsync(Guid roundId)
+        public async Task<IEnumerable<RoundGroup>> GetAllRoundGroupByRoundIdAsync(Guid roundId)
         {
-            return Task.FromResult(_context.Set<RoundGroup>().Where(x => x.RoundId == roundId).AsEnumerable());
+            return await _context.Set<RoundGroup>().Where(x => x.RoundId == roundId).ToListAsync();
         }
     }
 }

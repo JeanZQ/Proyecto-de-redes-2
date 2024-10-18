@@ -1,14 +1,14 @@
 using Contaminados.Aplication.Commands;
 using Contaminados.Models.Common;
-using Contaminados.Repositories.Repository;
+using Contaminados.Repositories.IRepository;
 using Models.roundGroupModels;
 
 namespace Contaminados.Aplication.Handlers
 {
     public class CreateRoundGroupHandler
     {
-        private readonly RoundGroupRepository _roundGroupRepository;
-        public CreateRoundGroupHandler(RoundGroupRepository roundGroupRepository)
+        private readonly IRoundGroupRepository<RoundGroup> _roundGroupRepository;
+        public CreateRoundGroupHandler(IRoundGroupRepository<RoundGroup> roundGroupRepository)
         {
             _roundGroupRepository = roundGroupRepository ?? throw new ArgumentNullException(nameof(roundGroupRepository));
         }
