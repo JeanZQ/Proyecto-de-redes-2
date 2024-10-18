@@ -1,9 +1,9 @@
-using Contaminados.Aplication.Queries;
+using Contaminados.Application.Queries;
 using Contaminados.Models.Common;
 using Contaminados.Repositories.IRepository;
 using Models.gameModels;
 
-namespace Contaminados.Aplication.Handlers
+namespace Contaminados.Application.Handlers
 {
     public class GetGameByIdByPasswordByPlayerHandler
     {

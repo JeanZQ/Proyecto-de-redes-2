@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Contaminados.Repositories.IRepository;
 using Contaminados.Repositories.Repository;
-using Contaminados.Aplication.Handlers;
+using Contaminados.Application.Handlers;
 using Models.gameModels;
 using Contaminados.DB;
 using Models.playersModels;

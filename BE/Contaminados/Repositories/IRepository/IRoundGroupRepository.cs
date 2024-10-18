@@ -1,5 +1,3 @@
-using Models.roundGroupModels;
-
 namespace Contaminados.Repositories.IRepository
 {
     public interface IRoundGroupRepository<RoundGroup>
