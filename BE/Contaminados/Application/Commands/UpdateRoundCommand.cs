@@ -1,6 +1,6 @@
 using Contaminados.Models.Common;
 
-namespace Contaminados.Aplication.Commands
+namespace Contaminados.Application.Commands
 {
     public class UpdateRoundCommand
     {

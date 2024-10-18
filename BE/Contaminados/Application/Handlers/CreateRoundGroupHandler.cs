@@ -1,9 +1,9 @@
-using Contaminados.Aplication.Commands;
+using Contaminados.Application.Commands;
 using Contaminados.Models.Common;
 using Contaminados.Repositories.IRepository;
 using Models.roundGroupModels;
 
-namespace Contaminados.Aplication.Handlers
+namespace Contaminados.Application.Handlers
 {
     public class CreateRoundGroupHandler
     {
@@ -14,14 +14,14 @@ namespace Contaminados.Aplication.Handlers
         }
         public async Task<RoundGroup> HandleAsync(CreateRoundGroupCommand command)
         {
-            if (command.RoundId == Guid.Empty || command.PlayerId == Guid.Empty)
+            if (command.RoundId == Guid.Empty || string.IsNullOrWhiteSpace(command.Player))
             {
                 throw new ClientException(); //Revizar si es la excepcion correcta
             }
             var roundGroup = new RoundGroup
             {
                 RoundId = command.RoundId,
-                PlayerId = command.PlayerId
+                Player = command.Player
             };
             try
             {

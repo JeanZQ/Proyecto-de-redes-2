@@ -1,4 +1,4 @@
-namespace Contaminados.Aplication.Queries
+namespace Contaminados.Application.Queries
 {
     public class GetPlayerByIdQuery
     {

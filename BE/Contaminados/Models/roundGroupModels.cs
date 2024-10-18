@@ -7,6 +7,6 @@ namespace Models.roundGroupModels
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
         public required Guid RoundId { get; set; }
-        public required Guid PlayerId { get; set; }
+        public required string Player { get; set; }
     }
 }

@@ -1,10 +1,10 @@
-using Contaminados.Aplication.Commands;
+using Contaminados.Application.Commands;
 using Contaminados.Models.Common;
 using Contaminados.Repositories.IRepository;
 using Models.gameModels;
 using Models.playersModels;
 
-namespace Contaminados.Aplication.Handlers
+namespace Contaminados.Application.Handlers
 {
     public class CreateGameHandler
     {

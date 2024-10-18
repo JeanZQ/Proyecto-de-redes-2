@@ -1,8 +1,8 @@
-using Contaminados.Aplication.Commands;
+using Contaminados.Application.Commands;
 using Contaminados.Repositories.IRepository;
 using Models.playersModels;
 
-namespace Contaminados.Aplication.Handlers
+namespace Contaminados.Application.Handlers
 {
     public class CreatePlayerHandler
     {

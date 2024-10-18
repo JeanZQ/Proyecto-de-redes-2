@@ -1,8 +1,8 @@
-using Contaminados.Aplication.Queries;
+using Contaminados.Application.Queries;
 using Contaminados.Repositories.IRepository;
 using Models.roundVoteModels;
 
-namespace Contaminados.Aplication.Handlers
+namespace Contaminados.Application.Handlers
 {
     public class GetAllRoundVoteByRoundIdHandler
     {

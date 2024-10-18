@@ -1,13 +1,11 @@
-using Contaminados.Aplication.Handlers;
-using Contaminados.Aplication.Queries;
-using Contaminados.Aplication.Commands;
+using Contaminados.Application.Handlers;
+using Contaminados.Application.Queries;
+using Contaminados.Application.Commands;
 using Microsoft.AspNetCore.Mvc;
 using Contaminados.Models.Common;
 using Models.gameModels;
 using Models.playersModels;
-using Models.roundModels;
-using Models.roundVoteModels;
-using Models.roundGroupModels;
+using Application.Commands.Common;
 
 namespace Contaminados.Api.Controllers
 {
@@ -18,33 +16,36 @@ namespace Contaminados.Api.Controllers
         private readonly GetGameByIdByPasswordByPlayerHandler _getGameByIdByPasswordByOwnerHandler;
         private readonly CreateGameHandler _createGameHandler;
         private readonly GetAllPlayersByGameIdHandler _getAllPlayersByGameIdHandler;
-        private readonly GetPlayerByIdHandler _getPlayerByIdHandler;
         private readonly GetAllRoundByGameIdHandler _getAllRoundByGameIdHandler;
         private readonly GetAllRoundGroupByRoundIdHandler _getAllRoundGroupByRoundIdHandler;
         private readonly GetAllRoundVoteByRoundIdHandler _getAllRoundVoteByRoundIdHandler;
         private readonly GetRoundByIdHandler _getRoundByIdHandler;
+        private readonly CreateRoundGroupHandler _createRoundGroupHandler;
+        private readonly CreateRoundVoteHandler _createRoundVoteHandler;
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
             GetAllPlayersByGameIdHandler getAllPlayersByGameIdHandler,
-            GetPlayerByIdHandler getPlayerByIdHandler,
             GetAllRoundByGameIdHandler getAllRoundByGameIdHandler,
             GetAllRoundGroupByRoundIdHandler getAllRoundGroupByRoundIdHandler,
             GetAllRoundVoteByRoundIdHandler getAllRoundVoteByRoundIdHandler,
-            GetRoundByIdHandler getRoundByIdHandler)
+            GetRoundByIdHandler getRoundByIdHandler,
+            CreateRoundGroupHandler createRoundGroupHandler,
+            CreateRoundVoteHandler createRoundVoteHandler)
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
             _createGameHandler = createGameHandler;
             _getAllPlayersByGameIdHandler = getAllPlayersByGameIdHandler;
-            _getPlayerByIdHandler = getPlayerByIdHandler;
             _getAllRoundByGameIdHandler = getAllRoundByGameIdHandler;
             _getAllRoundGroupByRoundIdHandler = getAllRoundGroupByRoundIdHandler;
             _getAllRoundVoteByRoundIdHandler = getAllRoundVoteByRoundIdHandler;
             _getRoundByIdHandler = getRoundByIdHandler;
+            _createRoundGroupHandler = createRoundGroupHandler;
+            _createRoundVoteHandler = createRoundVoteHandler;
         }
 
         [HttpGet("{gameId}")]
-        public async Task<IActionResult> GetGame(Guid gameId, string? password, string player)
+        public async Task<IActionResult> GetGame(Guid gameId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player)
         {
             try
             {
@@ -79,7 +80,7 @@ namespace Contaminados.Api.Controllers
         }
 
         [HttpGet("{gameId}/rounds")]
-        public async Task<IActionResult> GetRounds(Guid gameId, string? password, string player)
+        public async Task<IActionResult> GetRounds(Guid gameId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player)
         {
             try
             {
@@ -98,10 +99,9 @@ namespace Contaminados.Api.Controllers
                     {
                         var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(r.Id));
                         var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(r.Id));
-                        var playerName = await Task.WhenAll(group.Select(async g =>
+                        var playerName = await Task.WhenAll(group.Select(g =>
                         {
-                            var player = await _getPlayerByIdHandler.HandleAsync(new GetPlayerByIdQuery(g.PlayerId));
-                            return player.PlayerName;
+                            return Task.FromResult(g.Player);
                         }));
                         return new DataRounds
                         {
@@ -128,7 +128,7 @@ namespace Contaminados.Api.Controllers
         }
 
         [HttpGet("{gameId}/rounds/{roundId}")]
-        public async Task<IActionResult> ShowRound(Guid gameId, Guid roundId, string? password, string player)
+        public async Task<IActionResult> ShowRound(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player)
         {
             try
             {
@@ -139,16 +139,11 @@ namespace Contaminados.Api.Controllers
                 var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
                 var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
                 var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
-                var playerName = await Task.WhenAll(group.Select(async g =>
-                {
-                    var player = await _getPlayerByIdHandler.HandleAsync(new GetPlayerByIdQuery(g.PlayerId));
-                    return player.PlayerName;
-                }));
 
                 return Ok(new StatusCodesOkRounds
                 {
                     Status = 200,
-                    Msg = "Round Found",
+                    Msg = "Joined Game",
                     Data = new DataRounds
                     {
                         Id = round.Id,
@@ -156,7 +151,50 @@ namespace Contaminados.Api.Controllers
                         Status = round.Status.ToString(),
                         Result = round.Result.ToString(),
                         Phase = round.Phase.ToString(),
-                        Group = playerName.ToArray(),
+                        Group = group.Select(g => g.Player).ToArray(),
+                        Votes = votes.Select(v => v.Vote).ToArray()
+                    }
+                });
+            }
+            catch (CustomException ex)
+            {
+                return StatusCode(ex.Status, new
+                {
+                    message = ex.Message,
+                    status = ex.Status
+                });
+            }
+        }
+        [HttpPatch("{gameId}/rounds/{roundId}")]
+        public async Task<IActionResult> ProposeGroup(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] GroupCommon group)
+        {
+            try
+            {
+                //Validar credenciales
+                await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
+
+                //Guardar el grupo
+                await Task.WhenAll(group.Group.Select(async p =>
+                {
+                    await _createRoundGroupHandler.HandleAsync(new CreateRoundGroupCommand(roundId, player));
+                }));
+
+                //Variables para la respuesta
+                var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
+                var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
+
+                return Ok(new StatusCodesOkRounds
+                {
+                    Status = 200,
+                    Msg = "Group Created",
+                    Data = new DataRounds
+                    {
+                        Id = round.Id,
+                        Leader = round.Leader,
+                        Status = round.Status.ToString(),
+                        Result = round.Result.ToString(),
+                        Phase = round.Phase.ToString(),
+                        Group = group.Group.ToArray(),
                         Votes = votes.Select(v => v.Vote).ToArray()
                     }
                 });
@@ -171,6 +209,38 @@ namespace Contaminados.Api.Controllers
             }
         }
 
+        [HttpPost("{gameId}/rounds/{roundId}")]
+        public async Task<IActionResult> VoteGroup(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] GroupVoteCommon vote)
+        {
+            //Validar credenciales
+            await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
+
+            //Guardar el voto
+            await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(roundId, vote.Vote));
+            
+            //Variables para la respuesta
+            var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
+            var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
+            var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
+            
+            return Ok(
+                new StatusCodesOk
+                {
+                    Status = 200,
+                    Msg = "Vote Created",
+                    Data = new DataRounds
+                    {
+                        Id = round.Id,
+                        Leader = round.Leader,
+                        Status = round.Status.ToString(),
+                        Result = round.Result.ToString(),
+                        Phase = round.Phase.ToString(),
+                        Group = group.Select(g => g.Player).ToArray(),
+                        Votes = votes.Select(v => v.Vote).ToArray()
+                    }
+                }
+            );
+        }
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler
         private StatusCodesOk CreateResult(Game game, IEnumerable<Players> players)
