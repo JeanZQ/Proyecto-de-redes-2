@@ -115,9 +115,7 @@ namespace Contaminados.Api.Controllers
                         };
                     }))
                 };
-
                 return Ok(result);
-
             }
             catch (CustomException ex)
             {
@@ -172,7 +170,7 @@ namespace Contaminados.Api.Controllers
                 });
             }
         }
-        
+
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler
         private StatusCodesOk CreateResult(Game game, IEnumerable<Players> players)
