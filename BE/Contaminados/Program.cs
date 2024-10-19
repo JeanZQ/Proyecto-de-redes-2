@@ -1,10 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Contaminados.Repositories.IRepository;
 using Contaminados.Repositories.Repository;
-using Contaminados.Aplication.Handlers;
+using Contaminados.Application.Handlers;
 using Models.gameModels;
 using Contaminados.DB;
 using Models.playersModels;
+using Models.roundGroupModels;
+using Models.roundModels;
+using Models.roundVoteModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,14 +19,33 @@ builder.Services.AddDbContext<DbContextClass>(options =>
 // Inyección de dependencias Repositories----------------------------
 builder.Services.AddScoped(typeof(IGameRepository<Game>), typeof(GameRepository));
 builder.Services.AddScoped(typeof(IPlayerRepository<Players>), typeof(PlayerRepository));
+builder.Services.AddScoped(typeof(IRoundGroupRepository<RoundGroup>), typeof(RoundGroupRepository));
+builder.Services.AddScoped(typeof(IRoundRepository<Round>), typeof(RoundRepository));
+builder.Services.AddScoped(typeof(IRoundVoteRepository<RoundVote>), typeof(RoundVoteRepository));
+// -------------------------------------------------------------------
 
 // Inyección de dependencias Handlers--------------------------------
+// Game
 builder.Services.AddScoped<CreateGameHandler>();
-builder.Services.AddScoped<CreatePlayerHandler>();
 builder.Services.AddScoped<GetGameByIdByPasswordByPlayerHandler>();
+// Players
+builder.Services.AddScoped<CreatePlayerHandler>();
 builder.Services.AddScoped<GetPlayerByIdHandler>();
 builder.Services.AddScoped<GetPlayersByGameIdHandler>();
 builder.Services.AddScoped<GetGamesHandler>();
+builder.Services.AddScoped<GetAllPlayersByGameIdHandler>();
+// Round
+builder.Services.AddScoped<CreateRoundHandler>();
+builder.Services.AddScoped<GetAllRoundByGameIdHandler>();
+builder.Services.AddScoped<GetRoundByIdHandler>();
+builder.Services.AddScoped<UpdateRoundHandler>();
+// RoundGroup
+builder.Services.AddScoped<CreateRoundGroupHandler>();
+builder.Services.AddScoped<GetAllRoundGroupByRoundIdHandler>();
+// RoundVote
+builder.Services.AddScoped<CreateRoundVoteHandler>();
+builder.Services.AddScoped<GetAllRoundVoteByRoundIdHandler>();
+
 
 builder.Services.AddControllers();
 

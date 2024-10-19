@@ -1,8 +1,8 @@
-using Contaminados.Aplication.Queries;
+using Contaminados.Application.Queries;
 using Contaminados.Repositories.IRepository;
 using Models.playersModels;
 
-namespace Contaminados.Aplication.Handlers
+namespace Contaminados.Application.Handlers
 {
     public class GetPlayerByIdHandler
     {
@@ -14,7 +14,6 @@ namespace Contaminados.Aplication.Handlers
         public async Task<Players> HandleAsync(GetPlayerByIdQuery request)
         {
             //Falta validaciones-------------------------------------
-
             var player = await _playerRepository.GetPlayerByIdAsync(request.Id);
             return player;
         }

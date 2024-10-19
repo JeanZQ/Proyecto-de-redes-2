@@ -1,11 +1,10 @@
-using Contaminados.Aplication.Commands;
+using Contaminados.Application.Commands;
 using Contaminados.Models.Common;
 using Contaminados.Repositories.IRepository;
-using Contaminados.Repositories.Repository;
 using Models.gameModels;
 using Models.playersModels;
 
-namespace Contaminados.Aplication.Handlers
+namespace Contaminados.Application.Handlers
 {
     public class CreateGameHandler
     {
@@ -48,7 +47,6 @@ namespace Contaminados.Aplication.Handlers
             try
             {
                 await _gameRepository.CreateGameAsync(game);
-                await _playerRepository.CreatePlayerAsync(players);
                 return game;
             }
             catch (Exception)

@@ -83,15 +83,3 @@ Diagrama de la DB
 | RoundId (FK)     |   <-- Identificador de la ronda (roundId)
 | Vote             |   <-- Resultado del voto (boolean)
 +------------------+
-        |
-        |
-        | 1
-        |
-        | N
-+---------------------+
-|     ErrorMessages    |
-+---------------------+
-| Id (PK)             |   <-- Identificador único del mensaje de error
-| Message             |   <-- Mensaje de error amigable
-| Code                |   <-- Código de estado HTTP
-+---------------------+

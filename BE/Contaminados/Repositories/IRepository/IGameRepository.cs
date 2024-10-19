@@ -2,12 +2,14 @@ using Models.gameModels;
 
 namespace Contaminados.Repositories.IRepository
 {
-    public interface IGameRepository<T>
+    public interface IGameRepository<Game>
     {
-        Task CreateGameAsync(T game);
-        Task UpdateGameAsync(T game);
+        Task CreateGameAsync(Game game);
+        Task UpdateGameAsync(Game game);
         Task DeleteGameAsync(Guid id);
         Task<T> GetGameByIdAsync(Guid id);
+        Task<Game> GetGameByIdAsync(Guid id);
         Task<IEnumerable<Game>> GetAllGamesAsync();
+        
     }
 }

@@ -1,21 +1,21 @@
-using Contaminados.Aplication.Queries;
+using Contaminados.Application.Queries;
 using Contaminados.Repositories.IRepository;
 using Models.playersModels;
 
-namespace Contaminados.Aplication.Handlers
+namespace Contaminados.Application.Handlers
 {
-    public class GetPlayersByGameIdHandler
+    public class GetAllPlayersByGameIdHandler
     {
         private readonly IPlayerRepository<Players> _playerRepository;
-        public GetPlayersByGameIdHandler(IPlayerRepository<Players> playerRepository)
+        public GetAllPlayersByGameIdHandler(IPlayerRepository<Players> playerRepository)
         {
             _playerRepository = playerRepository ?? throw new ArgumentNullException(nameof(playerRepository));
         }
-        public async Task<IEnumerable<Players>> HandleAsync(GetPlayersByGameIdQuery request)
+        public async Task<IEnumerable<Players>> HandleAsync(GetAllPlayersByGameIdQuery request)
         {
             //Falta validaciones-------------------------------------
 
-            var players = await _playerRepository.GetPlayersByGameIdAsync(request.GameId);
+            var players = await _playerRepository.GetAllPlayersByGameIdAsync(request.GameId);
             return players;
         }
     }

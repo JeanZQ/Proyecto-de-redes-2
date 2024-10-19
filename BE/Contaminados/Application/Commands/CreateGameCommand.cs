@@ -1,4 +1,4 @@
-namespace Contaminados.Aplication.Commands
+namespace Contaminados.Application.Commands
 {
     public class CreateGameCommand
     {

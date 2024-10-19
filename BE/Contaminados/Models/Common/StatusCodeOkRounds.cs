@@ -4,7 +4,7 @@ namespace Contaminados.Models.Common
     {
         public required int Status { get; set; }
         public required string Msg { get; set; }
-        public required DataRounds Data { get; set; }
+        public required object? Data { get; set; }
     }
     public class DataRounds
     {
