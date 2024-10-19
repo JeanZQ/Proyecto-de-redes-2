@@ -47,7 +47,6 @@ namespace Contaminados.Application.Handlers
             try
             {
                 await _gameRepository.CreateGameAsync(game);
-                await _playerRepository.CreatePlayerAsync(players);
                 return game;
             }
             catch (Exception)
