@@ -23,9 +23,13 @@ namespace Contaminados.Api.Controllers
         private readonly CreateRoundGroupHandler _createRoundGroupHandler;
         private readonly CreateRoundVoteHandler _createRoundVoteHandler;
         private readonly CreatePlayerHandler _createPlayerHandler;
+        private readonly GetPlayersByGameIdHandler _getPlayersByGameIdHandler;
+        private readonly GetGamesHandler _getGamesHandler;
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
+            GetPlayersByGameIdHandler getPlayersByGameIdHandler,
+            GetGamesHandler getGamesHandler,
             GetAllPlayersByGameIdHandler getAllPlayersByGameIdHandler,
             GetAllRoundByGameIdHandler getAllRoundByGameIdHandler,
             GetAllRoundGroupByRoundIdHandler getAllRoundGroupByRoundIdHandler,
@@ -34,7 +38,12 @@ namespace Contaminados.Api.Controllers
             CreateRoundGroupHandler createRoundGroupHandler,
             CreateRoundVoteHandler createRoundVoteHandler,
             CreatePlayerHandler createPlayerHandler)
+            )
         {
+            _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
+            _createGameHandler = createGameHandler;
+            _getPlayersByGameIdHandler = getPlayersByGameIdHandler;
+            _getGamesHandler = getGamesHandler;
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
             _createGameHandler = createGameHandler;
             _getAllPlayersByGameIdHandler = getAllPlayersByGameIdHandler;
@@ -45,6 +54,7 @@ namespace Contaminados.Api.Controllers
             _createRoundGroupHandler = createRoundGroupHandler;
             _createRoundVoteHandler = createRoundVoteHandler;
             _createPlayerHandler = createPlayerHandler;
+
         }
 
         [HttpGet("{gameId}")]
@@ -294,6 +304,44 @@ namespace Contaminados.Api.Controllers
             };
         }
 
+        private StatusCodeAllGames GamesList(List<Game> games)
+        {
+            return new StatusCodeAllGames
+            {
+                Status = 200,
+                Msg = "Games Found",
+                Data = games.Select(g => new Data
+                {
+                    Id = g.Id.ToString(),
+                    Name = g.Name,
+                    Status = g.GameStatus.ToString(),
+                    Password = g.Password?.Length != 0,
+                    CurrentRound = g.CurrentRoundId ?? Guid.Empty,
+                    Players = _getPlayersByGameIdHandler.HandleAsync(new GetPlayersByGameIdQuery(g.Id)).Result.Select(p => p.PlayerName.ToString()).ToArray(),
+                    Enemies = _getPlayersByGameIdHandler.HandleAsync(new GetPlayersByGameIdQuery(g.Id)).Result.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
+                }).ToArray()
+            };
+        }
+
+
+        //Obtener los juegos que hayan
+        [HttpGet]
+        public async Task<IActionResult> GetGames()
+        {
+            try
+            {
+                var query = new GetGamesPossibleQuery("", Status.Lobby, 0, 0);
+                List<Game> games = (List<Game>)await _getGamesHandler.HandleAsync(query);
+                
+                var result = GamesList(games);
+
+                return Ok(result);
+            }
+            catch (CustomException ex)
+            {
+                return BadRequest(new { message = ex.Message, status = ex.Status });
+            }
+        }
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler
         /*Futuras actualizaciones, por favor companeros no me reganen :c
@@ -318,6 +366,7 @@ namespace Contaminados.Api.Controllers
                 ]
             };
         }*/
+
 
     }
 }

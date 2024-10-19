@@ -31,6 +31,8 @@ builder.Services.AddScoped<GetGameByIdByPasswordByPlayerHandler>();
 // Players
 builder.Services.AddScoped<CreatePlayerHandler>();
 builder.Services.AddScoped<GetPlayerByIdHandler>();
+builder.Services.AddScoped<GetPlayersByGameIdHandler>();
+builder.Services.AddScoped<GetGamesHandler>();
 builder.Services.AddScoped<GetAllPlayersByGameIdHandler>();
 // Round
 builder.Services.AddScoped<CreateRoundHandler>();
@@ -43,7 +45,7 @@ builder.Services.AddScoped<GetAllRoundGroupByRoundIdHandler>();
 // RoundVote
 builder.Services.AddScoped<CreateRoundVoteHandler>();
 builder.Services.AddScoped<GetAllRoundVoteByRoundIdHandler>();
-// -------------------------------------------------------------------
+
 
 builder.Services.AddControllers();
 
