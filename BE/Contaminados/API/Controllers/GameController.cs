@@ -84,6 +84,25 @@ namespace Contaminados.Api.Controllers
             };
         }
 
+        private StatusCodeAllGames GamesList(List<Game> games)
+        {
+            return new StatusCodeAllGames
+            {
+                Status = 200,
+                Msg = "Games Found",
+                Data = games.Select(g => new Data
+                {
+                    Id = g.Id.ToString(),
+                    Name = g.Name,
+                    Status = g.GameStatus.ToString(),
+                    Password = g.Password?.Length != 0,
+                    CurrentRound = g.CurrentRoundId ?? Guid.Empty,
+                    Players = _getPlayersByGameIdHandler.HandleAsync(new GetPlayersByGameIdQuery(g.Id)).Result.Select(p => p.PlayerName.ToString()).ToArray(),
+                    Enemies = _getPlayersByGameIdHandler.HandleAsync(new GetPlayersByGameIdQuery(g.Id)).Result.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
+                }).ToArray()
+            };
+        }
+
 
         //Obtener los juegos que hayan
         [HttpGet]
@@ -92,11 +111,11 @@ namespace Contaminados.Api.Controllers
             try
             {
                 var query = new GetGamesPossibleQuery("", Status.Lobby, 0, 0);
-                var games = await _getGamesHandler.HandleAsync(query);
-                // var players = await _getPlayersByGameIdHandler.HandleAsync(new GetPlayersByGameIdQuery(games.id));
+                List<Game> games = (List<Game>)await _getGamesHandler.HandleAsync(query);
+                
+                var result = GamesList(games);
 
-                //var result = CreateResult(game, players)
-                return Ok(games);
+                return Ok(result);
             }
             catch (CustomException ex)
             {
