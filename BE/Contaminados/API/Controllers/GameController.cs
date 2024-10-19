@@ -22,6 +22,7 @@ namespace Contaminados.Api.Controllers
         private readonly GetRoundByIdHandler _getRoundByIdHandler;
         private readonly CreateRoundGroupHandler _createRoundGroupHandler;
         private readonly CreateRoundVoteHandler _createRoundVoteHandler;
+        private readonly CreatePlayerHandler _createPlayerHandler;
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
@@ -31,7 +32,8 @@ namespace Contaminados.Api.Controllers
             GetAllRoundVoteByRoundIdHandler getAllRoundVoteByRoundIdHandler,
             GetRoundByIdHandler getRoundByIdHandler,
             CreateRoundGroupHandler createRoundGroupHandler,
-            CreateRoundVoteHandler createRoundVoteHandler)
+            CreateRoundVoteHandler createRoundVoteHandler,
+            CreatePlayerHandler createPlayerHandler)
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
             _createGameHandler = createGameHandler;
@@ -42,6 +44,7 @@ namespace Contaminados.Api.Controllers
             _getRoundByIdHandler = getRoundByIdHandler;
             _createRoundGroupHandler = createRoundGroupHandler;
             _createRoundVoteHandler = createRoundVoteHandler;
+            _createPlayerHandler = createPlayerHandler;
         }
 
         [HttpGet("{gameId}")]
@@ -217,12 +220,12 @@ namespace Contaminados.Api.Controllers
 
             //Guardar el voto
             await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(roundId, vote.Vote));
-            
+
             //Variables para la respuesta
             var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
             var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
             var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
-            
+
             return Ok(
                 new StatusCodesOk
                 {
@@ -241,6 +244,34 @@ namespace Contaminados.Api.Controllers
                 }
             );
         }
+
+        [HttpPut("{gameId}")]
+        public async Task<IActionResult> JoinGame(Guid gameId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] PlayersCommon players)
+        {
+            try
+            {
+                //Validar credenciales
+                await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
+
+                //Guardar el jugador
+                await _createPlayerHandler.HandleAsync(new CreatePlayerCommand(players.Player, gameId));
+
+                //Variables para la respuesta
+                var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
+                var playerlist = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
+                return Ok(CreateResult(game, playerlist));
+            }
+            catch (CustomException ex)
+            {
+                return StatusCode(ex.Status, new
+                {
+                    message = ex.Message,
+                    status = ex.Status
+                });
+            }
+        }
+
+
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler
         private StatusCodesOk CreateResult(Game game, IEnumerable<Players> players)
@@ -261,6 +292,7 @@ namespace Contaminados.Api.Controllers
                 }
             };
         }
+
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler
         /*Futuras actualizaciones, por favor companeros no me reganen :c
