@@ -78,8 +78,7 @@ namespace Contaminados.Api.Controllers
             {
                 var game = await _createGameHandler.HandleAsync(command);
                 await _createPlayerHandler.HandleAsync(new CreatePlayerCommand(command.Owner, game.Id));
-                var players = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(game.Id));
-
+                var players = new List<Players> { new Players { PlayerName = command.Owner, GameId = game.Id } };
                 var result = CreateResult(game, players);
                 return Ok(result);
             }
@@ -278,6 +277,48 @@ namespace Contaminados.Api.Controllers
             }
         }
 
+        [HttpPut("{gameId}/rounds/{roundId}")]
+        public async Task<IActionResult> ActionVote(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] ActionVoteCommon action)
+        {
+            try
+            {
+                //Validar credenciales
+                await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
+
+                //Guardar el voto
+                await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(roundId, action.Action));
+
+                //Variables para la respuesta
+                var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
+                var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
+                var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
+
+                return Ok(new StatusCodesOkRounds
+                {
+                    Status = 200,
+                    Msg = "Action registered",
+                    Data = new DataRounds
+                    {
+                        Id = round.Id,
+                        Leader = round.Leader,
+                        Status = round.Status.ToString(),
+                        Result = round.Result.ToString(),
+                        Phase = round.Phase.ToString(),
+                        Group = group.Select(g => g.Player).ToArray(),
+                        Votes = votes.Select(v => v.Vote).ToArray()
+                    }
+                });
+            }
+            catch (CustomException ex)
+            {
+                return StatusCode(ex.Status, new
+                {
+                    message = ex.Message,
+                    status = ex.Status
+                });
+            }
+        }
+        
 
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler

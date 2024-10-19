@@ -16,7 +16,7 @@ namespace Contaminados.Application.Handlers
         {
             if (command.RoundId == Guid.Empty)
             {
-                throw new ClientException(); //Revizar si es la excepcion correcta
+                throw new ClientException(); //Revisar si es la excepcion correcta
             }
             var roundVote = new RoundVote
             {
@@ -30,7 +30,7 @@ namespace Contaminados.Application.Handlers
             }
             catch (Exception)
             {
-                throw new ConflictException(); //Revizar si es la excepcion correcta
+                throw new ConflictException(); //Revisar si es la excepcion correcta
             }
         }
     }

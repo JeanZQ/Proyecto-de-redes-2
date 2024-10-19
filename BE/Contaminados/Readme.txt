@@ -37,7 +37,7 @@ Diagrama de la DB
         |
         | N
 +------------------+
-|   Participants    |
+|   Players        |
 +------------------+
 | Id (PK)          |   <-- Identificador único del participante
 | GameId (FK)      |   <-- Identificador del juego al que pertenece el participante (gameId)
