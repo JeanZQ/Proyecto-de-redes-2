@@ -1,8 +1,8 @@
-﻿using Contaminados.Aplication.Queries;
+﻿using Contaminados.Application.Queries;
 using Contaminados.Repositories.IRepository;
 using Models.gameModels;
 
-namespace Contaminados.Aplication.Handlers
+namespace Contaminados.Application.Handlers
 {
     public class GetGamesHandler
     {
@@ -15,10 +15,10 @@ namespace Contaminados.Aplication.Handlers
         {
             //Falta validaciones-------------------------------------
 
-             System.Console.WriteLine(query);
+            Console.WriteLine(query);
 
             var games = await _gameRepository.GetAllGamesAsync();
             return games;
-        }   
+        }
     }
 }

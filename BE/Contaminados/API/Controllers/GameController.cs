@@ -23,12 +23,10 @@ namespace Contaminados.Api.Controllers
         private readonly CreateRoundGroupHandler _createRoundGroupHandler;
         private readonly CreateRoundVoteHandler _createRoundVoteHandler;
         private readonly CreatePlayerHandler _createPlayerHandler;
-        private readonly GetPlayersByGameIdHandler _getPlayersByGameIdHandler;
         private readonly GetGamesHandler _getGamesHandler;
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
-            GetPlayersByGameIdHandler getPlayersByGameIdHandler,
             GetGamesHandler getGamesHandler,
             GetAllPlayersByGameIdHandler getAllPlayersByGameIdHandler,
             GetAllRoundByGameIdHandler getAllRoundByGameIdHandler,
@@ -38,11 +36,9 @@ namespace Contaminados.Api.Controllers
             CreateRoundGroupHandler createRoundGroupHandler,
             CreateRoundVoteHandler createRoundVoteHandler,
             CreatePlayerHandler createPlayerHandler)
-            )
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
             _createGameHandler = createGameHandler;
-            _getPlayersByGameIdHandler = getPlayersByGameIdHandler;
             _getGamesHandler = getGamesHandler;
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
             _createGameHandler = createGameHandler;
@@ -317,8 +313,8 @@ namespace Contaminados.Api.Controllers
                     Status = g.GameStatus.ToString(),
                     Password = g.Password?.Length != 0,
                     CurrentRound = g.CurrentRoundId ?? Guid.Empty,
-                    Players = _getPlayersByGameIdHandler.HandleAsync(new GetPlayersByGameIdQuery(g.Id)).Result.Select(p => p.PlayerName.ToString()).ToArray(),
-                    Enemies = _getPlayersByGameIdHandler.HandleAsync(new GetPlayersByGameIdQuery(g.Id)).Result.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
+                    Players = _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(g.Id)).Result.Select(p => p.PlayerName.ToString()).ToArray(),
+                    Enemies = _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(g.Id)).Result.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
                 }).ToArray()
             };
         }

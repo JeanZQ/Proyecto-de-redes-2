@@ -31,7 +31,6 @@ builder.Services.AddScoped<GetGameByIdByPasswordByPlayerHandler>();
 // Players
 builder.Services.AddScoped<CreatePlayerHandler>();
 builder.Services.AddScoped<GetPlayerByIdHandler>();
-builder.Services.AddScoped<GetPlayersByGameIdHandler>();
 builder.Services.AddScoped<GetGamesHandler>();
 builder.Services.AddScoped<GetAllPlayersByGameIdHandler>();
 // Round

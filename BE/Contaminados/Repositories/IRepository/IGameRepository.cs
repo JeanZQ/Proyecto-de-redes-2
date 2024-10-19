@@ -7,7 +7,6 @@ namespace Contaminados.Repositories.IRepository
         Task CreateGameAsync(Game game);
         Task UpdateGameAsync(Game game);
         Task DeleteGameAsync(Guid id);
-        Task<T> GetGameByIdAsync(Guid id);
         Task<Game> GetGameByIdAsync(Guid id);
         Task<IEnumerable<Game>> GetAllGamesAsync();
         

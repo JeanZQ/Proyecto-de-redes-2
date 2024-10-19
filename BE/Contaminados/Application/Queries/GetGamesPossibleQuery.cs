@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Contaminados.Aplication.Queries
+namespace Contaminados.Application.Queries
 {
 
     public class GetGamesPossibleQuery
