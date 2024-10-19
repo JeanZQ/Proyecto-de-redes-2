@@ -71,6 +71,7 @@ namespace Contaminados.Api.Controllers
             try
             {
                 var game = await _createGameHandler.HandleAsync(command);
+                await _createPlayerHandler.HandleAsync(new CreatePlayerCommand(command.Owner, game.Id));
                 var players = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(game.Id));
 
                 var result = CreateResult(game, players);
