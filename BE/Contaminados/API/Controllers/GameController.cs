@@ -58,8 +58,7 @@ namespace Contaminados.Api.Controllers
         {
             try
             {
-                var query = new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player);
-                var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(query);
+                var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
                 var players = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
 
                 var result = CreateResult(game, players);
@@ -67,7 +66,7 @@ namespace Contaminados.Api.Controllers
             }
             catch (CustomException ex)
             {
-                return StatusCode(ex.Status, new { message = ex.Message, status = ex.Status });
+                return StatusCode(ex.Status, new { msg = ex.Message, status = ex.Status });
             }
         }
 
@@ -183,7 +182,7 @@ namespace Contaminados.Api.Controllers
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
 
                 //Guardar el grupo
-                await Task.WhenAll(group.Group.Select(async p =>
+                await Task.WhenAll(group.Group.Select(async p => //implementar rollback en caso de erz
                 {
                     await _createRoundGroupHandler.HandleAsync(new CreateRoundGroupCommand(roundId, player));
                 }));
@@ -327,7 +326,7 @@ namespace Contaminados.Api.Controllers
             return new StatusCodesOk
             {
                 Status = 200,
-                Msg = "Game Found",
+                Msg = "Game Found",//modificar mensaje
                 Data = new Data
                 {
                     Id = game.Id.ToString(),
