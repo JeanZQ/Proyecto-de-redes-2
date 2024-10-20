@@ -13,24 +13,25 @@ namespace Contaminados.Application.Handlers
             _gameRepository = gameRepository ?? throw new ArgumentNullException(nameof(gameRepository));
         }
 
-        public async Task<Game> HandleAsync(UpdateGameCommand command)
+        public async Task HandleAsync(UpdateGameCommand command)
         {
 
             try
             {
 
-                if (command.id == Guid.Empty)
+                if (command.Id == Guid.Empty)
                 {
                     throw new ClientException();
                 }
 
 
                 // busca en la base de datos el juego
-                var game = await _gameRepository.GetGameByIdAsync(command.id);
+                var game = await _gameRepository.GetGameByIdAsync(command.Id);
 
-                game.gameStatus = command.gameStatus;
-                game.currentRoundId = command.currentRoundId; // cambia el roundId
+                game.GameStatus = command.GameStatus;
+                game.CurrentRoundId = command.CurrentRoundId; // cambia el roundId
                 await _gameRepository.UpdateGameAsync(game);
+;
 
             }
             catch (Exception)
