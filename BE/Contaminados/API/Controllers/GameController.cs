@@ -36,9 +36,8 @@ namespace Contaminados.Api.Controllers
             GetRoundByIdHandler getRoundByIdHandler,
             CreateRoundGroupHandler createRoundGroupHandler,
             CreateRoundVoteHandler createRoundVoteHandler,
-            CreatePlayerHandler createPlayerHandler)
+            CreatePlayerHandler createPlayerHandler,
             UpdateGameHandler updateGameHandler)
-
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
             _createGameHandler = createGameHandler;
