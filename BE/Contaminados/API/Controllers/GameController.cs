@@ -24,6 +24,7 @@ namespace Contaminados.Api.Controllers
         private readonly CreateRoundVoteHandler _createRoundVoteHandler;
         private readonly CreatePlayerHandler _createPlayerHandler;
         private readonly GetGamesHandler _getGamesHandler;
+        private readonly UpdateGameHandler _updateGameHandler;
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
@@ -36,6 +37,8 @@ namespace Contaminados.Api.Controllers
             CreateRoundGroupHandler createRoundGroupHandler,
             CreateRoundVoteHandler createRoundVoteHandler,
             CreatePlayerHandler createPlayerHandler)
+            UpdateGameHandler updateGameHandler)
+
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
             _createGameHandler = createGameHandler;
@@ -50,6 +53,7 @@ namespace Contaminados.Api.Controllers
             _createRoundGroupHandler = createRoundGroupHandler;
             _createRoundVoteHandler = createRoundVoteHandler;
             _createPlayerHandler = createPlayerHandler;
+            _updateGameHandler = updateGameHandler;
 
         }
 
@@ -83,7 +87,7 @@ namespace Contaminados.Api.Controllers
             }
             catch (CustomException ex)
             {
-                return StatusCode(ex.Status, new { message = ex.Message, status = ex.Status });
+                return StatusCode(ex.Status, new { msg = ex.Message, status = ex.Status });
             }
         }
 
@@ -129,11 +133,40 @@ namespace Contaminados.Api.Controllers
             {
                 return StatusCode(ex.Status, new
                 {
-                    message = ex.Message,
+                    msg = ex.Message,
                     status = ex.Status
                 });
             }
         }
+
+
+        //StartGame
+        [HttpHead("{gameId}/start")]
+        public async Task<IActionResult> StartGame(Guid gameId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player)
+        {
+
+            try
+            {
+                //Validar credenciales
+                await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
+
+                return Ok("Game started");
+
+            }catch(CustomException ex)
+            {
+                return StatusCode(ex.Status, new
+                {
+                    msg = ex.Message,
+                    status = ex.Status
+                });
+            }
+
+
+
+        }
+
+
+
 
         [HttpGet("{gameId}/rounds/{roundId}")]
         public async Task<IActionResult> ShowRound(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player)
@@ -168,7 +201,7 @@ namespace Contaminados.Api.Controllers
             {
                 return StatusCode(ex.Status, new
                 {
-                    message = ex.Message,
+                    msg = ex.Message,
                     status = ex.Status
                 });
             }
@@ -211,7 +244,7 @@ namespace Contaminados.Api.Controllers
             {
                 return StatusCode(ex.Status, new
                 {
-                    message = ex.Message,
+                    msg = ex.Message,
                     status = ex.Status
                 });
             }
