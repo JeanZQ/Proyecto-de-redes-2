@@ -1,18 +1,21 @@
+using Contaminados.Models.Common;
+
 namespace Contaminados.Application.Commands
 
 {
 
     public class UpdateGameCommand
     {
-        public Guid GameId { get; set; }
-        public string Password { get; set; }
-        public string PlayerName { get; set; }
+        public Guid Id { get; set; }
+        public Status GameStatus { get; set; }
+        public Guid CurrentRoundId { get; set; }
 
-        public UpdateGameCommand(Guid gameId, string password, string playerName)
+        public UpdateGameCommand(Guid id, Status gameStatus, Guid currentRoundId)
         {
-            GameId = gameId;
-            Password = password;
-            PlayerName = playerName;
+            Id = id;
+            GameStatus = gameStatus;
+            CurrentRoundId = currentRoundId;
         }
+
     }
 }

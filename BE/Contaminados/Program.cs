@@ -28,6 +28,7 @@ builder.Services.AddScoped(typeof(IRoundVoteRepository<RoundVote>), typeof(Round
 // Game
 builder.Services.AddScoped<CreateGameHandler>();
 builder.Services.AddScoped<GetGameByIdByPasswordByPlayerHandler>();
+builder.Services.AddScoped<UpdateGameHandler>();
 // Players
 builder.Services.AddScoped<CreatePlayerHandler>();
 builder.Services.AddScoped<GetPlayerByIdHandler>();

@@ -16,23 +16,28 @@ namespace Contaminados.Application.Handlers
         public async Task<Game> HandleAsync(UpdateGameCommand command)
         {
 
-            if (command.GameId == Guid.Empty)
+            try
             {
-                throw new ClientException();
-            }
+
+                if (command.id == Guid.Empty)
+                {
+                    throw new ClientException();
+                }
 
 
-            // busca en la base de datos el juego
-            var game = await _gameRepository.GetGameByIdAsync(command.gameId);
-            if (game != null)
-            {
-                game.Status = command.Status;
+                // busca en la base de datos el juego
+                var game = await _gameRepository.GetGameByIdAsync(command.id);
+
+                game.gameStatus = command.gameStatus;
+                game.currentRoundId = command.currentRoundId; // cambia el roundId
                 await _gameRepository.UpdateGameAsync(game);
+
             }
-            else
+            catch (Exception)
             {
-                return null;
+                throw new ConflictException();
             }
+          
 
 
         }
