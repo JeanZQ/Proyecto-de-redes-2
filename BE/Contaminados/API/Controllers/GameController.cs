@@ -148,7 +148,6 @@ namespace Contaminados.Api.Controllers
             {
                 //Validar credenciales
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
-
                 return Ok("Game started");
 
             }catch(CustomException ex)
