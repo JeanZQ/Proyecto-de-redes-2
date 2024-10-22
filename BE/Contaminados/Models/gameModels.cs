@@ -12,6 +12,10 @@ namespace Models.gameModels
         public required string Name { get; set; }
         public required Status GameStatus { get; set; }
 
+        public required DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public required DateTime UpdatedAt { get; set; } = DateTime.Now;
+
         [StringLength(20, MinimumLength = 3)]
         public string? Password { get; set; }
 

@@ -95,7 +95,7 @@ namespace Contaminados.Api.Controllers
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
                 var players = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
 
-                var result = CreateResult(game, players);
+                var result = CreateResult(game, players, "Game Found");
                 return Ok(result);
             }
             catch (CustomException ex)
@@ -118,7 +118,7 @@ namespace Contaminados.Api.Controllers
                 var game = await _createGameHandler.HandleAsync(command);
                 await _createPlayerHandler.HandleAsync(new CreatePlayerCommand(command.Owner, game.Id));
                 var players = new List<Players> { new Players { PlayerName = command.Owner, GameId = game.Id } };
-                var result = CreateResult(game, players);
+                var result = CreateResult(game, players, "Game Created");
                 return Ok(result);
             }
             catch (CustomException ex)
@@ -380,7 +380,7 @@ namespace Contaminados.Api.Controllers
                 //Variables para la respuesta
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
                 var playerlist = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
-                return Ok(CreateResult(game, playerlist));
+                return Ok(CreateResult(game, playerlist,"Joined Game"));
             }
             catch (CustomException ex)
             {
@@ -446,12 +446,12 @@ namespace Contaminados.Api.Controllers
 
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler
-        private StatusCodesOk CreateResult(Game game, IEnumerable<Players> players)
+        private StatusCodesOk CreateResult(Game game, IEnumerable<Players> players, string msg)
         {
             return new StatusCodesOk
             {
                 Status = 200,
-                Msg = "Game Found",//modificar mensaje
+                Msg = msg,
                 Data = new Data
                 {
                     Id = game.Id.ToString(),
