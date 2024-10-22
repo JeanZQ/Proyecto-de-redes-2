@@ -36,7 +36,7 @@ namespace Contaminados.Api.Controllers
             GetRoundByIdHandler getRoundByIdHandler,
             CreateRoundGroupHandler createRoundGroupHandler,
             CreateRoundVoteHandler createRoundVoteHandler,
-            CreatePlayerHandler createPlayerHandler)
+            CreatePlayerHandler createPlayerHandler,
             UpdateGameHandler updateGameHandler)
 
         {
@@ -57,6 +57,36 @@ namespace Contaminados.Api.Controllers
 
         }
 
+        /// <summary>
+        /// Game Search
+        /// </summary>
+        /// <returns></returns>
+        //Obtener los juegos que hayan
+        [HttpGet]
+        public async Task<IActionResult> GetGames()
+        {
+            try
+            {
+                var query = new GetGamesPossibleQuery("", Status.Lobby, 0, 0);
+                List<Game> games = (List<Game>)await _getGamesHandler.HandleAsync(query);
+
+                var result = GamesList(games);
+
+                return Ok(result);
+            }
+            catch (CustomException ex)
+            {
+                return BadRequest(new { message = ex.Message, status = ex.Status });
+            }
+        }
+
+        /// <summary>
+        /// Get Game
+        /// </summary>
+        /// <param name="gameId"></param>
+        /// <param name="password"></param>
+        /// <param name="player"></param>
+        /// <returns></returns>
         [HttpGet("{gameId}")]
         public async Task<IActionResult> GetGame(Guid gameId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player)
         {
@@ -74,6 +104,12 @@ namespace Contaminados.Api.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Game Create
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateGame([FromBody] CreateGameCommand command)
         {
@@ -91,6 +127,13 @@ namespace Contaminados.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Get Rounds
+        /// </summary>
+        /// <param name="gameId"></param>
+        /// <param name="password"></param>
+        /// <param name="player"></param>
+        /// <returns></returns>
         [HttpGet("{gameId}/rounds")]
         public async Task<IActionResult> GetRounds(Guid gameId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player)
         {
@@ -139,7 +182,13 @@ namespace Contaminados.Api.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Start Game
+        /// </summary>
+        /// <param name="gameId"></param>
+        /// <param name="password"></param>
+        /// <param name="player"></param>
+        /// <returns></returns>
         //StartGame
         [HttpHead("{gameId}/start")]
         public async Task<IActionResult> StartGame(Guid gameId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player)
@@ -167,7 +216,14 @@ namespace Contaminados.Api.Controllers
 
 
 
-
+        /// <summary>
+        /// Show Round
+        /// </summary>
+        /// <param name="gameId"></param>
+        /// <param name="roundId"></param>
+        /// <param name="password"></param>
+        /// <param name="player"></param>
+        /// <returns></returns>
         [HttpGet("{gameId}/rounds/{roundId}")]
         public async Task<IActionResult> ShowRound(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player)
         {
@@ -206,6 +262,16 @@ namespace Contaminados.Api.Controllers
                 });
             }
         }
+
+        /// <summary>
+        /// Propose a Group
+        /// </summary>
+        /// <param name="gameId"></param>
+        /// <param name="roundId"></param>
+        /// <param name="password"></param>
+        /// <param name="player"></param>
+        /// <param name="group"></param>
+        /// <returns></returns>
         [HttpPatch("{gameId}/rounds/{roundId}")]
         public async Task<IActionResult> ProposeGroup(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] GroupCommon group)
         {
@@ -250,6 +316,15 @@ namespace Contaminados.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Vote for group
+        /// </summary>
+        /// <param name="gameId"></param>
+        /// <param name="roundId"></param>
+        /// <param name="password"></param>
+        /// <param name="player"></param>
+        /// <param name="vote"></param>
+        /// <returns></returns>
         [HttpPost("{gameId}/rounds/{roundId}")]
         public async Task<IActionResult> VoteGroup(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] GroupVoteCommon vote)
         {
@@ -283,6 +358,14 @@ namespace Contaminados.Api.Controllers
             );
         }
 
+        /// <summary>
+        /// Join Game
+        /// </summary>
+        /// <param name="gameId"></param>
+        /// <param name="password"></param>
+        /// <param name="player"></param>
+        /// <param name="players"></param>
+        /// <returns></returns>
         [HttpPut("{gameId}")]
         public async Task<IActionResult> JoinGame(Guid gameId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] PlayersCommon players)
         {
@@ -309,6 +392,15 @@ namespace Contaminados.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Action Vote
+        /// </summary>
+        /// <param name="gameId"></param>
+        /// <param name="roundId"></param>
+        /// <param name="password"></param>
+        /// <param name="player"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
         [HttpPut("{gameId}/rounds/{roundId}")]
         public async Task<IActionResult> ActionVote(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] ActionVoteCommon action)
         {
@@ -392,25 +484,7 @@ namespace Contaminados.Api.Controllers
             };
         }
 
-
-        //Obtener los juegos que hayan
-        [HttpGet]
-        public async Task<IActionResult> GetGames()
-        {
-            try
-            {
-                var query = new GetGamesPossibleQuery("", Status.Lobby, 0, 0);
-                List<Game> games = (List<Game>)await _getGamesHandler.HandleAsync(query);
-                
-                var result = GamesList(games);
-
-                return Ok(result);
-            }
-            catch (CustomException ex)
-            {
-                return BadRequest(new { message = ex.Message, status = ex.Status });
-            }
-        }
+        
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler
         /*Futuras actualizaciones, por favor companeros no me reganen :c
