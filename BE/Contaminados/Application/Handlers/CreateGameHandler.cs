@@ -39,12 +39,6 @@ namespace Contaminados.Application.Handlers
                 CurrentRoundId = Guid.Empty
             };
 
-            var players = new Players
-            {
-                PlayerName = command.Owner,
-                GameId = game.Id
-            };
-
             try
             {
                 await _gameRepository.CreateGameAsync(game);
