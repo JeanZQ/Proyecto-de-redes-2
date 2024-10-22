@@ -24,6 +24,7 @@ namespace Contaminados.Api.Controllers
         private readonly CreateRoundVoteHandler _createRoundVoteHandler;
         private readonly CreatePlayerHandler _createPlayerHandler;
         private readonly GetGamesHandler _getGamesHandler;
+        private readonly UpdateGameHandler _updateGameHandler;
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
@@ -36,6 +37,8 @@ namespace Contaminados.Api.Controllers
             CreateRoundGroupHandler createRoundGroupHandler,
             CreateRoundVoteHandler createRoundVoteHandler,
             CreatePlayerHandler createPlayerHandler)
+            UpdateGameHandler updateGameHandler)
+
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
             _createGameHandler = createGameHandler;
@@ -50,6 +53,7 @@ namespace Contaminados.Api.Controllers
             _createRoundGroupHandler = createRoundGroupHandler;
             _createRoundVoteHandler = createRoundVoteHandler;
             _createPlayerHandler = createPlayerHandler;
+            _updateGameHandler = updateGameHandler;
 
         }
 
@@ -58,8 +62,7 @@ namespace Contaminados.Api.Controllers
         {
             try
             {
-                var query = new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player);
-                var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(query);
+                var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
                 var players = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
 
                 var result = CreateResult(game, players);
@@ -67,7 +70,7 @@ namespace Contaminados.Api.Controllers
             }
             catch (CustomException ex)
             {
-                return StatusCode(ex.Status, new { message = ex.Message, status = ex.Status });
+                return StatusCode(ex.Status, new { msg = ex.Message, status = ex.Status });
             }
         }
 
@@ -78,14 +81,13 @@ namespace Contaminados.Api.Controllers
             {
                 var game = await _createGameHandler.HandleAsync(command);
                 await _createPlayerHandler.HandleAsync(new CreatePlayerCommand(command.Owner, game.Id));
-                var players = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(game.Id));
-
+                var players = new List<Players> { new Players { PlayerName = command.Owner, GameId = game.Id } };
                 var result = CreateResult(game, players);
                 return Ok(result);
             }
             catch (CustomException ex)
             {
-                return StatusCode(ex.Status, new { message = ex.Message, status = ex.Status });
+                return StatusCode(ex.Status, new { msg = ex.Message, status = ex.Status });
             }
         }
 
@@ -131,11 +133,40 @@ namespace Contaminados.Api.Controllers
             {
                 return StatusCode(ex.Status, new
                 {
-                    message = ex.Message,
+                    msg = ex.Message,
                     status = ex.Status
                 });
             }
         }
+
+
+        //StartGame
+        [HttpHead("{gameId}/start")]
+        public async Task<IActionResult> StartGame(Guid gameId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player)
+        {
+
+            try
+            {
+                //Validar credenciales
+                await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
+
+                return Ok("Game started");
+
+            }catch(CustomException ex)
+            {
+                return StatusCode(ex.Status, new
+                {
+                    msg = ex.Message,
+                    status = ex.Status
+                });
+            }
+
+
+
+        }
+
+
+
 
         [HttpGet("{gameId}/rounds/{roundId}")]
         public async Task<IActionResult> ShowRound(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player)
@@ -170,7 +201,7 @@ namespace Contaminados.Api.Controllers
             {
                 return StatusCode(ex.Status, new
                 {
-                    message = ex.Message,
+                    msg = ex.Message,
                     status = ex.Status
                 });
             }
@@ -184,7 +215,7 @@ namespace Contaminados.Api.Controllers
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
 
                 //Guardar el grupo
-                await Task.WhenAll(group.Group.Select(async p =>
+                await Task.WhenAll(group.Group.Select(async p => //implementar rollback en caso de erz
                 {
                     await _createRoundGroupHandler.HandleAsync(new CreateRoundGroupCommand(roundId, player));
                 }));
@@ -213,7 +244,7 @@ namespace Contaminados.Api.Controllers
             {
                 return StatusCode(ex.Status, new
                 {
-                    message = ex.Message,
+                    msg = ex.Message,
                     status = ex.Status
                 });
             }
@@ -278,6 +309,48 @@ namespace Contaminados.Api.Controllers
             }
         }
 
+        [HttpPut("{gameId}/rounds/{roundId}")]
+        public async Task<IActionResult> ActionVote(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] ActionVoteCommon action)
+        {
+            try
+            {
+                //Validar credenciales
+                await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
+
+                //Guardar el voto
+                await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(roundId, action.Action));
+
+                //Variables para la respuesta
+                var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
+                var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
+                var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
+
+                return Ok(new StatusCodesOkRounds
+                {
+                    Status = 200,
+                    Msg = "Action registered",
+                    Data = new DataRounds
+                    {
+                        Id = round.Id,
+                        Leader = round.Leader,
+                        Status = round.Status.ToString(),
+                        Result = round.Result.ToString(),
+                        Phase = round.Phase.ToString(),
+                        Group = group.Select(g => g.Player).ToArray(),
+                        Votes = votes.Select(v => v.Vote).ToArray()
+                    }
+                });
+            }
+            catch (CustomException ex)
+            {
+                return StatusCode(ex.Status, new
+                {
+                    message = ex.Message,
+                    status = ex.Status
+                });
+            }
+        }
+        
 
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler
@@ -286,7 +359,7 @@ namespace Contaminados.Api.Controllers
             return new StatusCodesOk
             {
                 Status = 200,
-                Msg = "Game Found",
+                Msg = "Game Found",//modificar mensaje
                 Data = new Data
                 {
                     Id = game.Id.ToString(),
