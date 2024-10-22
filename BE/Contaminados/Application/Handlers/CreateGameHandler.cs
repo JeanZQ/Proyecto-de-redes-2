@@ -35,7 +35,8 @@ namespace Contaminados.Application.Handlers
                 Name = command.Name,
                 Password = command.Password,
                 GameStatus = Status.Lobby,
-                Owner = command.Owner
+                Owner = command.Owner,
+                CurrentRoundId = Guid.Empty
             };
 
             var players = new Players
