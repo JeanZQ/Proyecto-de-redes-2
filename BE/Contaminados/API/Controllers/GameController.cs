@@ -198,16 +198,17 @@ namespace Contaminados.Api.Controllers
             {
                 //Validar credenciales
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
-                await _updateGameHandler.HandleAsync(new UpdateGameCommand(game.Id, Status.Rounds, gameId));
+                await _updateGameHandler.HandleAsync(new UpdateGameCommand(game.Id, Status.Rounds, gameId, player, password));
                 return Ok("Game started");
 
             }catch(CustomException ex)
             {
-                return StatusCode(ex.Status, new
+                 return StatusCode(ex.Status, new
                 {
-                    msg = ex.Message,
+                    message = ex.Message,
                     status = ex.Status
                 });
+              
             }
 
 

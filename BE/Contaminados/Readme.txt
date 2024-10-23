@@ -9,7 +9,7 @@ Pasos QORS
 8. Program.cs
 
 Para entrar al swagger
-https://localhost:<port>/swagger/index.html
+https://localhost:7047/swagger/index.html
 
 Para ejecutar la aplicacion con https
 dotnet run --launch-profile https

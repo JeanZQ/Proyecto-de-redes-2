@@ -38,4 +38,38 @@ namespace Contaminados.Models.Common
     {
         public PreconditionRequiredException() : base(428, "This action is not allowed at this time") { }
     }
+
+    // Execptions for StartGame
+
+    // no autorizado
+    public class UnauthorizedStartExeption : CustomException
+    {
+        public UnauthorizedStartExeption() : base(401, "Unauthorized") { }
+    }
+
+    // prohibido
+    public class ForbiddenStartExeption : CustomException
+    {
+        public ForbiddenStartExeption() : base(403, "Forbidden") { }
+    }
+
+   public class GameNotFoundStartExeption : CustomException
+    {
+        public GameNotFoundStartExeption() : base(404, "Game not found") { }
+    }
+
+       public class GameAlreadyStartedStartExeption : CustomException
+    {
+        public GameAlreadyStartedStartExeption() : base(409, "Game already started") { }
+    }
+
+
+    // Need 5 players to start
+    public class NeedPlayerStartExeption : CustomException
+    {
+        public NeedPlayerStartExeption() : base(428, "Need 5 players to start") { }
+    }
+
+
+
 }

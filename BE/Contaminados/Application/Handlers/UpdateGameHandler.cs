@@ -2,15 +2,18 @@ using Contaminados.Application.Commands;
 using Contaminados.Repositories.IRepository;
 using Contaminados.Models.Common;
 using Models.gameModels;
+using Models.playersModels;
 
 namespace Contaminados.Application.Handlers
 {
     public class UpdateGameHandler
     {
         private readonly IGameRepository<Game> _gameRepository;
-        public UpdateGameHandler(IGameRepository<Game> gameRepository)
+        private readonly IPlayerRepository<Players> _playerRepository;
+        public UpdateGameHandler(IGameRepository<Game> gameRepository, IPlayerRepository<Players> playerRepository)
         {
             _gameRepository = gameRepository ?? throw new ArgumentNullException(nameof(gameRepository));
+            _playerRepository = playerRepository ?? throw new ArgumentNullException(nameof(playerRepository));
         }
 
         public async Task HandleAsync(UpdateGameCommand command)
@@ -19,26 +22,48 @@ namespace Contaminados.Application.Handlers
             try
             {
 
-                if (command.Id == Guid.Empty)
+                // busca en la base de datos el juego
+                var game = await _gameRepository.GetGameByIdAsync(command.Id);
+
+
+                // Unauthorized
+                if (!(game.Password != null && game.Password.Length == 0 && command.Password == null))
                 {
-                    throw new ClientException();
+                    if (game.Password != command.Password)
+                    {
+                        throw new UnauthorizedStartExeption();
+                    }
+                }
+
+                // Forbidden
+                if (game.Owner != command.Player)
+                {
+                    throw new ForbiddenException();
+                }
+
+                // Si el juego ya empezo no se puede volver a empezar
+                if (game.GameStatus != Status.Lobby)
+                {
+                    throw new GameAlreadyStartedStartExeption();
+                }
+
+                var players =  await _playerRepository.GetAllPlayersByGameIdAsync(game.Id);
+                if (players.Count() < 5)
+                {
+                    throw new NeedPlayerStartExeption();
                 }
 
 
-                // busca en la base de datos el juego
-                var game = await _gameRepository.GetGameByIdAsync(command.Id);
 
                 game.GameStatus = command.GameStatus;
                 game.CurrentRoundId = command.CurrentRoundId; // cambia el roundId
                 await _gameRepository.UpdateGameAsync(game);
-;
 
             }
-            catch (Exception)
+            catch (CustomException)
             {
-                throw new ConflictException();
+                throw new GameNotFoundStartExeption();
             }
-          
 
 
         }
