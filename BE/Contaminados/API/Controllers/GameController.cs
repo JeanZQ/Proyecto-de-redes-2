@@ -201,7 +201,8 @@ namespace Contaminados.Api.Controllers
                 await _updateGameHandler.HandleAsync(new UpdateGameCommand(game.Id, Status.Rounds, gameId));
                 return Ok("Game started");
 
-            }catch(CustomException ex)
+            }
+            catch (CustomException ex)
             {
                 return StatusCode(ex.Status, new
                 {
@@ -380,7 +381,7 @@ namespace Contaminados.Api.Controllers
                 //Variables para la respuesta
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
                 var playerlist = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
-                return Ok(CreateResult(game, playerlist,"Joined Game"));
+                return Ok(CreateResult(game, playerlist, "Joined Game"));
             }
             catch (CustomException ex)
             {
@@ -442,7 +443,7 @@ namespace Contaminados.Api.Controllers
                 });
             }
         }
-        
+
 
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler
@@ -484,7 +485,7 @@ namespace Contaminados.Api.Controllers
             };
         }
 
-        
+
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler
         /*Futuras actualizaciones, por favor companeros no me reganen :c
