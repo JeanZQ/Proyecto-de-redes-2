@@ -17,7 +17,7 @@ namespace Contaminados.Application.Handlers
             if (request.Id == Guid.Empty
             || request.Player.Length is < 3 or > 20)
             {
-                throw new UnauthorizedException();
+                throw new NotFoundException();
             }
 
             var game = await _gameRepository.GetGameByIdAsync(request.Id) ?? throw new NotFoundException();

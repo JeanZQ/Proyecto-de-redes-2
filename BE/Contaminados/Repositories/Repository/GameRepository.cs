@@ -21,7 +21,7 @@ namespace Contaminados.Repositories.Repository
 
         public async Task DeleteGameAsync(Guid id)
         {
-            var game = await _context.Set<Game>().FindAsync(id) ?? throw new KeyNotFoundException($"Game with id {id} not found.");
+            var game = await _context.Set<Game>().FindAsync(id);
             _context.Set<Game>().Remove(game);
             await _context.SaveChangesAsync();
         }
@@ -33,7 +33,7 @@ namespace Contaminados.Repositories.Repository
 
         public async Task<Game> GetGameByIdAsync(Guid id)
         {
-            var game = await _context.Set<Game>().FindAsync(id) ?? throw new KeyNotFoundException($"Game with id {id} not found.");
+            var game = await _context.Set<Game>().FindAsync(id);
             return game;
         }
 

@@ -1,12 +1,15 @@
+using Models.gameModels;
+using Models.roundModels;
+
 namespace Contaminados.Application.Commands
 {
     public class CreateRoundGroupCommand
     {
-        public Guid RoundId { get; set; }
+        public Round Round { get; set; }
         public string Player { get; set; }
-        public CreateRoundGroupCommand(Guid roundId, string player)
+        public CreateRoundGroupCommand(Round round, string player)
         {
-            RoundId = roundId;
+            Round = round;
             Player = player;
         }
     }
