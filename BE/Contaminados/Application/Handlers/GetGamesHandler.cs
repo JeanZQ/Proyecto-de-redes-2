@@ -15,10 +15,47 @@ namespace Contaminados.Application.Handlers
         {
             //Falta validaciones-------------------------------------
 
-            Console.WriteLine(query);
+            if (query.Name == null && query.Status == null && query.Limit == null && query.Page == null)
+            {
+                var games = await _gameRepository.GetAllGamesAsync();
+                return games;
+            }
+            else {
+                var games = await _gameRepository.GetAllGamesAsync();
 
-            var games = await _gameRepository.GetAllGamesAsync();
-            return games;
+                List<Game> filteredGames = new List<Game>();
+
+                foreach (var game in games)
+                {
+                    // Funciona con el contains en not, no se porque
+                    if (query.Name != null && !game.Name.Contains(query.Name))
+                    {
+                        continue;
+                    }
+
+                    if (query.Status != null && game.GameStatus != query.Status)
+                    {
+                        continue;
+                    }
+
+                    if (query.Page != null && query.Limit != null)
+                    {
+                        if (filteredGames.Count >= query.Limit)
+                        {
+                            break;
+                        }
+                    }
+
+                    filteredGames.Add(game);
+                }
+
+
+
+
+                return filteredGames;
+            }
+
+            
         }
     }
 }
