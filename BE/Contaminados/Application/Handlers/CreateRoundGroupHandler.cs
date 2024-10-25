@@ -18,6 +18,7 @@ namespace Contaminados.Application.Handlers
             {
                 throw new NotFoundException();
             }
+            
             try
             {
                 //Verifica si el estado del round es WaitingOnGroup

@@ -1,4 +1,5 @@
 using Contaminados.Application.Queries;
+using Contaminados.Models.Common;
 using Contaminados.Repositories.IRepository;
 using Models.roundModels;
 
@@ -15,6 +16,12 @@ namespace Contaminados.Application.Handlers
         {
             //Falta validaciones-------------------------------------
             var rounds = await _roundRepository.GetAllRoundByGameIdAsync(query.GameId);
+
+            if (!rounds.Select(x => x.Id).Contains(query.GameId))
+            {
+                throw new NotFoundException();
+            }
+
             return rounds;
         }
     }
