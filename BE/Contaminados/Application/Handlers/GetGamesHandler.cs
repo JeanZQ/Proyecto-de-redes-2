@@ -1,6 +1,8 @@
 ﻿using Contaminados.Application.Queries;
+using Contaminados.Models.Common;
 using Contaminados.Repositories.IRepository;
 using Models.gameModels;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Contaminados.Application.Handlers
 {
@@ -13,49 +15,51 @@ namespace Contaminados.Application.Handlers
         }
         public async Task<IEnumerable<Game>> HandleAsync(GetGamesPossibleQuery query)
         {
-            //Falta validaciones-------------------------------------
 
-            if (query.Name == null && query.Status == null && query.Limit == null && query.Page == null)
+
+            if (query.Name == null  
+            || query.Name.Length is < 3 or > 20
+            || query.Limit < 0 || query.Page < 0 || query.Page > 50)
             {
-                var games = await _gameRepository.GetAllGamesAsync();
-                return games;
+                throw new ClientException();
             }
-            else {
-                var games = await _gameRepository.GetAllGamesAsync();
 
-                List<Game> filteredGames = new List<Game>();
+            int page = 1;
+            if (query.Page < 2 || query.Page == null)
+            {
+                page = 1;
+            }
+            else { 
+                page = query.Page.Value;
+            }
+            int limit = query.Limit ?? 250; 
 
-                foreach (var game in games)
+            var games = await _gameRepository.GetGamesByDate();
+            List<Game> filteredGames = new List<Game>();
+
+ 
+            foreach (var game in games)
+            {
+                if (query.Name != null && !game.Name.Contains(query.Name))
                 {
-                    // Funciona con el contains en not, no se porque
-                    if (query.Name != null && !game.Name.Contains(query.Name))
-                    {
-                        continue;
-                    }
-
-                    if (query.Status != null && game.GameStatus != query.Status)
-                    {
-                        continue;
-                    }
-
-                    if (query.Page != null && query.Limit != null)
-                    {
-                        if (filteredGames.Count >= query.Limit)
-                        {
-                            break;
-                        }
-                    }
-
-                    filteredGames.Add(game);
+                    continue;
                 }
 
+                if (query.Status != null && game.GameStatus != query.Status)
+                {
+                    continue;
+                }
 
-
-
-                return filteredGames;
+                filteredGames.Add(game);
             }
 
-            
+            int skip = (page - 1) * limit;
+            filteredGames = filteredGames.Skip(skip).Take(limit).ToList();
+
+
+            return filteredGames;
+
+
         }
     }
 }
