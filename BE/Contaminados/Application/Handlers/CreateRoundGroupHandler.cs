@@ -27,6 +27,7 @@ namespace Contaminados.Application.Handlers
                     throw new ConflictException();
                 }
 
+              
                 var roundGroup = new RoundGroup
                 {
                     RoundId = command.Round.Id,

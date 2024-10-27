@@ -339,6 +339,9 @@ namespace Contaminados.Api.Controllers
         [HttpPost("{gameId}/rounds/{roundId}")]
         public async Task<IActionResult> VoteGroup(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] GroupVoteCommon vote)
         {
+
+            try
+            {
             //Validar credenciales
             await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
 
@@ -367,6 +370,15 @@ namespace Contaminados.Api.Controllers
                     }
                 }
             );
+
+            }catch (CustomException e)
+            {
+                return StatusCode(e.Status, new
+                {
+                    message = e.Message,
+                    status = e.Status
+                });
+            }
         }
 
         /// <summary>

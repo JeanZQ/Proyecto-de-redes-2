@@ -1,4 +1,5 @@
 using Contaminados.Application.Queries;
+using Contaminados.Models.Common;
 using Contaminados.Repositories.IRepository;
 using Models.roundModels;
 
@@ -15,6 +16,12 @@ namespace Contaminados.Application.Handlers
         {
             //Falta validaciones-------------------------------------
             var round = await _roundRepository.GetRoundByIdAsync(request.Id);
+            
+            if (round == null)
+            {
+                throw new NotFoundException();
+            }   
+
             return round;
         }
     }

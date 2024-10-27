@@ -17,6 +17,8 @@ namespace Contaminados.Application.Handlers
             //Falta validaciones-------------------------------------
             var rounds = await _roundRepository.GetAllRoundByGameIdAsync(query.GameId);
 
+
+            // si no existe el round, mande una excepcion
             if (!rounds.Select(x => x.Id).Contains(query.GameId))
             {
                 throw new NotFoundException();
