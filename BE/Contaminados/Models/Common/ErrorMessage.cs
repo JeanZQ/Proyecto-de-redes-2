@@ -39,6 +39,9 @@ namespace Contaminados.Models.Common
         public PreconditionRequiredException() : base(428, "This action is not allowed at this time") { }
     }
 
+
+    
+
     // Execptions for StartGame
 
     // no autorizado

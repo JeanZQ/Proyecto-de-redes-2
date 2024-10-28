@@ -14,22 +14,33 @@ namespace Contaminados.Application.Handlers
         }
         public async Task<RoundGroup> HandleAsync(CreateRoundGroupCommand command)
         {
-            if (command.RoundId == Guid.Empty || string.IsNullOrWhiteSpace(command.Player))
+            if (command.Round.Id == Guid.Empty || string.IsNullOrWhiteSpace(command.Player))
             {
-                throw new ClientException(); //Revizar si es la excepcion correcta
+                throw new NotFoundException();
             }
-            var roundGroup = new RoundGroup
-            {
-                RoundId = command.RoundId,
-                Player = command.Player
-            };
+            
             try
             {
+                //Verifica si el estado del round es WaitingOnGroup
+                if(command.Round.Status != RoundsStatus.WaitingOnGroup)
+                {
+                    throw new ConflictException();
+                }
+
+              
+                var roundGroup = new RoundGroup
+                {
+                    RoundId = command.Round.Id,
+                    Player = command.Player
+                };
+
                 await _roundGroupRepository.CreateRoundGroupAsync(roundGroup);
+
                 return roundGroup;
             }
-            catch (Exception){
-                throw new ConflictException(); //Revizar si es la excepcion correcta
+            catch (Exception)
+            {
+                throw new PreconditionRequiredException();//revizar
             }
         }
     }

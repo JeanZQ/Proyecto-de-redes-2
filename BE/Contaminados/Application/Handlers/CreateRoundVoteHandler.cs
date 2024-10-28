@@ -14,17 +14,24 @@ namespace Contaminados.Application.Handlers
         }
         public async Task<RoundVote> HandleAsync(CreateRoundVoteCommand command)
         {
-            if (command.RoundId == Guid.Empty)
+            if (command.Round.Id == Guid.Empty)
             {
-                throw new ClientException(); //Revisar si es la excepcion correcta
+                throw new NotFoundException();
             }
-            var roundVote = new RoundVote
-            {
-                RoundId = command.RoundId,
-                Vote = command.Vote
-            };
             try
             {
+                //Verifica si el estado del round es Voting
+                if (command.Round.Status != RoundsStatus.Voting)
+                {
+                    throw new ConflictException();
+                }
+                
+                var roundVote = new RoundVote
+                {
+                    RoundId = command.Round.Id,
+                    Vote = command.Vote
+                };
+
                 await _roundVoteRepository.CreateRoundVoteAsync(roundVote);
                 return roundVote;
             }

@@ -21,7 +21,6 @@ namespace Contaminados.Application.Handlers
 
             try
             {
-
                 // busca en la base de datos el juego
                 var game = await _gameRepository.GetGameByIdAsync(command.Id);
 
@@ -47,7 +46,8 @@ namespace Contaminados.Application.Handlers
                     throw new GameAlreadyStartedStartExeption();
                 }
 
-                var players =  await _playerRepository.GetAllPlayersByGameIdAsync(game.Id);
+                // Si no hay suficientes jugadores no se puede empezar
+                var players = await _playerRepository.GetAllPlayersByGameIdAsync(game.Id);
                 if (players.Count() < 5)
                 {
                     throw new NeedPlayerStartExeption();

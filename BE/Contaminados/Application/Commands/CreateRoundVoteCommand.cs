@@ -1,12 +1,14 @@
+using Models.roundModels;
+
 namespace Contaminados.Application.Commands
 {
     public class CreateRoundVoteCommand
     {
-        public Guid RoundId { get; set; }
+        public Round Round { get; set; }
         public bool Vote { get; set; }
-        public CreateRoundVoteCommand(Guid roundId, bool vote)
+        public CreateRoundVoteCommand(Round round, bool vote)
         {
-            RoundId = roundId;
+            Round = round;
             Vote = vote;
         }
     }

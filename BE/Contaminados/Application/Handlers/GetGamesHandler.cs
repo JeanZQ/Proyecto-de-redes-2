@@ -15,8 +15,6 @@ namespace Contaminados.Application.Handlers
         }
         public async Task<IEnumerable<Game>> HandleAsync(GetGamesPossibleQuery query)
         {
-
-    
             if (query.Name != null && query.Name.Length is < 3 or > 20)
             {
                 throw new ClientException();
@@ -46,8 +44,6 @@ namespace Contaminados.Application.Handlers
 
 
             return filteredGames;
-
-
         }
     }
 }

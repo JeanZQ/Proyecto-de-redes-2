@@ -25,6 +25,7 @@ namespace Contaminados.Api.Controllers
         private readonly CreatePlayerHandler _createPlayerHandler;
         private readonly GetGamesHandler _getGamesHandler;
         private readonly UpdateGameHandler _updateGameHandler;
+        private readonly CreateRoundHandler _createRoundHandler;
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
@@ -37,7 +38,8 @@ namespace Contaminados.Api.Controllers
             CreateRoundGroupHandler createRoundGroupHandler,
             CreateRoundVoteHandler createRoundVoteHandler,
             CreatePlayerHandler createPlayerHandler,
-            UpdateGameHandler updateGameHandler)
+            UpdateGameHandler updateGameHandler,
+            CreateRoundHandler createRoundHandler)
 
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
@@ -54,7 +56,7 @@ namespace Contaminados.Api.Controllers
             _createRoundVoteHandler = createRoundVoteHandler;
             _createPlayerHandler = createPlayerHandler;
             _updateGameHandler = updateGameHandler;
-
+            _createRoundHandler = createRoundHandler;
         }
 
         /// <summary>
@@ -198,21 +200,29 @@ namespace Contaminados.Api.Controllers
             {
                 //Validar credenciales
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
-                await _updateGameHandler.HandleAsync(new UpdateGameCommand(game.Id, Status.Rounds, gameId, player, password));
-                return Ok("Game started");
 
-            }catch(CustomException ex)
+                //Crear la ronda
+                var leader = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
+                var random = new Random();
+                int index = random.Next(leader.Count());
+                var leaderName = leader.ElementAt(index).PlayerName;
+
+                var round = await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, RoundsPhase.Vote1, gameId));//revizar
+
+                //Iniciar el juego
+                await _updateGameHandler.HandleAsync(new UpdateGameCommand(game.Id, Status.Rounds, round.Id, player, password ?? string.Empty));
+
+                return Ok(new { Code = 200, Description = "Game started" });
+            }
+            catch (CustomException ex)
             {
-                 return StatusCode(ex.Status, new
+                return StatusCode(ex.Status, new
                 {
                     message = ex.Message,
                     status = ex.Status
                 });
-              
+
             }
-
-
-
         }
 
 
@@ -273,7 +283,7 @@ namespace Contaminados.Api.Controllers
         /// <param name="player"></param>
         /// <param name="group"></param>
         /// <returns></returns>
-        [HttpPatch("{gameId}/rounds/{roundId}")]
+        [HttpPatch("{gameId}/rounds/{roundId}")] //debe de seguir las reglas del juego, cada phase tiene una cantidad de jugadores
         public async Task<IActionResult> ProposeGroup(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] GroupCommon group)
         {
             try
@@ -281,15 +291,15 @@ namespace Contaminados.Api.Controllers
                 //Validar credenciales
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
 
-                //Guardar el grupo
-                await Task.WhenAll(group.Group.Select(async p => //implementar rollback en caso de erz
-                {
-                    await _createRoundGroupHandler.HandleAsync(new CreateRoundGroupCommand(roundId, player));
-                }));
-
                 //Variables para la respuesta
-                var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
                 var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
+                var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
+
+                //Guardar el grupo
+                await Task.WhenAll(group.Group.Select(async p => //implementar rollback en caso de error
+                {
+                    await _createRoundGroupHandler.HandleAsync(new CreateRoundGroupCommand(round, player));
+                }));
 
                 return Ok(new StatusCodesOkRounds
                 {
@@ -329,34 +339,47 @@ namespace Contaminados.Api.Controllers
         [HttpPost("{gameId}/rounds/{roundId}")]
         public async Task<IActionResult> VoteGroup(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] GroupVoteCommon vote)
         {
-            //Validar credenciales
-            await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
 
-            //Guardar el voto
-            await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(roundId, vote.Vote));
+            try
+            {
+                //Validar credenciales
+                await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
 
-            //Variables para la respuesta
-            var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
-            var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
-            var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
+                //Variables para la respuesta
+                var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
+                var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
+                var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
 
-            return Ok(
-                new StatusCodesOk
-                {
-                    Status = 200,
-                    Msg = "Vote Created",
-                    Data = new DataRounds
+                //Guardar el voto
+                await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(round, vote.Vote));
+
+                return Ok(
+                    new StatusCodesOk
                     {
-                        Id = round.Id,
-                        Leader = round.Leader,
-                        Status = round.Status.ToString(),
-                        Result = round.Result.ToString(),
-                        Phase = round.Phase.ToString(),
-                        Group = group.Select(g => g.Player).ToArray(),
-                        Votes = votes.Select(v => v.Vote).ToArray()
+                        Status = 200,
+                        Msg = "Vote Created",
+                        Data = new DataRounds
+                        {
+                            Id = round.Id,
+                            Leader = round.Leader,
+                            Status = round.Status.ToString(),
+                            Result = round.Result.ToString(),
+                            Phase = round.Phase.ToString(),
+                            Group = group.Select(g => g.Player).ToArray(),
+                            Votes = votes.Select(v => v.Vote).ToArray()
+                        }
                     }
-                }
-            );
+                );
+
+            }
+            catch (CustomException e)
+            {
+                return StatusCode(e.Status, new
+                {
+                    message = e.Message,
+                    status = e.Status
+                });
+            }
         }
 
         /// <summary>
@@ -381,7 +404,7 @@ namespace Contaminados.Api.Controllers
                 //Variables para la respuesta
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
                 var playerlist = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
-                return Ok(CreateResult(game, playerlist,"Joined Game"));
+                return Ok(CreateResult(game, playerlist, "Joined Game"));
             }
             catch (CustomException ex)
             {
@@ -410,13 +433,13 @@ namespace Contaminados.Api.Controllers
                 //Validar credenciales
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
 
-                //Guardar el voto
-                await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(roundId, action.Action));
-
                 //Variables para la respuesta
                 var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
                 var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
                 var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
+
+                //Guardar el voto
+                await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(round, action.Action));
 
                 return Ok(new StatusCodesOkRounds
                 {
@@ -443,7 +466,7 @@ namespace Contaminados.Api.Controllers
                 });
             }
         }
-        
+
 
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler
@@ -484,8 +507,6 @@ namespace Contaminados.Api.Controllers
                 }).ToArray()
             };
         }
-
-
 
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler

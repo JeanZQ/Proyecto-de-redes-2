@@ -26,7 +26,7 @@ namespace Contaminados.Repositories.Repository
 
         public async Task<Round> GetRoundByIdAsync(Guid id)
         {
-            var round = await _context.Set<Round>().FindAsync(id) ?? throw new KeyNotFoundException($"Round with id {id} not found.");
+            var round = await _context.Set<Round>().FindAsync(id);
             return round;
         }
 
