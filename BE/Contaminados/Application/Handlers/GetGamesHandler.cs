@@ -15,7 +15,7 @@ namespace Contaminados.Application.Handlers
         {
             //Falta validaciones-------------------------------------
 
-            Console.WriteLine(query);
+            //Console.WriteLine(query);
 
             var games = await _gameRepository.GetAllGamesAsync();
             return games;

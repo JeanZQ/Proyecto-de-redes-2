@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Contaminados.Application.Queries;
 using Contaminados.Models.Common;
 using Contaminados.Repositories.IRepository;
@@ -14,15 +15,19 @@ namespace Contaminados.Application.Handlers
         }
         public async Task<Round> HandleAsync(GetRoundByIdQuery request)
         {
-            //Falta validaciones-------------------------------------
-            var round = await _roundRepository.GetRoundByIdAsync(request.Id);
-            
-            if (round == null)
+
+            try
+            {
+                //Falta validaciones-------------------------------------
+                var round = await _roundRepository.GetRoundByIdAsync(request.Id);
+                return round;
+
+            }
+
+            catch (CustomException)
             {
                 throw new NotFoundException();
-            }   
-
-            return round;
+            }
         }
     }
 }

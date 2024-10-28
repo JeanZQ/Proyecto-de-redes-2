@@ -14,17 +14,17 @@ namespace Contaminados.Application.Handlers
         }
         public async Task<IEnumerable<Round>> HandleAsync(GetAllRoundByGameIdQuery query)
         {
-            //Falta validaciones-------------------------------------
-            var rounds = await _roundRepository.GetAllRoundByGameIdAsync(query.GameId);
 
+            try
+            {
+                var rounds = await _roundRepository.GetAllRoundByGameIdAsync(query.GameId);
+                return rounds;
 
-            // si no existe el round, mande una excepcion
-            if (!rounds.Select(x => x.Id).Contains(query.GameId))
+            }
+            catch (CustomException)
             {
                 throw new NotFoundException();
             }
-
-            return rounds;
         }
     }
 }

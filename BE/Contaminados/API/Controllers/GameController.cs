@@ -210,6 +210,7 @@ namespace Contaminados.Api.Controllers
                 int index = random.Next(leader.Count());
                 var leaderName = leader.ElementAt(index).PlayerName;
 
+                //Crear la ronda
                 await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, RoundsPhase.Vote1, gameId));//revizar
 
                 return Ok(new { Code = 200, Description = "Game started" });
