@@ -47,7 +47,7 @@ namespace Contaminados.Application.Handlers
                 }
 
                 // Si no hay suficientes jugadores no se puede empezar
-                var players =  await _playerRepository.GetAllPlayersByGameIdAsync(game.Id);
+                var players = await _playerRepository.GetAllPlayersByGameIdAsync(game.Id);
                 if (players.Count() < 5)
                 {
                     throw new NeedPlayerStartExeption();
