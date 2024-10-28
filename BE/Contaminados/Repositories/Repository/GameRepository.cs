@@ -42,5 +42,11 @@ namespace Contaminados.Repositories.Repository
             _context.Set<Game>().Update(game);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Game>> GetGamesByDate()
+        {
+            return await _context.Set<Game>().OrderByDescending(g => g.CreatedAt).ToListAsync();
+        }
+
     }
 }

@@ -2,15 +2,19 @@ using Contaminados.Application.Queries;
 using Contaminados.Models.Common;
 using Contaminados.Repositories.IRepository;
 using Models.gameModels;
+using Models.playersModels;
 
 namespace Contaminados.Application.Handlers
 {
     public class GetGameByIdByPasswordByPlayerHandler
     {
         private readonly IGameRepository<Game> _gameRepository;
-        public GetGameByIdByPasswordByPlayerHandler(IGameRepository<Game> gameRepository)
+        private readonly IPlayerRepository<Players> _playerRepository;
+
+        public GetGameByIdByPasswordByPlayerHandler(IGameRepository<Game> gameRepository, IPlayerRepository<Players> playerRepository)
         {
             _gameRepository = gameRepository;
+            _playerRepository = playerRepository;
         }
         public async Task<Game> HandleAsync(GetGameByIdByPasswordByPlayerQuery request)
         {
@@ -25,6 +29,7 @@ namespace Contaminados.Application.Handlers
             }
 
             var game = await _gameRepository.GetGameByIdAsync(request.Id) ?? throw new NotFoundException();
+            IEnumerable<Players> players = await _playerRepository.GetAllPlayersByGameIdAsync(request.Id);
 
             if (!(game.Password != null && game.Password.Length == 0 && request.Password == null))
             {
@@ -34,13 +39,12 @@ namespace Contaminados.Application.Handlers
                 }
             }
 
-            if (game.Owner != request.Player)
+            if (game.Owner == request.Player || players.Any(p => p.PlayerName == request.Player))
             {
-                throw new ForbiddenException();
+                return game; ;
             }
 
-
-            return game;
+            throw new ForbiddenException();
         }
     }
 }
