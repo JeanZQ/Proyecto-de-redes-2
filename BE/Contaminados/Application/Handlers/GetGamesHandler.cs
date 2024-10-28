@@ -16,44 +16,32 @@ namespace Contaminados.Application.Handlers
         public async Task<IEnumerable<Game>> HandleAsync(GetGamesPossibleQuery query)
         {
 
-
-            if (query.Name == null  
-            || query.Name.Length is < 3 or > 20
-            || query.Limit < 0 || query.Page < 0 || query.Page > 50)
+    
+            if (query.Name != null && query.Name.Length is < 3 or > 20)
             {
+                throw new ClientException();
+            } else if (query.Limit != null && query.Limit <= 0 || query.Limit > 50)
+            {
+                throw new ClientException();
+            } else if (query.Page != null && query.Page < 0) {
                 throw new ClientException();
             }
 
-            int page = 1;
-            if (query.Page < 2 || query.Page == null)
-            {
-                page = 1;
-            }
-            else { 
-                page = query.Page.Value;
-            }
+
+            int page = query.Page ?? 0;
             int limit = query.Limit ?? 250; 
 
             var games = await _gameRepository.GetGamesByDate();
-            List<Game> filteredGames = new List<Game>();
 
- 
-            foreach (var game in games)
-            {
-                if (query.Name != null && !game.Name.Contains(query.Name))
-                {
-                    continue;
-                }
 
-                if (query.Status != null && game.GameStatus != query.Status)
-                {
-                    continue;
-                }
 
-                filteredGames.Add(game);
-            }
+             IEnumerable<Game> filteredGames = games
+            .Where(game => (query.Name == null || game.Name.Contains(query.Name)) &&
+                   (query.Status == null || game.GameStatus == query.Status))
+            .ToList();
 
-            int skip = (page - 1) * limit;
+
+            int skip = page * limit;
             filteredGames = filteredGames.Skip(skip).Take(limit).ToList();
 
 
