@@ -14,10 +14,14 @@ namespace Contaminados.Application.Handlers
         }
         public async Task<Game> HandleAsync(GetGameByIdByPasswordByPlayerQuery request)
         {
-            if (request.Id == Guid.Empty
-            || request.Player.Length is < 3 or > 20)
+            if (request.Id == Guid.Empty)
             {
                 throw new NotFoundException();
+            }
+
+            if (request.Player.Length is < 3 or > 20)
+            {
+                throw new UnauthorizedException();
             }
 
             var game = await _gameRepository.GetGameByIdAsync(request.Id) ?? throw new NotFoundException();
