@@ -65,11 +65,11 @@ namespace Contaminados.Api.Controllers
         /// <returns></returns>
         //Obtener los juegos que hayan
         [HttpGet]
-        public async Task<IActionResult> GetGames()
+        public async Task<IActionResult> GetGames([FromQuery] string? name, Status? status, int? page, int? limit)
         {
             try
             {
-                var query = new GetGamesPossibleQuery("", Status.Lobby, 0, 0);
+                GetGamesPossibleQuery query = new GetGamesPossibleQuery(name, status, page, limit);
                 List<Game> games = (List<Game>)await _getGamesHandler.HandleAsync(query);
 
                 var result = GamesList(games);
@@ -507,7 +507,6 @@ namespace Contaminados.Api.Controllers
                 }).ToArray()
             };
         }
-
 
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler
