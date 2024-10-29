@@ -212,6 +212,9 @@ namespace Contaminados.Api.Controllers
                 //Iniciar el juego
                 await _updateGameHandler.HandleAsync(new UpdateGameCommand(game.Id, Status.Rounds, round.Id, player, password ?? string.Empty));
 
+                //Asignar enemiges
+
+
                 return Ok(new { Code = 200, Description = "Game started" });
             }
             catch (CustomException ex)
