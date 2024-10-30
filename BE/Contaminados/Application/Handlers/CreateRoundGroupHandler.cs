@@ -14,6 +14,10 @@ namespace Contaminados.Application.Handlers
         }
         public async Task<RoundGroup> HandleAsync(CreateRoundGroupCommand command)
         {
+            
+
+
+
             if (command.Round.Id == Guid.Empty || string.IsNullOrWhiteSpace(command.Player))
             {
                 throw new NotFoundException();

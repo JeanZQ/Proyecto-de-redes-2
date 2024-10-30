@@ -6,6 +6,7 @@ using Contaminados.Models.Common;
 using Models.gameModels;
 using Models.playersModels;
 using Application.Commands.Common;
+using Application.Handlers.Common;
 
 namespace Contaminados.Api.Controllers
 {
@@ -26,6 +27,7 @@ namespace Contaminados.Api.Controllers
         private readonly GetGamesHandler _getGamesHandler;
         private readonly UpdateGameHandler _updateGameHandler;
         private readonly CreateRoundHandler _createRoundHandler;
+        private readonly UpdatePlayerHandler _updatePlayerHandler;
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
@@ -39,6 +41,7 @@ namespace Contaminados.Api.Controllers
             CreateRoundVoteHandler createRoundVoteHandler,
             CreatePlayerHandler createPlayerHandler,
             UpdateGameHandler updateGameHandler,
+            UpdatePlayerHandler updatePlayerHandler,
             CreateRoundHandler createRoundHandler)
 
         {
@@ -57,6 +60,7 @@ namespace Contaminados.Api.Controllers
             _createPlayerHandler = createPlayerHandler;
             _updateGameHandler = updateGameHandler;
             _createRoundHandler = createRoundHandler;
+            _updatePlayerHandler = updatePlayerHandler;
         }
 
         /// <summary>
@@ -213,6 +217,24 @@ namespace Contaminados.Api.Controllers
                 await _updateGameHandler.HandleAsync(new UpdateGameCommand(game.Id, Status.Rounds, round.Id, player, password ?? string.Empty));
 
                 //Asignar enemiges
+                List<Players> playerList = (List<Players>)await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
+
+
+                Enemies enemies =  Enemies.Instance;
+
+                // cantidad de enemigos 
+                var amountEnemies = enemies.GetEnemies(playerList.Count());
+
+
+
+                // asignar enemigos aleatorios
+                for (int i = 0; i < amountEnemies; i++)
+                {
+                    var randomEnemie = random.Next(playerList.Count());
+                    var enemy = playerList.ElementAt(randomEnemie);
+                    playerList.Remove(enemy);
+                    await _updatePlayerHandler.HandleAsync(new UpdatePlayerCommand(enemy.Id, enemy.GameId, enemy.PlayerName, true));
+                }
 
 
                 return Ok(new { Code = 200, Description = "Game started" });
