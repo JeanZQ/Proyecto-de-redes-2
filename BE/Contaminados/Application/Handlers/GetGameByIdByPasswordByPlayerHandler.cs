@@ -37,7 +37,7 @@ namespace Contaminados.Application.Handlers
 
             if (game.Owner == request.Player || players.Any(p => p.PlayerName == request.Player))
             {
-                return game; ;
+                return game;
             }
 
             throw new ForbiddenException();
