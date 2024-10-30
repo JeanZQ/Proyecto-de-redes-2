@@ -28,6 +28,7 @@ namespace Contaminados.Api.Controllers
         private readonly UpdateGameHandler _updateGameHandler;
         private readonly CreateRoundHandler _createRoundHandler;
         private readonly UpdatePlayerHandler _updatePlayerHandler;
+        private readonly UpdateRoundVoteHandler _updateRoundVoteHandler;
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
@@ -42,6 +43,7 @@ namespace Contaminados.Api.Controllers
             CreatePlayerHandler createPlayerHandler,
             UpdateGameHandler updateGameHandler,
             UpdatePlayerHandler updatePlayerHandler,
+            UpdateRoundVoteHandler updateRoundVoteHandler,
             CreateRoundHandler createRoundHandler)
 
         {
@@ -61,6 +63,7 @@ namespace Contaminados.Api.Controllers
             _updateGameHandler = updateGameHandler;
             _createRoundHandler = createRoundHandler;
             _updatePlayerHandler = updatePlayerHandler;
+            _updateRoundVoteHandler = updateRoundVoteHandler;
         }
 
         /// <summary>
@@ -172,7 +175,7 @@ namespace Contaminados.Api.Controllers
                             Result = r.Result.ToString(),
                             Phase = r.Phase.ToString(),
                             Group = playerName.ToArray(),
-                            Votes = votes.Select(v => v.Vote).ToArray()
+                            Votes = votes.Select(v => v.Vote == Vote.Yes ? true : false).ToArray()
                         };
                     }))
                 };
@@ -220,7 +223,7 @@ namespace Contaminados.Api.Controllers
                 List<Players> playerList = (List<Players>)await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
 
 
-                Enemies enemies =  Enemies.Instance;
+                Enemies enemies = Enemies.Instance;
 
                 // cantidad de enemigos 
                 var amountEnemies = enemies.GetEnemies(playerList.Count());
@@ -285,7 +288,8 @@ namespace Contaminados.Api.Controllers
                         Result = round.Result.ToString(),
                         Phase = round.Phase.ToString(),
                         Group = group.Select(g => g.Player).ToArray(),
-                        Votes = votes.Select(v => v.Vote).ToArray()
+                        Votes = votes.Select(v => v.Vote == Vote.Yes ? true : false).ToArray()
+
                     }
                 });
             }
@@ -338,7 +342,8 @@ namespace Contaminados.Api.Controllers
                         Result = round.Result.ToString(),
                         Phase = round.Phase.ToString(),
                         Group = group.Group.ToArray(),
-                        Votes = votes.Select(v => v.Vote).ToArray()
+                        Votes = votes.Select(v => v.Vote == Vote.Yes ? true : false).ToArray()
+
                     }
                 });
             }
@@ -376,7 +381,7 @@ namespace Contaminados.Api.Controllers
                 var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
 
                 //Guardar el voto
-                await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(round, vote.Vote));
+                await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(round, player, Vote.NA ,vote.Vote == true ? Vote.Yes : Vote.No));
 
                 return Ok(
                     new StatusCodesOk
@@ -391,7 +396,8 @@ namespace Contaminados.Api.Controllers
                             Result = round.Result.ToString(),
                             Phase = round.Phase.ToString(),
                             Group = group.Select(g => g.Player).ToArray(),
-                            Votes = votes.Select(v => v.Vote).ToArray()
+                            Votes = votes.Select(v => v.Vote == Vote.Yes ? true : false).ToArray()
+
                         }
                     }
                 );
@@ -464,7 +470,6 @@ namespace Contaminados.Api.Controllers
                 var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
 
                 //Guardar el voto
-                await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(round, action.Action));
 
                 return Ok(new StatusCodesOkRounds
                 {
@@ -478,7 +483,8 @@ namespace Contaminados.Api.Controllers
                         Result = round.Result.ToString(),
                         Phase = round.Phase.ToString(),
                         Group = group.Select(g => g.Player).ToArray(),
-                        Votes = votes.Select(v => v.Vote).ToArray()
+                        Votes = votes.Select(v => v.Vote == Vote.Yes ? true : false).ToArray()
+
                     }
                 });
             }

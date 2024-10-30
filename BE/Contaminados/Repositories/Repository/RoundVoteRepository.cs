@@ -23,5 +23,16 @@ namespace Contaminados.Repositories.Repository
         {
             return await _context.Set<RoundVote>().Where(x => x.RoundId == roundId).ToListAsync();
         }
+
+        public async Task<RoundVote> GetRoundVoteByGameIdByPlayerNameAsync(Guid roundId, string playerName)
+        {
+            return await _context.Set<RoundVote>().FirstOrDefaultAsync(x => x.RoundId == roundId && x.PlayerName == playerName);
+        }
+
+        public async Task UpdateRoundVoteAsync(RoundVote roundVote)
+        {
+            _context.Set<RoundVote>().Update(roundVote);
+            await _context.SaveChangesAsync();
+        }
     }
 }

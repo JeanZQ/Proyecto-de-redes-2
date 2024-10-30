@@ -28,4 +28,11 @@ namespace Contaminados.Models.Common
         Vote2,
         Vote3
     }
+
+    public enum Vote
+    {
+        Yes,
+        No,
+        NA
+    }
 }

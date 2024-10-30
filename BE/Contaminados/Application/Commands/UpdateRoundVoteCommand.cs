@@ -3,15 +3,18 @@ using Models.roundModels;
 
 namespace Contaminados.Application.Commands
 {
-    public class CreateRoundVoteCommand
+
+  public class UpdateRoundVoteCommand
     {
-        public Round Round { get; set; }
+        public Guid Id { get; set; }
+        public Guid RoundId { get; set; }
         public string PlayerName { get; set; }
         public Vote Vote { get; set; }
         public Vote GroupVote { get; set; }
-        public CreateRoundVoteCommand(Round round, string playerName, Vote vote, Vote groupVote)
+        public UpdateRoundVoteCommand(Guid id, string playerName, Guid roundId, Vote vote, Vote groupVote)
         {
-            Round = round;
+            Id = id;
+            RoundId = roundId;
             PlayerName = playerName;
             Vote = vote;
             GroupVote = groupVote;

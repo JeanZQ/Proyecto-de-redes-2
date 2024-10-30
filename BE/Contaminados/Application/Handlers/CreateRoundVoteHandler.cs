@@ -26,10 +26,18 @@ namespace Contaminados.Application.Handlers
                     throw new ConflictException();
                 }
                 
+                // Verifica si el jugador ya voto
+                if (await _roundVoteRepository.GetRoundVoteByGameIdByPlayerNameAsync(command.Round.Id, command.PlayerName) != null)
+                {
+                    throw new ConflictException();
+                }
+
                 var roundVote = new RoundVote
                 {
                     RoundId = command.Round.Id,
-                    Vote = command.Vote
+                    PlayerName = command.PlayerName,
+                    Vote = command.Vote,
+                    GroupVote = command.GroupVote
                 };
 
                 await _roundVoteRepository.CreateRoundVoteAsync(roundVote);
