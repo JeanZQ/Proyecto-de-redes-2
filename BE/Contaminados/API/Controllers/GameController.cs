@@ -30,6 +30,7 @@ namespace Contaminados.Api.Controllers
         private readonly UpdatePlayerHandler _updatePlayerHandler;
         private readonly UpdateRoundVoteHandler _updateRoundVoteHandler;
         private readonly GetRoundVoteByGameIdByPlayerNameHandler _getRoundVoteByGameIdByPlayerNameHandler;
+        private readonly UpdateRoundHandler _updateRoundHandler;
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
@@ -46,7 +47,8 @@ namespace Contaminados.Api.Controllers
             UpdatePlayerHandler updatePlayerHandler,
             UpdateRoundVoteHandler updateRoundVoteHandler,
             CreateRoundHandler createRoundHandler,
-            GetRoundVoteByGameIdByPlayerNameHandler getRoundVoteByGameIdByPlayerNameHandler)
+            GetRoundVoteByGameIdByPlayerNameHandler getRoundVoteByGameIdByPlayerNameHandler,
+            UpdateRoundHandler updateRoundHandler)
 
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
@@ -67,6 +69,7 @@ namespace Contaminados.Api.Controllers
             _updatePlayerHandler = updatePlayerHandler;
             _updateRoundVoteHandler = updateRoundVoteHandler;
             _getRoundVoteByGameIdByPlayerNameHandler = getRoundVoteByGameIdByPlayerNameHandler;
+            _updateRoundHandler = updateRoundHandler;
         }
 
         /// <summary>
@@ -315,7 +318,7 @@ namespace Contaminados.Api.Controllers
         /// <param name="player"></param>
         /// <param name="group"></param>
         /// <returns></returns>
-        [HttpPatch("{gameId}/rounds/{roundId}")] //debe de seguir las reglas del juego, cada phase tiene una cantidad de jugadores
+        [HttpPatch("{gameId}/rounds/{roundId}")]
         public async Task<IActionResult> ProposeGroup(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] GroupCommon group)
         {
             try
@@ -475,7 +478,7 @@ namespace Contaminados.Api.Controllers
                 //Guardar el voto
                 var roundVote = await _getRoundVoteByGameIdByPlayerNameHandler.HandleAsync(new GetRoundVoteByGameIdByPlayerNameQuery(gameId, player));
                 await _updateRoundVoteHandler.HandleAsync(new UpdateRoundVoteCommand(roundVote.Id, roundVote.PlayerName, roundVote.RoundId, action.Action == true ? Vote.Yes : Vote.No, roundVote.Vote));
-
+                
                 return Ok(new StatusCodesOkRounds
                 {
                     Status = 200,
