@@ -29,6 +29,7 @@ namespace Contaminados.Api.Controllers
         private readonly CreateRoundHandler _createRoundHandler;
         private readonly UpdatePlayerHandler _updatePlayerHandler;
         private readonly UpdateRoundVoteHandler _updateRoundVoteHandler;
+        private readonly GetRoundVoteByGameIdByPlayerNameHandler _getRoundVoteByGameIdByPlayerNameHandler;
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
@@ -44,7 +45,8 @@ namespace Contaminados.Api.Controllers
             UpdateGameHandler updateGameHandler,
             UpdatePlayerHandler updatePlayerHandler,
             UpdateRoundVoteHandler updateRoundVoteHandler,
-            CreateRoundHandler createRoundHandler)
+            CreateRoundHandler createRoundHandler,
+            GetRoundVoteByGameIdByPlayerNameHandler getRoundVoteByGameIdByPlayerNameHandler)
 
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
@@ -64,6 +66,7 @@ namespace Contaminados.Api.Controllers
             _createRoundHandler = createRoundHandler;
             _updatePlayerHandler = updatePlayerHandler;
             _updateRoundVoteHandler = updateRoundVoteHandler;
+            _getRoundVoteByGameIdByPlayerNameHandler = getRoundVoteByGameIdByPlayerNameHandler;
         }
 
         /// <summary>
@@ -470,6 +473,8 @@ namespace Contaminados.Api.Controllers
                 var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
 
                 //Guardar el voto
+                var roundVote = await _getRoundVoteByGameIdByPlayerNameHandler.HandleAsync(new GetRoundVoteByGameIdByPlayerNameQuery(gameId, player));
+                await _updateRoundVoteHandler.HandleAsync(new UpdateRoundVoteCommand(roundVote.Id, roundVote.PlayerName, roundVote.RoundId, action.Action == true ? Vote.Yes : Vote.No, roundVote.Vote));
 
                 return Ok(new StatusCodesOkRounds
                 {
