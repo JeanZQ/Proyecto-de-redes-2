@@ -25,8 +25,8 @@ namespace Contaminados.Application.Handlers
             
             try
             {
-                //Verifica si el estado del round es WaitingOnGroup
-                if(command.Round.Status != RoundsStatus.WaitingOnGroup)
+                //Verifica si el estado del round es WaitingOnLeader
+                if(command.Round.Status != RoundsStatus.WaitingOnLeader)
                 {
                     throw new ConflictException();
                 }

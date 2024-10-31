@@ -229,15 +229,15 @@ namespace Contaminados.Api.Controllers
                 List<Players> playerList = (List<Players>)await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
 
 
-                Enemies enemies = Enemies.Instance;
+                //Enemies enemies = Enemies.Instance;
 
                 // cantidad de enemigos 
-                var amountEnemies = enemies.GetEnemies(playerList.Count());
+                //var amountEnemies = enemies.GetEnemies(playerList.Count());
 
 
 
                 // asignar enemigos aleatorios
-                for (int i = 0; i < amountEnemies; i++)
+                for (int i = 0; i < 2; i++)
                 {
                     var randomEnemie = random.Next(playerList.Count());
                     var enemy = playerList.ElementAt(randomEnemie);
@@ -333,8 +333,13 @@ namespace Contaminados.Api.Controllers
                 //Guardar el grupo
                 await Task.WhenAll(group.Group.Select(async p => //implementar rollback en caso de error
                 {
-                    await _createRoundGroupHandler.HandleAsync(new CreateRoundGroupCommand(round, player));
+                    
+                    await _createRoundGroupHandler.HandleAsync(new CreateRoundGroupCommand(round, p));
                 }));
+
+                //Cambio del status de la ronda a Voting
+
+                await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.Voting, round.Result, round.Phase, round.GameId));
 
                 return Ok(new StatusCodesOkRounds
                 {

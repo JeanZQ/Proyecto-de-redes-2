@@ -32,9 +32,16 @@ namespace Contaminados.Repositories.Repository
 
         public async Task UpdateRoundAsync(Round round)
         {
-            _context.Set<Round>().Update(round);
+            var existingRound = await _context.Set<Round>().FindAsync(round.Id);
+            if (existingRound != null)
+            {
+                _context.Entry(existingRound).CurrentValues.SetValues(round);
+            }
+            else
+            {
+                _context.Set<Round>().Update(round);
+            }
             await _context.SaveChangesAsync();
-            
         }
     }
 }

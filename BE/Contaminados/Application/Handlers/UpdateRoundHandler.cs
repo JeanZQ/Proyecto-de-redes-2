@@ -20,6 +20,7 @@ namespace Contaminados.Application.Handlers
             }
             var round = new Round
             {
+                Id = command.Id,
                 Leader = command.Leader,
                 Status = command.Status,
                 Result = command.Result,

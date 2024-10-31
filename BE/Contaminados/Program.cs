@@ -48,6 +48,7 @@ builder.Services.AddScoped<GetAllRoundGroupByRoundIdHandler>();
 builder.Services.AddScoped<CreateRoundVoteHandler>();
 builder.Services.AddScoped<GetAllRoundVoteByRoundIdHandler>();
 builder.Services.AddScoped<UpdateRoundVoteHandler>();
+builder.Services.AddScoped<GetRoundVoteByGameIdByPlayerNameHandler>();
 
 
 builder.Services.AddControllers();

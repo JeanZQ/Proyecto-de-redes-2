@@ -10,7 +10,7 @@ namespace Contaminados.Application.Handlers
         private readonly IRoundVoteRepository<RoundVote> _roundVoteRepository;
         public GetRoundVoteByGameIdByPlayerNameHandler(IRoundVoteRepository<RoundVote> roundVoteRepository)
         {
-            _roundVoteRepository = _roundVoteRepository ?? throw new ArgumentNullException(nameof(roundVoteRepository));
+            _roundVoteRepository = roundVoteRepository ?? throw new ArgumentNullException(nameof(roundVoteRepository));
         }
         public async Task<RoundVote> HandleAsync(GetRoundVoteByGameIdByPlayerNameQuery request)
         {
