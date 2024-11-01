@@ -5,13 +5,13 @@ namespace Contaminados.Application.Commands
 {
     public class CreateRoundVoteCommand
     {
-        public Round Round { get; set; }
+        public Guid RoundId { get; set; }
         public string PlayerName { get; set; }
         public Vote Vote { get; set; }
         public Vote GroupVote { get; set; }
-        public CreateRoundVoteCommand(Round round, string playerName, Vote vote, Vote groupVote)
+        public CreateRoundVoteCommand(Guid roundId, string playerName, Vote vote, Vote groupVote)
         {
-            Round = round;
+            RoundId = roundId;
             PlayerName = playerName;
             Vote = vote;
             GroupVote = groupVote;

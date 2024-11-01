@@ -17,11 +17,6 @@ namespace Contaminados.Application.Handlers
             //Falta validaciones-------------------------------------
             var roundVotes = await _roundVoteRepository.GetAllRoundVoteByRoundIdAsync(request.RoundId);
 
-            if (roundVotes.Select(x => x.RoundId).Contains(request.RoundId))
-            {
-                throw new NotFoundException();
-            }   
-
             return roundVotes;
         }
     }

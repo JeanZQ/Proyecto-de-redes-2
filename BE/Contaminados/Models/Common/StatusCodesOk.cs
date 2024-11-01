@@ -16,9 +16,5 @@ namespace Contaminados.Models.Common
         public required IEnumerable<string> Players { get; set; }
         public required IEnumerable<string> Enemies { get; set; }
 
-        public static implicit operator Data(DataRounds v)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

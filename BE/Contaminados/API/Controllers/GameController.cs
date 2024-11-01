@@ -377,17 +377,15 @@ namespace Contaminados.Api.Controllers
             {
                 //Validar credenciales
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
-
+                //Guardar el voto
+                await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(roundId, player, Vote.NA ,vote.Vote == true ? Vote.Yes : Vote.No));
                 //Variables para la respuesta
                 var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
                 var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
                 var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
 
-                //Guardar el voto
-                await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(round, player, Vote.NA ,vote.Vote == true ? Vote.Yes : Vote.No));
-
                 return Ok(
-                    new StatusCodesOk
+                    new StatusCodesOkRounds
                     {
                         Status = 200,
                         Msg = "Vote Created",
@@ -399,8 +397,7 @@ namespace Contaminados.Api.Controllers
                             Result = round.Result.ToString(),
                             Phase = round.Phase.ToString(),
                             Group = group.Select(g => g.Player).ToArray(),
-                            Votes = votes.Select(v => v.Vote == Vote.Yes ? true : false).ToArray()
-
+                            Votes = votes.Select(v => v.GroupVote == Vote.Yes ? true : false).ToArray()
                         }
                     }
                 );
