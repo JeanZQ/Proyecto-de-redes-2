@@ -4,5 +4,6 @@ namespace Contaminados.Repositories.IRepository
     {
         Task CreateRoundGroupAsync(RoundGroup roundGroup);
         Task<IEnumerable<RoundGroup>> GetAllRoundGroupByRoundIdAsync(Guid roundId);
+        Task DeleteAllRoundGroupsByRoundIdAsync(Guid roundId);
     }
 }

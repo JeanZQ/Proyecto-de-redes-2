@@ -19,6 +19,13 @@ namespace Contaminados.Repositories.Repository
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteAllRoundVotesByRoundIdAsync(Guid roundId)
+        {
+            var roundVotes = _context.Set<RoundVote>().Where(x => x.RoundId == roundId);
+            _context.Set<RoundVote>().RemoveRange(roundVotes);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<RoundVote>> GetAllRoundVoteByRoundIdAsync(Guid roundId)
         {
             return await _context.Set<RoundVote>().Where(x => x.RoundId == roundId).ToListAsync();

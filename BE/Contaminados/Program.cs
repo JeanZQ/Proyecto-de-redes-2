@@ -44,11 +44,13 @@ builder.Services.AddScoped<UpdateRoundHandler>();
 // RoundGroup
 builder.Services.AddScoped<CreateRoundGroupHandler>();
 builder.Services.AddScoped<GetAllRoundGroupByRoundIdHandler>();
+builder.Services.AddScoped<DeleteAllRoundGroupsByRoundIdHandler>();
 // RoundVote
 builder.Services.AddScoped<CreateRoundVoteHandler>();
 builder.Services.AddScoped<GetAllRoundVoteByRoundIdHandler>();
 builder.Services.AddScoped<UpdateRoundVoteHandler>();
 builder.Services.AddScoped<GetRoundVoteByGameIdByPlayerNameHandler>();
+builder.Services.AddScoped<DeleteAllRoundVotesByRoundIdHandler>();
 
 
 builder.Services.AddControllers();

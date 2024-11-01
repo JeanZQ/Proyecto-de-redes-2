@@ -31,6 +31,8 @@ namespace Contaminados.Api.Controllers
         private readonly UpdateRoundVoteHandler _updateRoundVoteHandler;
         private readonly GetRoundVoteByGameIdByPlayerNameHandler _getRoundVoteByGameIdByPlayerNameHandler;
         private readonly UpdateRoundHandler _updateRoundHandler;
+        private readonly DeleteAllRoundGroupsByRoundIdHandler deleteAllRoundGroupsByRoundIdHandler;
+        private readonly DeleteAllRoundVotesByRoundIdHandler deleteAllRoundVotesByRoundIdHandler;
         public GameController(
             GetGameByIdByPasswordByPlayerHandler getGameByIdByPasswordByOwnerHandler,
             CreateGameHandler createGameHandler,
@@ -48,7 +50,9 @@ namespace Contaminados.Api.Controllers
             UpdateRoundVoteHandler updateRoundVoteHandler,
             CreateRoundHandler createRoundHandler,
             GetRoundVoteByGameIdByPlayerNameHandler getRoundVoteByGameIdByPlayerNameHandler,
-            UpdateRoundHandler updateRoundHandler)
+            UpdateRoundHandler updateRoundHandler,
+            DeleteAllRoundGroupsByRoundIdHandler deleteAllRoundGroupsByRoundIdCommand,
+            DeleteAllRoundVotesByRoundIdHandler deleteAllRoundVotesByRoundIdCommand)
 
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
@@ -70,6 +74,8 @@ namespace Contaminados.Api.Controllers
             _updateRoundVoteHandler = updateRoundVoteHandler;
             _getRoundVoteByGameIdByPlayerNameHandler = getRoundVoteByGameIdByPlayerNameHandler;
             _updateRoundHandler = updateRoundHandler;
+            deleteAllRoundGroupsByRoundIdHandler = deleteAllRoundGroupsByRoundIdCommand;
+            deleteAllRoundVotesByRoundIdHandler = deleteAllRoundVotesByRoundIdCommand;
         }
 
         /// <summary>
@@ -378,7 +384,7 @@ namespace Contaminados.Api.Controllers
                 //Validar credenciales
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
                 //Guardar el voto
-                await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(roundId, player, Vote.NA ,vote.Vote == true ? Vote.Yes : Vote.No));
+                await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(roundId, player, Vote.NA, vote.Vote == true ? Vote.Yes : Vote.No));
                 //Variables para la respuesta
                 var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
                 var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
@@ -410,6 +416,30 @@ namespace Contaminados.Api.Controllers
                     message = e.Message,
                     status = e.Status
                 });
+            }
+            finally
+            {
+                try
+                {
+                    // Eliminar todos los grupos y votos de la ronda si la mayoria de los votos son NO
+                    var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
+                    var game = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
+                    Console.WriteLine(votes.Count());
+                    Console.WriteLine(game.Count());
+                    foreach (var v in votes)
+                    {
+                        Console.WriteLine(v.GroupVote);
+                    }
+                    if (votes.Count() == game.Count() && votes.Count(x => x.GroupVote == Vote.No) > game.Count() / 2)
+                    {
+                        await deleteAllRoundGroupsByRoundIdHandler.HandleAsync(new DeleteAllRoundGroupsByRoundIdCommand(roundId));
+                        await deleteAllRoundVotesByRoundIdHandler.HandleAsync(new DeleteAllRoundVotesByRoundIdCommand(roundId));
+                    }
+                }
+                catch (CustomException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
         }
 
@@ -472,7 +502,7 @@ namespace Contaminados.Api.Controllers
                 //Guardar el voto
                 var roundVote = await _getRoundVoteByGameIdByPlayerNameHandler.HandleAsync(new GetRoundVoteByGameIdByPlayerNameQuery(gameId, player));
                 await _updateRoundVoteHandler.HandleAsync(new UpdateRoundVoteCommand(roundVote.Id, roundVote.PlayerName, roundVote.RoundId, action.Action == true ? Vote.Yes : Vote.No, roundVote.Vote));
-                
+
                 return Ok(new StatusCodesOkRounds
                 {
                     Status = 200,
