@@ -17,22 +17,12 @@ namespace Contaminados.Application.Handlers
 
         public async Task HandleAsync(UpdatePlayerCommand command)
         {
-
-            if (command.Id == Guid.Empty)
-            {
-                throw new ClientException(); //Revizar si es la excepcion correcta
-            }
-
-            var player = new Players
-            {
-                Id = command.Id,
-                GameId = command.GameId,
-                PlayerName = command.PlayerName,
-                IsEnemy = command.IsEnemy,
-            };
-
             try
             {
+                var player = await _playerRepository.GetPlayerByIdAsync(command.Id);
+                player.IsEnemy = command.IsEnemy;
+                player.PlayerName = command.PlayerName;
+                
                 // actualiza en la base de datos el jugador
                 await _playerRepository.UpdatePlayerAsync(player);
             }

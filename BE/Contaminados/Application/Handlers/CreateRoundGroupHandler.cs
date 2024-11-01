@@ -2,39 +2,34 @@ using Contaminados.Application.Commands;
 using Contaminados.Models.Common;
 using Contaminados.Repositories.IRepository;
 using Models.roundGroupModels;
+using Models.roundModels;
 
 namespace Contaminados.Application.Handlers
 {
     public class CreateRoundGroupHandler
     {
         private readonly IRoundGroupRepository<RoundGroup> _roundGroupRepository;
-        public CreateRoundGroupHandler(IRoundGroupRepository<RoundGroup> roundGroupRepository)
+        private readonly IRoundRepository<Round> _roundRepository;
+        public CreateRoundGroupHandler(IRoundGroupRepository<RoundGroup> roundGroupRepository, IRoundRepository<Round> roundRepository)
         {
             _roundGroupRepository = roundGroupRepository ?? throw new ArgumentNullException(nameof(roundGroupRepository));
+            _roundRepository = roundRepository ?? throw new ArgumentNullException(nameof(roundRepository));
         }
         public async Task<RoundGroup> HandleAsync(CreateRoundGroupCommand command)
-        {
-            
-
-
-
-            if (command.Round.Id == Guid.Empty || string.IsNullOrWhiteSpace(command.Player))
-            {
-                throw new NotFoundException();
-            }
-            
+        {   
             try
             {
+                var round = await _roundRepository.GetRoundByIdAsync(command.RoundId);
+
                 //Verifica si el estado del round es WaitingOnLeader
-                if(command.Round.Status != RoundsStatus.WaitingOnLeader)
+                if(round.Status != RoundsStatus.WaitingOnLeader)
                 {
                     throw new ConflictException();
                 }
-
               
                 var roundGroup = new RoundGroup
                 {
-                    RoundId = command.Round.Id,
+                    RoundId = command.RoundId,
                     Player = command.Player
                 };
 
@@ -42,9 +37,9 @@ namespace Contaminados.Application.Handlers
 
                 return roundGroup;
             }
-            catch (Exception)
+            catch (CustomException)
             {
-                throw new PreconditionRequiredException();//revizar
+                throw new NotFoundException();
             }
         }
     }

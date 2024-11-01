@@ -1,10 +1,7 @@
 namespace Application.Handlers.Common
-
 {
-
     public sealed class Enemies
     {
-
         private static readonly Enemies instance = new Enemies();
 
         private Enemies()
@@ -15,21 +12,18 @@ namespace Application.Handlers.Common
         {
             get
             {
-                return Instance;
+                return instance;
             }
         }
 
-        private static readonly int[] enemies = new int[6]
-        {
+        private static readonly int[] enemies =
+        [
             2, 2, 3, 3, 3, 4  // Enemigos
-        };
+        ];
 
         public int GetEnemies(int totalPlayers)
         {
             return enemies[totalPlayers - 5];
         }
-
     }
-
 }
-

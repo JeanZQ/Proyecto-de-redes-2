@@ -44,7 +44,7 @@ namespace Contaminados.Repositories.Repository
 
         public async Task<IEnumerable<Players>> GetAllPlayersByGameIdAsync(Guid gameId)
         {
-            return await _context.Set<Players>().Where(x => x.GameId == gameId).ToListAsync();
+            return await _context.Set<Players>().AsNoTracking().Where(x => x.GameId == gameId).ToListAsync();
         }
     }
 }

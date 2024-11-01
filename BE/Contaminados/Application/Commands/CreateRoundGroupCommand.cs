@@ -5,11 +5,11 @@ namespace Contaminados.Application.Commands
 {
     public class CreateRoundGroupCommand
     {
-        public Round Round { get; set; }
+        public Guid RoundId { get; set; }
         public string Player { get; set; }
-        public CreateRoundGroupCommand(Round round, string player)
+        public CreateRoundGroupCommand(Guid roundId, string player)
         {
-            Round = round;
+            RoundId = roundId;
             Player = player;
         }
     }
