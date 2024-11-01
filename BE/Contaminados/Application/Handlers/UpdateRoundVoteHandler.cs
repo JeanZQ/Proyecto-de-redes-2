@@ -1,6 +1,8 @@
 using Contaminados.Application.Commands;
 using Contaminados.Models.Common;
 using Contaminados.Repositories.IRepository;
+using Models.playersModels;
+using Models.roundGroupModels;
 using Models.roundVoteModels;
 
 namespace Contaminados.Application.Handlers
@@ -10,35 +12,31 @@ namespace Contaminados.Application.Handlers
     {
 
         private readonly IRoundVoteRepository<RoundVote> _roundVoteRepository;
-
-        public UpdateRoundVoteHandler(IRoundVoteRepository<RoundVote> roundVoteRepository)
+        private readonly IRoundGroupRepository<RoundGroup> _roundGroupRepository;
+        public UpdateRoundVoteHandler(IRoundVoteRepository<RoundVote> roundVoteRepository, IRoundGroupRepository<RoundGroup> roundGroupRepository)
         {
             _roundVoteRepository = roundVoteRepository ?? throw new ArgumentNullException(nameof(roundVoteRepository));
+            _roundGroupRepository = roundGroupRepository ?? throw new ArgumentNullException(nameof(roundGroupRepository));
         }
 
-        public async Task<RoundVote> HandleAsync(UpdateRoundVoteCommand command)
+        public async Task HandleAsync(UpdateRoundVoteCommand command)
         {
-            if (command.Id == Guid.Empty)
+
+            var roundVote = await _roundVoteRepository.GetRoundVoteByGameIdByPlayerNameAsync(command.RoundId, command.PlayerName) ?? throw new NotFoundException();
+            var roundGroup = await _roundGroupRepository.GetAllRoundGroupByRoundIdAsync(command.RoundId) ?? throw new NotFoundException();
+            //Verifica si el jugador pertenece a un grupo y que no haya votado
+            if (roundGroup.Any(x => x.Player == command.PlayerName) && roundVote.Vote == Vote.NA)
             {
-                throw new ClientException(); //Revisar si es la excepcion correcta
-            }
-            var roundVote = new RoundVote
-            {
-                Id = command.Id,
-                RoundId = command.RoundId,
-                PlayerName = command.PlayerName,
-                Vote = command.Vote,
-                GroupVote = command.GroupVote
-            };
-            try
-            {
+                roundVote.Vote = command.Vote;
+                roundVote.GroupVote = command.GroupVote != null ? command.GroupVote : roundVote.GroupVote;
                 await _roundVoteRepository.UpdateRoundVoteAsync(roundVote);
-                return roundVote;
             }
-            catch (Exception)
+            else
             {
-                throw new ConflictException();//Revisar si es la excepcion correcta
+                throw new PreconditionRequiredException();
             }
+
+
         }
 
     }

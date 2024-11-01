@@ -35,16 +35,16 @@ namespace Contaminados.Application.Handlers
                 }
 
                 // Forbidden
-                if (game.Owner != command.Player)
-                {
-                    throw new ForbiddenException();
-                }
+                //if (game.Owner != command.Player)
+                //{
+                //    throw new ForbiddenException();
+                //}
 
                 // Si el juego ya empezo no se puede volver a empezar
-                if (game.GameStatus != Status.Lobby)
-                {
-                    throw new GameAlreadyStartedStartExeption();
-                }
+                //if (game.GameStatus == Status.Lobby )
+                //{
+                    //throw new GameAlreadyStartedStartExeption();
+                //}
 
                 // Si no hay suficientes jugadores no se puede empezar
                 var players = await _playerRepository.GetAllPlayersByGameIdAsync(game.Id);

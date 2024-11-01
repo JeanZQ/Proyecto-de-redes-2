@@ -162,9 +162,8 @@ namespace Contaminados.Api.Controllers
             {
                 //Validar credenciales
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
-
+                
                 //Informacion de todas las rondas con el mismo gameId
-                var query = new GetAllRoundByGameIdQuery(gameId);
                 var rounds = await _getAllRoundByGameIdHandler.HandleAsync(new GetAllRoundByGameIdQuery(gameId));
 
                 var result = new StatusCodesOkRounds
@@ -187,7 +186,7 @@ namespace Contaminados.Api.Controllers
                             Result = r.Result.ToString(),
                             Phase = r.Phase.ToString(),
                             Group = playerName.ToArray(),
-                            Votes = votes.Select(v => v.Vote == Vote.Yes ? true : false).ToArray()
+                            Votes = votes.Select(v => v.GroupVote == Vote.Yes ? true : false).ToArray()
                         };
                     }))
                 };
@@ -378,12 +377,11 @@ namespace Contaminados.Api.Controllers
         [HttpPost("{gameId}/rounds/{roundId}")]
         public async Task<IActionResult> VoteGroup(Guid gameId, Guid roundId, [FromHeader(Name = "password")] string? password, [FromHeader(Name = "player")] string player, [FromBody] GroupVoteCommon vote)
         {
-
             try
             {
                 //Validar credenciales
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
-                
+
                 //Guardar el voto
                 await _createRoundVoteHandler.HandleAsync(new CreateRoundVoteCommand(roundId, player, Vote.NA, vote.Vote == true ? Vote.Yes : Vote.No));
 
@@ -486,15 +484,54 @@ namespace Contaminados.Api.Controllers
             {
                 //Validar credenciales
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
-
+                
                 //Variables para la respuesta
                 var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
                 var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
                 var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
-
                 //Guardar el voto
-                var roundVote = await _getRoundVoteByGameIdByPlayerNameHandler.HandleAsync(new GetRoundVoteByGameIdByPlayerNameQuery(gameId, player));
-                await _updateRoundVoteHandler.HandleAsync(new UpdateRoundVoteCommand(roundVote.Id, roundVote.PlayerName, roundVote.RoundId, action.Action == true ? Vote.Yes : Vote.No, roundVote.Vote));
+                await _updateRoundVoteHandler.HandleAsync(new UpdateRoundVoteCommand(player, roundId, action.Action ? Vote.Yes : Vote.No, null));
+                //----------------------------------------------------------------------------------------------
+                //Acciones cuando todos los jugadores han votado------------------------------------------------
+                //----------------------------------------------------------------------------------------------
+
+                //Todos los votos de la ronda
+                var roundVotes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
+                //Todos los jugadores que pueden votar
+                var playersGroup = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
+                //Si todos votaron
+                if (roundVotes.Count(x => x.Vote != Vote.NA) == playersGroup.Count())
+                {
+                    //Si todos aportaron en la ronda
+                    if (!roundVotes.Any(x => x.Vote == Vote.No))
+                    {
+                        //Ganan los Citizens
+                        await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.Ended, RoundsResult.Citizens, round.Phase, round.GameId));
+                    }
+                    else
+                    {
+                        //Ganan los Enemies
+                        await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.Ended, RoundsResult.Enemies, round.Phase, round.GameId));
+                    }
+
+                    //El juego no ha terminado
+                    if (round.Phase != RoundsPhase.Vote3)
+                    {
+                        //Pasamos a la siguiente ronda y actualizamos Game
+                        var leader = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
+                        var random = new Random();
+                        int index = random.Next(leader.Count());
+                        var leaderName = leader.ElementAt(index).PlayerName;
+
+                        var nextRound = await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, round.Phase == RoundsPhase.Vote1 ? RoundsPhase.Vote2 : RoundsPhase.Vote3, gameId));
+                        await _updateGameHandler.HandleAsync(new UpdateGameCommand(gameId, Status.Rounds, nextRound.Id, player, password ?? string.Empty));
+                    }
+                    //Ya termino el juego
+                    else
+                    {
+                        await _updateGameHandler.HandleAsync(new UpdateGameCommand(gameId, Status.Ended, round.Id, player, password ?? string.Empty));
+                    }
+                }
 
                 return Ok(new StatusCodesOkRounds
                 {
@@ -508,7 +545,7 @@ namespace Contaminados.Api.Controllers
                         Result = round.Result.ToString(),
                         Phase = round.Phase.ToString(),
                         Group = group.Select(g => g.Player).ToArray(),
-                        Votes = votes.Select(v => v.Vote == Vote.Yes ? true : false).ToArray()
+                        Votes = votes.Select(v => v.GroupVote == Vote.Yes ? true : false).ToArray()
 
                     }
                 });
@@ -522,7 +559,6 @@ namespace Contaminados.Api.Controllers
                 });
             }
         }
-
 
         //-------------------------------------------------------------------------------------
         //No hacer el metodo ASYNC ni llamar a ningun Handler

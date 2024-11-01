@@ -19,7 +19,6 @@ namespace Contaminados.Application.Handlers
             {
                 var rounds = await _roundRepository.GetAllRoundByGameIdAsync(query.GameId);
                 return rounds;
-
             }
             catch (CustomException)
             {

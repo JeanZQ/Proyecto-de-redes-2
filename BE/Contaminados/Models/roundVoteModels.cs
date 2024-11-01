@@ -10,6 +10,6 @@ namespace Models.roundVoteModels
         public required Guid RoundId { get; set; }
         public string PlayerName { get; set; }
         public required Vote Vote { get; set; }
-        public required Vote GroupVote { get; set; }
+        public required Vote? GroupVote { get; set; }
     }
 }
