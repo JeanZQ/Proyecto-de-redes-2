@@ -162,10 +162,9 @@ namespace Contaminados.Api.Controllers
             {
                 //Validar credenciales
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
-                
+
                 //Informacion de todas las rondas con el mismo gameId
                 var rounds = await _getAllRoundByGameIdHandler.HandleAsync(new GetAllRoundByGameIdQuery(gameId));
-
                 var result = new StatusCodesOkRounds
                 {
                     Status = 200,
@@ -484,7 +483,7 @@ namespace Contaminados.Api.Controllers
             {
                 //Validar credenciales
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
-                
+
                 //Variables para la respuesta
                 var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
                 var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
@@ -515,7 +514,7 @@ namespace Contaminados.Api.Controllers
                     }
 
                     //El juego no ha terminado
-                    if (round.Phase != RoundsPhase.Vote3)
+                    if (round.Phase != RoundsPhase.Vote5)
                     {
                         //Pasamos a la siguiente ronda y actualizamos Game
                         var leader = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
@@ -523,7 +522,7 @@ namespace Contaminados.Api.Controllers
                         int index = random.Next(leader.Count());
                         var leaderName = leader.ElementAt(index).PlayerName;
 
-                        var nextRound = await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, round.Phase == RoundsPhase.Vote1 ? RoundsPhase.Vote2 : RoundsPhase.Vote3, gameId));
+                        var nextRound = await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, round.Phase + 1, gameId));
                         await _updateGameHandler.HandleAsync(new UpdateGameCommand(gameId, Status.Rounds, nextRound.Id, player, password ?? string.Empty));
                     }
                     //Ya termino el juego

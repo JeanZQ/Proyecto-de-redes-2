@@ -26,7 +26,9 @@ namespace Contaminados.Models.Common
     {
         Vote1,
         Vote2,
-        Vote3
+        Vote3,
+        Vote4,
+        Vote5
     }
 
     public enum Vote
