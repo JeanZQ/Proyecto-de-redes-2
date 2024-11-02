@@ -340,10 +340,7 @@ namespace Contaminados.Api.Controllers
                 var round = await _getRoundByIdHandler.HandleAsync(new GetRoundByIdQuery(roundId));
 
                 //Guardar el grupo
-                foreach (var p in group.Group)
-                {
-                    await _createRoundGroupHandler.HandleAsync(new CreateRoundGroupCommand(round.Id, p));
-                }
+                await _createRoundGroupHandler.HandleAsync(new CreateRoundGroupCommand(round.Id, group.Group, player, gameId));
 
                 //Cambio del status de la ronda a Voting
                 await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.Voting, round.Result, round.Phase, round.GameId));
@@ -524,11 +521,11 @@ namespace Contaminados.Api.Controllers
                         //Ganan los Enemies
                         await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.Ended, RoundsResult.Enemies, round.Phase, round.GameId));
                     }
-                    
+
                     //Todas las rondas
                     var rounds = await _getAllRoundByGameIdHandler.HandleAsync(new GetAllRoundByGameIdQuery(gameId));
                     //El juego no ha terminado
-                    if (round.Phase != RoundsPhase.Vote5 && (rounds.Count(x => x.Result == RoundsResult.Citizens) < 3 || rounds.Count(x => x.Result == RoundsResult.Enemies) < 3))
+                    if (round.Phase != RoundsPhase.Vote5 && (rounds.Count(x => x.Result == RoundsResult.Citizens) <= 3 || rounds.Count(x => x.Result == RoundsResult.Enemies) <= 3))
                     {
                         //Pasamos a la siguiente ronda y actualizamos Game
                         var leader = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));

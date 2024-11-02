@@ -38,7 +38,7 @@ namespace Application.Handlers.Common
                 throw new sizeOfGroupExeption();
             }
 
-            return groups[decade - 1, totalPlayers - 5];
+            return groups[decade, totalPlayers - 5];
         }
     }
 }
