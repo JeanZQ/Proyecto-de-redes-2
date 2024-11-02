@@ -509,6 +509,7 @@ namespace Contaminados.Api.Controllers
                 var roundVotes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
                 //Todos los jugadores que pueden votar
                 var playersGroup = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
+
                 //Si todos votaron
                 if (roundVotes.Count(x => x.Vote != Vote.NA) == playersGroup.Count())
                 {
@@ -523,9 +524,11 @@ namespace Contaminados.Api.Controllers
                         //Ganan los Enemies
                         await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.Ended, RoundsResult.Enemies, round.Phase, round.GameId));
                     }
-
+                    
+                    //Todas las rondas
+                    var rounds = await _getAllRoundByGameIdHandler.HandleAsync(new GetAllRoundByGameIdQuery(gameId));
                     //El juego no ha terminado
-                    if (round.Phase != RoundsPhase.Vote5)
+                    if (round.Phase != RoundsPhase.Vote5 && (rounds.Count(x => x.Result == RoundsResult.Citizens) < 3 || rounds.Count(x => x.Result == RoundsResult.Enemies) < 3))
                     {
                         //Pasamos a la siguiente ronda y actualizamos Game
                         var leader = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
