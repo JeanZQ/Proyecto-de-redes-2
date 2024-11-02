@@ -7,6 +7,7 @@ using Models.gameModels;
 using Models.playersModels;
 using Application.Commands.Common;
 using Application.Handlers.Common;
+using System.Runtime.InteropServices;
 
 namespace Contaminados.Api.Controllers
 {
@@ -160,36 +161,45 @@ namespace Contaminados.Api.Controllers
         {
             try
             {
-                //Validar credenciales
+                // Validar credenciales
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
-                
-                //Informacion de todas las rondas con el mismo gameId
+
+                // Información de todas las rondas con el mismo gameId
                 var rounds = await _getAllRoundByGameIdHandler.HandleAsync(new GetAllRoundByGameIdQuery(gameId));
+                var dataRoundsList = new List<DataRounds>();
+
+                foreach (var r in rounds)
+                {
+                    var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(r.Id));
+                    var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(r.Id));
+                    var playerName = new List<string>();
+
+                    foreach (var g in group)
+                    {
+                        playerName.Add(g.Player);
+                    }
+
+                    var dataRound = new DataRounds
+                    {
+                        Id = r.Id,
+                        Leader = r.Leader,
+                        Status = r.Status.ToString(),
+                        Result = r.Result.ToString(),
+                        Phase = r.Phase.ToString(),
+                        Group = playerName.ToArray(),
+                        Votes = votes.Select(v => v.GroupVote == Vote.Yes ? true : false).ToArray()
+                    };
+
+                    dataRoundsList.Add(dataRound);
+                }
 
                 var result = new StatusCodesOkRounds
                 {
                     Status = 200,
                     Msg = "Rounds Found",
-                    Data = await Task.WhenAll(rounds.Select(async r =>
-                    {
-                        var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(r.Id));
-                        var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(r.Id));
-                        var playerName = await Task.WhenAll(group.Select(g =>
-                        {
-                            return Task.FromResult(g.Player);
-                        }));
-                        return new DataRounds
-                        {
-                            Id = r.Id,
-                            Leader = r.Leader,
-                            Status = r.Status.ToString(),
-                            Result = r.Result.ToString(),
-                            Phase = r.Phase.ToString(),
-                            Group = playerName.ToArray(),
-                            Votes = votes.Select(v => v.GroupVote == Vote.Yes ? true : false).ToArray()
-                        };
-                    }))
+                    Data = dataRoundsList.ToArray()
                 };
+
                 return Ok(result);
             }
             catch (CustomException ex)
