@@ -7,7 +7,8 @@ using Models.gameModels;
 using Models.playersModels;
 using Application.Commands.Common;
 using Application.Handlers.Common;
-using System.Runtime.InteropServices;
+using Models.roundGroupModels;
+using API.Controllers.Common;
 
 namespace Contaminados.Api.Controllers
 {
@@ -30,7 +31,6 @@ namespace Contaminados.Api.Controllers
         private readonly CreateRoundHandler _createRoundHandler;
         private readonly UpdatePlayerHandler _updatePlayerHandler;
         private readonly UpdateRoundVoteHandler _updateRoundVoteHandler;
-        private readonly GetRoundVoteByGameIdByPlayerNameHandler _getRoundVoteByGameIdByPlayerNameHandler;
         private readonly UpdateRoundHandler _updateRoundHandler;
         private readonly DeleteAllRoundGroupsByRoundIdHandler deleteAllRoundGroupsByRoundIdHandler;
         private readonly DeleteAllRoundVotesByRoundIdHandler deleteAllRoundVotesByRoundIdHandler;
@@ -50,11 +50,9 @@ namespace Contaminados.Api.Controllers
             UpdatePlayerHandler updatePlayerHandler,
             UpdateRoundVoteHandler updateRoundVoteHandler,
             CreateRoundHandler createRoundHandler,
-            GetRoundVoteByGameIdByPlayerNameHandler getRoundVoteByGameIdByPlayerNameHandler,
             UpdateRoundHandler updateRoundHandler,
             DeleteAllRoundGroupsByRoundIdHandler deleteAllRoundGroupsByRoundIdCommand,
             DeleteAllRoundVotesByRoundIdHandler deleteAllRoundVotesByRoundIdCommand)
-
         {
             _getGameByIdByPasswordByOwnerHandler = getGameByIdByPasswordByOwnerHandler;
             _createGameHandler = createGameHandler;
@@ -73,7 +71,6 @@ namespace Contaminados.Api.Controllers
             _createRoundHandler = createRoundHandler;
             _updatePlayerHandler = updatePlayerHandler;
             _updateRoundVoteHandler = updateRoundVoteHandler;
-            _getRoundVoteByGameIdByPlayerNameHandler = getRoundVoteByGameIdByPlayerNameHandler;
             _updateRoundHandler = updateRoundHandler;
             deleteAllRoundGroupsByRoundIdHandler = deleteAllRoundGroupsByRoundIdCommand;
             deleteAllRoundVotesByRoundIdHandler = deleteAllRoundVotesByRoundIdCommand;
@@ -117,15 +114,13 @@ namespace Contaminados.Api.Controllers
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
                 var players = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
 
-                var result = CreateResult(game, players, "Game Found");
-                return Ok(result);
+                return Ok(new StatusCodesOkCommon(game, players, "Game Found").GetStatusCodesOk());
             }
             catch (CustomException ex)
             {
                 return StatusCode(ex.Status, new { msg = ex.Message, status = ex.Status });
             }
         }
-
 
         /// <summary>
         /// Game Create
@@ -140,8 +135,7 @@ namespace Contaminados.Api.Controllers
                 var game = await _createGameHandler.HandleAsync(command);
                 await _createPlayerHandler.HandleAsync(new CreatePlayerCommand(command.Owner, game.Id));
                 var players = new List<Players> { new Players { PlayerName = command.Owner, GameId = game.Id } };
-                var result = CreateResult(game, players, "Game Created");
-                return Ok(result);
+                return Ok(new StatusCodesOkCommon(game, players, "Game Created").GetStatusCodesOk());
             }
             catch (CustomException ex)
             {
@@ -254,7 +248,6 @@ namespace Contaminados.Api.Controllers
                     await _updatePlayerHandler.HandleAsync(new UpdatePlayerCommand(enemy.Id, enemy.GameId, enemy.PlayerName, true));
                 }
 
-
                 return Ok(new { Code = 200, Description = "Game started" });
             }
             catch (CustomException ex)
@@ -264,11 +257,8 @@ namespace Contaminados.Api.Controllers
                     message = ex.Message,
                     status = ex.Status
                 });
-
             }
         }
-
-
 
         /// <summary>
         /// Show Round
@@ -291,22 +281,7 @@ namespace Contaminados.Api.Controllers
                 var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
                 var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
 
-                return Ok(new StatusCodesOkRounds
-                {
-                    Status = 200,
-                    Msg = "Joined Game",
-                    Data = new DataRounds
-                    {
-                        Id = round.Id,
-                        Leader = round.Leader,
-                        Status = round.Status.ToString(),
-                        Result = round.Result.ToString(),
-                        Phase = round.Phase.ToString(),
-                        Group = group.Select(g => g.Player).ToArray(),
-                        Votes = votes.Select(v => v.Vote == Vote.Yes ? true : false).ToArray()
-
-                    }
-                });
+                return Ok(new StatusCodesOkRoundsCommon(round, group, votes, "Round Found").GetStatusCodesOkRounds());
             }
             catch (CustomException ex)
             {
@@ -345,22 +320,8 @@ namespace Contaminados.Api.Controllers
                 //Cambio del status de la ronda a Voting
                 await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.Voting, round.Result, round.Phase, round.GameId));
 
-                return Ok(new StatusCodesOkRounds
-                {
-                    Status = 200,
-                    Msg = "Group Created",
-                    Data = new DataRounds
-                    {
-                        Id = round.Id,
-                        Leader = round.Leader,
-                        Status = round.Status.ToString(),
-                        Result = round.Result.ToString(),
-                        Phase = round.Phase.ToString(),
-                        Group = group.Group.ToArray(),
-                        Votes = votes.Select(v => v.Vote == Vote.Yes ? true : false).ToArray()
-
-                    }
-                });
+                var newGroup = group.Group.Select(g => new RoundGroup { Player = g, RoundId = roundId }).ToList();
+                return Ok(new StatusCodesOkRoundsCommon(round, newGroup, votes, "Group Created").GetStatusCodesOkRounds());
             }
             catch (CustomException ex)
             {
@@ -403,33 +364,16 @@ namespace Contaminados.Api.Controllers
                 {
                     await deleteAllRoundGroupsByRoundIdHandler.HandleAsync(new DeleteAllRoundGroupsByRoundIdCommand(roundId));
                     await deleteAllRoundVotesByRoundIdHandler.HandleAsync(new DeleteAllRoundVotesByRoundIdCommand(roundId));
-                    await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.WaitingOnLeader, round.Result, round.Phase, round.GameId));// revizar si es waiting on leader
-
+                    await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.WaitingOnLeader, round.Result, round.Phase, round.GameId));
                 }
+
                 //Cambiamos el status de la ronda a Waiting on group si la mayoria de los votos son SI
                 else if (votes.Count() == game.Count() && votes.Count(x => x.GroupVote == Vote.Yes) > game.Count() / 2)
                 {
                     await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.WaitingOnGroup, round.Result, round.Phase, round.GameId));
                 }
 
-                return Ok(
-                    new StatusCodesOkRounds
-                    {
-                        Status = 200,
-                        Msg = "Vote Created",
-                        Data = new DataRounds
-                        {
-                            Id = round.Id,
-                            Leader = round.Leader,
-                            Status = round.Status.ToString(),
-                            Result = round.Result.ToString(),
-                            Phase = round.Phase.ToString(),
-                            Group = group.Select(g => g.Player).ToArray(),
-                            Votes = votes.Select(v => v.GroupVote == Vote.Yes ? true : false).ToArray()
-                        }
-                    }
-                );
-
+                return Ok(new StatusCodesOkRoundsCommon(round, group, votes, "Vote registered").GetStatusCodesOkRounds());
             }
             catch (CustomException e)
             {
@@ -463,7 +407,7 @@ namespace Contaminados.Api.Controllers
                 //Variables para la respuesta
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
                 var playerlist = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
-                return Ok(CreateResult(game, playerlist, "Joined Game"));
+                return Ok(new StatusCodesOkCommon(game, playerlist, "Joined Game").GetStatusCodesOk());
             }
             catch (CustomException ex)
             {
@@ -498,6 +442,7 @@ namespace Contaminados.Api.Controllers
                 var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
                 //Guardar el voto
                 await _updateRoundVoteHandler.HandleAsync(new UpdateRoundVoteCommand(player, roundId, action.Action ? Vote.Yes : Vote.No, null));
+
                 //----------------------------------------------------------------------------------------------
                 //Acciones cuando todos los jugadores han votado------------------------------------------------
                 //----------------------------------------------------------------------------------------------
@@ -542,23 +487,7 @@ namespace Contaminados.Api.Controllers
                         await _updateGameHandler.HandleAsync(new UpdateGameCommand(gameId, Status.Ended, round.Id, player, password ?? string.Empty));
                     }
                 }
-
-                return Ok(new StatusCodesOkRounds
-                {
-                    Status = 200,
-                    Msg = "Action registered",
-                    Data = new DataRounds
-                    {
-                        Id = round.Id,
-                        Leader = round.Leader,
-                        Status = round.Status.ToString(),
-                        Result = round.Result.ToString(),
-                        Phase = round.Phase.ToString(),
-                        Group = group.Select(g => g.Player).ToArray(),
-                        Votes = votes.Select(v => v.GroupVote == Vote.Yes ? true : false).ToArray()
-
-                    }
-                });
+                return Ok(new StatusCodesOkRoundsCommon(round, group, votes, "Action registered").GetStatusCodesOkRounds());
             }
             catch (CustomException ex)
             {
@@ -568,27 +497,6 @@ namespace Contaminados.Api.Controllers
                     status = ex.Status
                 });
             }
-        }
-
-        //-------------------------------------------------------------------------------------
-        //No hacer el metodo ASYNC ni llamar a ningun Handler
-        private StatusCodesOk CreateResult(Game game, IEnumerable<Players> players, string msg)
-        {
-            return new StatusCodesOk
-            {
-                Status = 200,
-                Msg = msg,
-                Data = new Data
-                {
-                    Id = game.Id.ToString(),
-                    Name = game.Name,
-                    Status = game.GameStatus.ToString(),
-                    Password = game.Password?.Length != 0,
-                    CurrentRound = game.CurrentRoundId,
-                    Players = players.Select(p => p.PlayerName.ToString()).ToArray(),
-                    Enemies = players.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
-                }
-            };
         }
 
         private StatusCodeAllGames GamesList(List<Game> games)
@@ -609,32 +517,5 @@ namespace Contaminados.Api.Controllers
                 }).ToArray()
             };
         }
-
-        //-------------------------------------------------------------------------------------
-        //No hacer el metodo ASYNC ni llamar a ningun Handler
-        /*Futuras actualizaciones, por favor companeros no me reganen :c
-        private StatusCodesOkRounds CreateResultRounds()
-        {
-            return new StatusCodesOkRounds
-            {
-                Status = 200,
-                Msg = "Rounds Found",
-                Data =
-                [
-                    new DataRounds
-                    {
-                        Id = round.Id,
-                        Leader = round.Leader,
-                        Status = round.Status.ToString(),
-                        Result = round.Result.ToString(),
-                        Phase = round.Phase.ToString(),
-                        Group = group?.ToArray() ?? Array.Empty<string>(),
-                        Votes = votes?.Select(v => v.Vote).ToArray() ?? Array.Empty<bool>()
-                    }
-                ]
-            };
-        }*/
-
-
     }
 }

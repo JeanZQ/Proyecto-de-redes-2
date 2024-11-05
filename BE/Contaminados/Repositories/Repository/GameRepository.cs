@@ -39,6 +39,7 @@ namespace Contaminados.Repositories.Repository
 
         public async Task UpdateGameAsync(Game game)
         {
+            game.UpdatedAt = DateTime.Now;
             _context.Set<Game>().Update(game);
             await _context.SaveChangesAsync();
         }
