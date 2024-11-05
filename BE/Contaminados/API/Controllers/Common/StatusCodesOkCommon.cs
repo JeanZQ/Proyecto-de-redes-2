@@ -1,6 +1,7 @@
 using Contaminados.Models.Common;
 using Models.gameModels;
 using Models.playersModels;
+using Models.roundModels;
 
 namespace API.Controllers.Common
 {
@@ -20,6 +21,8 @@ namespace API.Controllers.Common
                 Status = game.GameStatus.ToString(),
                 Password = game.Password?.Length != 0,
                 CurrentRound = game.CurrentRoundId,
+                CreatedAt = game.CreatedAt,
+                UpdateAt = game.UpdatedAt,
                 Players = players.Select(p => p.PlayerName.ToString()).ToArray(),
                 Enemies = players.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
             };

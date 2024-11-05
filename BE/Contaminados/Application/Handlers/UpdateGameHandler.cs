@@ -38,10 +38,10 @@ namespace Contaminados.Application.Handlers
             //}
 
             // Si el juego ya empezo no se puede volver a empezar (No actualiza currentRoundId de Game)
-            if (game.GameStatus == Status.Rounds || game.GameStatus == Status.Ended)
-            {
-                throw new GameAlreadyStartedStartExeption();
-            }
+            //if (game.GameStatus == Status.Rounds || game.GameStatus == Status.Ended)
+            //{
+            //    throw new GameAlreadyStartedStartExeption();
+            //}
 
             // Si no hay suficientes jugadores no se puede empezar
             var players = await _playerRepository.GetAllPlayersByGameIdAsync(game.Id);

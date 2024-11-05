@@ -234,6 +234,10 @@ namespace Contaminados.Api.Controllers
                     throw new ForbiddenStartExeption();
                 }
 
+                if (game.GameStatus != Status.Lobby) {
+                    throw new GameAlreadyStartedStartExeption();
+                }
+
                 var round = await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, RoundsPhase.Vote1, gameId));//revizar
 
                 //Iniciar el juego
@@ -539,6 +543,8 @@ namespace Contaminados.Api.Controllers
                     Status = g.GameStatus.ToString(),
                     Password = g.Password?.Length != 0,
                     CurrentRound = g.CurrentRoundId,
+                    CreatedAt = g.CreatedAt,
+                    UpdateAt = g.UpdatedAt,
                     Players = _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(g.Id)).Result.Select(p => p.PlayerName.ToString()).ToArray(),
                     Enemies = _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(g.Id)).Result.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
                 }).ToArray()
