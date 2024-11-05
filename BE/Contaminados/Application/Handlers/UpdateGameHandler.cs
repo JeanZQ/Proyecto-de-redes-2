@@ -32,16 +32,16 @@ namespace Contaminados.Application.Handlers
             }
 
             // Forbidden (El ultimo que del actionVote le tira error)
-            // if (game.Owner != command.Player)
-            // {
+            //if (game.Owner != command.Player)
+            //{
             //    throw new ForbiddenException();
-            // }
+            //}
 
             // Si el juego ya empezo no se puede volver a empezar (No actualiza currentRoundId de Game)
-            //if (game.GameStatus == Status.Rounds || game.GameStatus == Status.Ended)
-            //{
-            //    throw new GameAlreadyStartedStartExeption();
-            //}
+            if (game.GameStatus == Status.Rounds || game.GameStatus == Status.Ended)
+            {
+                throw new GameAlreadyStartedStartExeption();
+            }
 
             // Si no hay suficientes jugadores no se puede empezar
             var players = await _playerRepository.GetAllPlayersByGameIdAsync(game.Id);

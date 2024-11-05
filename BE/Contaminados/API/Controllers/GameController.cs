@@ -229,10 +229,16 @@ namespace Contaminados.Api.Controllers
                 int index = random.Next(leader.Count());
                 var leaderName = leader.ElementAt(index).PlayerName;
 
+                //Mandar el juego para saber el lider
+                if (game.Owner != player) {
+                    throw new ForbiddenStartExeption();
+                }
+
                 var round = await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, RoundsPhase.Vote1, gameId));//revizar
 
                 //Iniciar el juego
                 await _updateGameHandler.HandleAsync(new UpdateGameCommand(game.Id, Status.Rounds, round.Id, player, password ?? string.Empty));
+
 
                 //Asignar enemiges
                 List<Players> playerList = (List<Players>)await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
