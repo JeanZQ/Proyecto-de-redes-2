@@ -250,7 +250,7 @@ namespace Contaminados.Api.Controllers
                 var amountEnemies = enemies.GetEnemies(playerList.Count());
 
                 // asignar enemigos aleatorios
-                for (int i = 0; i < amountEnemies; i++)//pasar a lambda
+                for (int i = 0; i < amountEnemies; i++)
                 {
                     var randomEnemie = random.Next(playerList.Count());
                     var enemy = playerList.ElementAt(randomEnemie);
@@ -452,7 +452,7 @@ namespace Contaminados.Api.Controllers
                 var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
                 //Guardar el voto
                 await _updateRoundVoteHandler.HandleAsync(new UpdateRoundVoteCommand(gameId, player, roundId, action.Action ? Vote.Yes : Vote.No, null));
-
+                await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, round.Status, round.Result, round.Phase, round.GameId));
                 //----------------------------------------------------------------------------------------------
                 //Acciones cuando todos los jugadores han votado------------------------------------------------
                 //----------------------------------------------------------------------------------------------
