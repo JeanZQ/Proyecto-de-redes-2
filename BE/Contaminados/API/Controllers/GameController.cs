@@ -441,7 +441,7 @@ namespace Contaminados.Api.Controllers
                 var votes = await _getAllRoundVoteByRoundIdHandler.HandleAsync(new GetAllRoundVoteByRoundIdQuery(roundId));
                 var group = await _getAllRoundGroupByRoundIdHandler.HandleAsync(new GetAllRoundGroupByRoundIdQuery(roundId));
                 //Guardar el voto
-                await _updateRoundVoteHandler.HandleAsync(new UpdateRoundVoteCommand(player, roundId, action.Action ? Vote.Yes : Vote.No, null));
+                await _updateRoundVoteHandler.HandleAsync(new UpdateRoundVoteCommand(gameId, player, roundId, action.Action ? Vote.Yes : Vote.No, null));
 
                 //----------------------------------------------------------------------------------------------
                 //Acciones cuando todos los jugadores han votado------------------------------------------------
@@ -470,9 +470,9 @@ namespace Contaminados.Api.Controllers
                     //Todas las rondas
                     var rounds = await _getAllRoundByGameIdHandler.HandleAsync(new GetAllRoundByGameIdQuery(gameId));
                     //El juego no ha terminado
-                    if (round.Phase != RoundsPhase.Vote5 && (rounds.Count(x => x.Result == RoundsResult.Citizens) <= 3 || rounds.Count(x => x.Result == RoundsResult.Enemies) <= 3))
+                    if (round.Phase != RoundsPhase.Vote5 && (rounds.Count(x => x.Result == RoundsResult.Citizens) < 2 || rounds.Count(x => x.Result == RoundsResult.Enemies) < 2))
                     {
-                        //Pasamos a la siguiente ronda y actualizamos Game
+                        //Pasamos a la siguiente ronda, actualizamos Game y actualizamos enemies
                         var leader = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
                         var random = new Random();
                         int index = random.Next(leader.Count());
@@ -480,6 +480,27 @@ namespace Contaminados.Api.Controllers
 
                         var nextRound = await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, round.Phase + 1, gameId));
                         await _updateGameHandler.HandleAsync(new UpdateGameCommand(gameId, Status.Rounds, nextRound.Id, player, password ?? string.Empty));
+
+                        //Asignar enemigos nuevos
+                        List<Players> playerList = (List<Players>)await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
+                        List<Players> playerListEnemies = playerList.Where(x => x.IsEnemy == true).ToList();
+                        Enemies enemies = Enemies.Instance;
+                        var amountEnemies = enemies.GetEnemies(playerList.Count());
+
+                        // eliminar enemigos anteriores
+                        for(int i = 0; i < amountEnemies; i++){
+                            await _updatePlayerHandler.HandleAsync(new UpdatePlayerCommand(playerListEnemies[i].Id, playerListEnemies[i].GameId, playerListEnemies[i].PlayerName, false));
+                        }
+
+                        // asignar enemigos aleatorios
+                        for (int i = 0; i < amountEnemies; i++)
+                        {
+                            var randomEnemie = random.Next(playerList.Count());
+                            var enemy = playerList.ElementAt(randomEnemie);
+                            playerList.Remove(enemy);
+                            await _updatePlayerHandler.HandleAsync(new UpdatePlayerCommand(enemy.Id, enemy.GameId, enemy.PlayerName, true));
+                        }
+
                     }
                     //Ya termino el juego
                     else

@@ -29,7 +29,7 @@ namespace Contaminados.Application.Handlers
             //Verifica si el estado del round es WaitingOnLeader
             if (round.Status != RoundsStatus.WaitingOnLeader)
             {
-                throw new ConflictException();
+                throw new PreconditionRequiredException();
             }
 
             //Verificar si la consulta es del lider
@@ -41,13 +41,13 @@ namespace Contaminados.Application.Handlers
             //Verificamos que el numero de jugadores sea el correcto
             if (command.Players.Count() != decades.GetGroups(round.Phase.GetHashCode(), playerList.Count()))
             {
-                throw new ConflictException(); //Cambiar por excepcion de tamaño de grupo
+                throw new sizeOfGroupExeption();
             }
 
             //Verificamos que los jugadores esten en la lista de jugadores
             if (!command.Players.All(p => playerList.Any(pl => pl.PlayerName == p)))
             {
-                throw new NotFoundException();
+                throw new ForbiddenException();
             }
 
             //Guarda los jugadores en la tabla RoundGroup

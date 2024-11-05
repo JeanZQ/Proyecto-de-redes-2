@@ -18,56 +18,41 @@ namespace Contaminados.Application.Handlers
 
         public async Task HandleAsync(UpdateGameCommand command)
         {
+            // busca en la base de datos el juego
+            var game = await _gameRepository.GetGameByIdAsync(command.Id);
 
-            try
+
+            // Unauthorized
+            if (!(game.Password != null && game.Password.Length == 0 && command.Password == null))
             {
-                // busca en la base de datos el juego
-                var game = await _gameRepository.GetGameByIdAsync(command.Id);
-
-
-                // Unauthorized
-                if (!(game.Password != null && game.Password.Length == 0 && command.Password == null))
+                if (game.Password != command.Password)
                 {
-                    if (game.Password != command.Password)
-                    {
-                        throw new UnauthorizedStartExeption();
-                    }
+                    throw new UnauthorizedStartExeption();
                 }
-
-                // Forbidden
-                //if (game.Owner != command.Player)
-                //{
-                //    throw new ForbiddenException();
-                //}
-
-                // Si el juego ya empezo no se puede volver a empezar
-                //if (game.GameStatus == Status.Lobby )
-                //{
-                    //throw new GameAlreadyStartedStartExeption();
-                //}
-
-                // Si no hay suficientes jugadores no se puede empezar
-                var players = await _playerRepository.GetAllPlayersByGameIdAsync(game.Id);
-                if (players.Count() < 5)
-                {
-                    throw new NeedPlayerStartExeption();
-                }
-
-
-
-                game.GameStatus = command.GameStatus;
-                game.CurrentRoundId = command.CurrentRoundId; // cambia el roundId
-                await _gameRepository.UpdateGameAsync(game);
-
-            }
-            catch (CustomException)
-            {
-                throw new GameNotFoundStartExeption();
             }
 
+            // Forbidden (El ultimo que del actionVote le tira error)
+            // if (game.Owner != command.Player)
+            // {
+            //    throw new ForbiddenException();
+            // }
 
+            // Si el juego ya empezo no se puede volver a empezar (No actualiza currentRoundId de Game)
+            //if (game.GameStatus == Status.Rounds || game.GameStatus == Status.Ended)
+            //{
+            //    throw new GameAlreadyStartedStartExeption();
+            //}
+
+            // Si no hay suficientes jugadores no se puede empezar
+            var players = await _playerRepository.GetAllPlayersByGameIdAsync(game.Id);
+            if (players.Count() < 5)
+            {
+                throw new NeedPlayerStartExeption();
+            }
+
+            game.GameStatus = command.GameStatus;
+            game.CurrentRoundId = command.CurrentRoundId; // cambia el roundId
+            await _gameRepository.UpdateGameAsync(game);
         }
-
-
     }
 }

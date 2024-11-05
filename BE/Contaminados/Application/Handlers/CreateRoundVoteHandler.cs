@@ -18,37 +18,31 @@ namespace Contaminados.Application.Handlers
         }
         public async Task<RoundVote> HandleAsync(CreateRoundVoteCommand command)
         {
-            try
+            // Verifica si el estado del round es Voting
+            var round = await _roundRepository.GetRoundByIdAsync(command.RoundId);
+            if (round.Status != RoundsStatus.Voting)
             {
-                // Verifica si el estado del round es Voting
-                var round = await _roundRepository.GetRoundByIdAsync(command.RoundId);
-                if (round.Status != RoundsStatus.Voting)
-                {
-                    throw new ConflictException();
-                }
-                
-                // Verifica si el jugador ya voto
-                if (await _roundVoteRepository.GetRoundVoteByGameIdByPlayerNameAsync(command.RoundId, command.PlayerName) != null)
-                {
-                    throw new ConflictException();
-                }
-
-                // Crea el voto
-                var roundVote = new RoundVote
-                {
-                    RoundId = command.RoundId,
-                    PlayerName = command.PlayerName,
-                    Vote = command.Vote,
-                    GroupVote = command.GroupVote
-                };
-
-                await _roundVoteRepository.CreateRoundVoteAsync(roundVote);
-                return roundVote;
+                throw new ConflictException();
             }
-            catch (Exception)
+
+            // Verifica si el jugador ya voto
+            if (await _roundVoteRepository.GetRoundVoteByGameIdByPlayerNameAsync(command.RoundId, command.PlayerName) != null)
             {
-                throw new NotFoundException();
+                throw new PreconditionRequiredException();
             }
+
+            // Crea el voto
+            var roundVote = new RoundVote
+            {
+                RoundId = command.RoundId,
+                PlayerName = command.PlayerName,
+                Vote = command.Vote,
+                GroupVote = command.GroupVote
+            };
+
+            await _roundVoteRepository.CreateRoundVoteAsync(roundVote);
+            return roundVote;
+
         }
     }
 }
