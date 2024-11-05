@@ -470,7 +470,7 @@ namespace Contaminados.Api.Controllers
                     //Todas las rondas
                     var rounds = await _getAllRoundByGameIdHandler.HandleAsync(new GetAllRoundByGameIdQuery(gameId));
                     //El juego no ha terminado
-                    if (round.Phase != RoundsPhase.Vote5 && (rounds.Count(x => x.Result == RoundsResult.Citizens) < 2 || rounds.Count(x => x.Result == RoundsResult.Enemies) < 2))
+                    if (round.Phase != RoundsPhase.Vote5 && (rounds.Count(x => x.Result == RoundsResult.Citizens) < 2 && rounds.Count(x => x.Result == RoundsResult.Enemies) < 2))
                     {
                         //Pasamos a la siguiente ronda, actualizamos Game y actualizamos enemies
                         var leader = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
