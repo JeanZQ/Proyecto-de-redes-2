@@ -12,5 +12,7 @@ namespace Models.roundModels
         public required RoundsResult Result { get; set; }
         public required RoundsPhase Phase { get; set; }
         public required Guid GameId { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

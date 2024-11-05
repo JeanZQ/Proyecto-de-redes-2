@@ -544,7 +544,7 @@ namespace Contaminados.Api.Controllers
                     Password = g.Password?.Length != 0,
                     CurrentRound = g.CurrentRoundId,
                     CreatedAt = g.CreatedAt,
-                    UpdateAt = g.UpdatedAt,
+                    UpdatedAt = g.UpdatedAt,
                     Players = _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(g.Id)).Result.Select(p => p.PlayerName.ToString()).ToArray(),
                     Enemies = _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(g.Id)).Result.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
                 }).ToArray()

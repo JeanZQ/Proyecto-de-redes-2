@@ -32,6 +32,7 @@ namespace Contaminados.Repositories.Repository
 
         public async Task UpdateRoundAsync(Round round)
         {
+            round.UpdatedAt = DateTime.Now;
             _context.Set<Round>().Update(round);
             await _context.SaveChangesAsync();
         }

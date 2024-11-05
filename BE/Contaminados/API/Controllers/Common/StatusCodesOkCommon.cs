@@ -22,7 +22,7 @@ namespace API.Controllers.Common
                 Password = game.Password?.Length != 0,
                 CurrentRound = game.CurrentRoundId,
                 CreatedAt = game.CreatedAt,
-                UpdateAt = game.UpdatedAt,
+                UpdatedAt = game.UpdatedAt,
                 Players = players.Select(p => p.PlayerName.ToString()).ToArray(),
                 Enemies = players.Where(p => p.IsEnemy == true).Select(p => p.PlayerName.ToString()).ToArray()
             };

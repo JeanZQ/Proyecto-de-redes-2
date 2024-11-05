@@ -21,8 +21,8 @@ namespace API.Controllers.Common
                 Status = round.Status.ToString(),
                 Result = round.Result.ToString(),
                 Phase = round.Phase.ToString(),
-                //CreatedAt = round.CreatedAt,
-                //UpdateAt = round.UpdateAt,
+                CreatedAt = round.CreatedAt,
+                UpdatedAt = round.UpdatedAt,
                 Group = group.Select(g => g.Player).ToArray(),
                 Votes = votes.Select(v => v.GroupVote == Vote.Yes ? true : false).ToArray()
             };
