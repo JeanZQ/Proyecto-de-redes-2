@@ -9,6 +9,7 @@ namespace Contaminados.Models.Common
     public class Data
     {
         public required string Id { get; set; }
+        public required string Owner { get; set; }
         public required string Name { get; set; }
         public required string Status { get; set; }
         public required bool Password { get; set; }

@@ -17,6 +17,7 @@ namespace API.Controllers.Common
             Data = new Data
             {
                 Id = game.Id.ToString(),
+                Owner = game.Owner.ToString(),
                 Name = game.Name,
                 Status = game.GameStatus.ToString(),
                 Password = game.Password?.Length != 0,

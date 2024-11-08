@@ -18,7 +18,7 @@ namespace Contaminados.Application.Handlers
             {
                 throw new ClientException();
             }
-            else if (query.Limit != null && query.Limit <= 0 || query.Limit > 50)
+            else if (query.Limit != null && query.Limit <= 0 || query.Limit > 250)
             {
                 throw new ClientException();
             }

@@ -2,7 +2,7 @@ using Contaminados.Application.Handlers;
 using Contaminados.Application.Queries;
 using Models.playersModels;
 
-namespace Application.Handlers.Common
+namespace Utilities
 {
     public sealed class EnemiesUtilities
     {
