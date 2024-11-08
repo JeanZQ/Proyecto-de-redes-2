@@ -2,9 +2,9 @@ namespace Contaminados.Models.Common
 {
     public enum Status
     {
-        Lobby,
-        Rounds,
-        Ended
+        lobby,
+        rounds,
+        ended
     }
 
     public enum RoundsStatus

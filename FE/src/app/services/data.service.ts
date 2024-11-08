@@ -10,7 +10,7 @@ import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_P
     providedIn: 'root'
 })
 export class DataService {
-    private urlAPI = 'https://localhost:5237/api/games';
+    private urlAPI = 'https://localhost:7047/api/games';
     constructor(private http: HttpClient) { }
 
     getRooms(page: number, limit: number): Observable<ServerGameResponse> {

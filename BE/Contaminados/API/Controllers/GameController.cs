@@ -9,6 +9,7 @@ using Application.Commands.Common;
 using Application.Handlers.Common;
 using Models.roundGroupModels;
 using API.Controllers.Common;
+using Azure.Core;
 
 namespace Contaminados.Api.Controllers
 {
@@ -203,8 +204,8 @@ namespace Contaminados.Api.Controllers
                 //Validar credenciales
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
 
-                //Crear la ronda
-                var leader = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
+                    //Crear la ronda
+                    var leader = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
                 var random = new Random();
                 int index = random.Next(leader.Count());
                 var leaderName = leader.ElementAt(index).PlayerName;
@@ -214,14 +215,14 @@ namespace Contaminados.Api.Controllers
                     throw new ForbiddenStartExeption();
                 }
 
-                if (game.GameStatus != Status.Lobby) {
+                if (game.GameStatus != Status.lobby) {
                     throw new GameAlreadyStartedStartExeption();
                 }
 
                 var round = await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, RoundsPhase.Vote1, gameId));//revizar
 
                 //Iniciar el juego
-                await _updateGameHandler.HandleAsync(new UpdateGameCommand(game.Id, Status.Rounds, round.Id, player, password ?? string.Empty));
+                await _updateGameHandler.HandleAsync(new UpdateGameCommand(game.Id, Status.rounds, round.Id, player, password ?? string.Empty));
 
 
                 //Asignar enemiges
@@ -364,6 +365,11 @@ namespace Contaminados.Api.Controllers
             Console.WriteLine("JoinGame");
             try
             {
+                if ( players.Player != player) {
+                    throw new UnauthorizedException();
+                }
+                
+
                 //Validar credenciales
                 await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
 
@@ -373,6 +379,7 @@ namespace Contaminados.Api.Controllers
                 //Variables para la respuesta
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
                 var playerlist = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
+
                 Console.WriteLine("Joined Game");
                 return Ok(new StatusCodesOkCommon(game, playerlist, "Joined Game").GetStatusCodesOk());
             }
@@ -439,7 +446,7 @@ namespace Contaminados.Api.Controllers
                         var leaderName = leader.ElementAt(index).PlayerName;
 
                         var nextRound = await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, round.Phase + 1, gameId));
-                        await _updateGameHandler.HandleAsync(new UpdateGameCommand(gameId, Status.Rounds, nextRound.Id, player, password ?? string.Empty));
+                        await _updateGameHandler.HandleAsync(new UpdateGameCommand(gameId, Status.rounds, nextRound.Id, player, password ?? string.Empty));
 
                         //Asignar enemigos nuevos
                         List<Players> playerList = (List<Players>)await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
@@ -465,7 +472,7 @@ namespace Contaminados.Api.Controllers
                     //Ya termino el juego
                     else
                     {
-                        await _updateGameHandler.HandleAsync(new UpdateGameCommand(gameId, Status.Ended, round.Id, player, password ?? string.Empty));
+                        await _updateGameHandler.HandleAsync(new UpdateGameCommand(gameId, Status.ended, round.Id, player, password ?? string.Empty));
                     }
                 }
                 Console.WriteLine("Action registered");

@@ -171,14 +171,14 @@ export class LobbyComponent implements OnDestroy {
             this.subscription = interval(3000).subscribe(() => {
                 // console.log('Game:' + localStorage.getItem('RoundResponse'));
                 // console.log('ID ROUND:' + this.roundResponse.data.id);
-                console.log(this.getAllRounds);
+                // console.log(this.getAllRounds);
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
 
                       //  console.log('DECADA: ',response.data.decade);
                       //   console.log('TOTAL JUGADORES: ',response.data.players.length);
-                        // console.log('Response de getGame');
-                        // console.log(response);
+                         console.log('Response de getGame');
+                         console.log(response);
 
                         // Actualiza los jugadores sin recargar la página                        
 

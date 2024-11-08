@@ -32,7 +32,7 @@ namespace Contaminados.Application.Handlers
 
             // valida si el juego es distinto de lobby o hay mas de 10 players, no deja unirse
             var game = await _gameRepository.GetGameByIdAsync(command.GameId);
-            if (game.GameStatus != Status.Lobby || allPlayers.Count() > 9)
+            if (game.GameStatus != Status.lobby || allPlayers.Count() > 9)
             {
                 throw new PreconditionRequiredException();
             }
