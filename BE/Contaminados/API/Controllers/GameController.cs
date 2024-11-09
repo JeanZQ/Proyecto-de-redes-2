@@ -9,7 +9,9 @@ using Application.Commands.Common;
 using Application.Handlers.Common;
 using Models.roundGroupModels;
 using API.Controllers.Common;
+using Utilities;
 using Azure.Core;
+using Contaminados.Utilities;
 
 namespace Contaminados.Api.Controllers
 {
@@ -296,7 +298,7 @@ namespace Contaminados.Api.Controllers
                 await _createRoundGroupHandler.HandleAsync(new CreateRoundGroupCommand(round.Id, group.Group, player, gameId));
 
                 //Cambio del status de la ronda a Voting
-                await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.Voting, round.Result, round.Phase, round.GameId));
+                await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.voting, round.Result, round.Phase, round.GameId));
 
                 var newGroup = group.Group.Select(g => new RoundGroup { Player = g, RoundId = roundId }).ToList();
                 Console.WriteLine("Group Created");
@@ -426,18 +428,18 @@ namespace Contaminados.Api.Controllers
                     if (!roundVotes.Any(x => x.Vote == Vote.No))
                     {
                         //Ganan los Citizens
-                        await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.Ended, RoundsResult.Citizens, round.Phase, round.GameId));
+                        await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.ended, RoundsResult.citizens, round.Phase, round.GameId));
                     }
                     else
                     {
                         //Ganan los Enemies
-                        await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.Ended, RoundsResult.Enemies, round.Phase, round.GameId));
+                        await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.ended, RoundsResult.enemies, round.Phase, round.GameId));
                     }
 
                     //Todas las rondas
                     var rounds = await _getAllRoundByGameIdHandler.HandleAsync(new GetAllRoundByGameIdQuery(gameId));
                     //El juego no ha terminado
-                    if (round.Phase != RoundsPhase.Vote5 && (rounds.Count(x => x.Result == RoundsResult.Citizens) < 2 && rounds.Count(x => x.Result == RoundsResult.Enemies) < 2))
+                    if (round.Phase != RoundsPhase.Vote5 && (rounds.Count(x => x.Result == RoundsResult.citizens) < 2 && rounds.Count(x => x.Result == RoundsResult.enemies) < 2))
                     {
                         //Pasamos a la siguiente ronda, actualizamos Game y actualizamos enemies
                         var leader = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
@@ -491,6 +493,9 @@ namespace Contaminados.Api.Controllers
 
         private StatusCodeAllGames GamesList(List<Game> games)
         {
+
+            
+
             return new StatusCodeAllGames
             {
                 Status = 200,

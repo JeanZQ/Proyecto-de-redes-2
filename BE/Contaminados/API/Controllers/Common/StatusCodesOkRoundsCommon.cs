@@ -1,4 +1,5 @@
 using Contaminados.Models.Common;
+using Contaminados.Utilities;
 using Models.roundGroupModels;
 using Models.roundModels;
 using Models.roundVoteModels;
@@ -18,7 +19,7 @@ namespace API.Controllers.Common
             {
                 Id = round.Id,
                 Leader = round.Leader,
-                Status = round.Status.ToString(),
+                Status = EnumToString.GetEnumDescription(round.Status),
                 Result = round.Result.ToString(),
                 Phase = round.Phase.ToString(),
                 CreatedAt = round.CreatedAt,

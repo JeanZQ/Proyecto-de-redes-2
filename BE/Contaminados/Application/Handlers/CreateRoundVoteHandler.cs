@@ -20,7 +20,7 @@ namespace Contaminados.Application.Handlers
         {
             // Verifica si el estado del round es Voting
             var round = await _roundRepository.GetRoundByIdAsync(command.RoundId);
-            if (round.Status != RoundsStatus.Voting)
+            if (round.Status != RoundsStatus.voting)
             {
                 throw new ConflictException();
             }

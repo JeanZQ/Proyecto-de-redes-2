@@ -329,8 +329,8 @@ export class LobbyComponent implements OnDestroy {
                 this.roundLeader = response.data.leader; // Actualiza el líder de la ronda
                 this.cdr.detectChanges(); // Actualiza la vista
 
-                // console.log('Actualizando ronda');
-                // console.log(response);
+                console.log('Actualizando ronda');
+                console.log(response);
 
                 if (response.data.status === 'waiting-on-leader') {
                     this.groupDefined = false;

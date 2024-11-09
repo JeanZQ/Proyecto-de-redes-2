@@ -53,7 +53,8 @@ export class DataService {
         return this.http.head<ServerGameResponse>(`${this.urlAPI}/${payload.id}/start`,
             {
                 headers: {
-                    'player': payload.player
+                    'player': payload.player,
+                    ...(payload.password && { 'password': payload.password })
                 }
             }
         );

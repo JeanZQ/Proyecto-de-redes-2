@@ -10,6 +10,9 @@ namespace API.Controllers.Common
         private int Status { get; set; }
         private string Msg { get; set; }
         private Data Data { get; set; }
+
+
+
         public StatusCodesOkCommon(Game game, IEnumerable<Players> players, string msg)
         {
             Status = 200;
