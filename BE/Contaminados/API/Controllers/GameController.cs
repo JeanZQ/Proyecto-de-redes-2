@@ -206,8 +206,8 @@ namespace Contaminados.Api.Controllers
                 //Validar credenciales
                 var game = await _getGameByIdByPasswordByOwnerHandler.HandleAsync(new GetGameByIdByPasswordByPlayerQuery(gameId, password ?? string.Empty, player));
 
-                    //Crear la ronda
-                    var leader = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
+                //Crear la ronda
+                var leader = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
                 var random = new Random();
                 int index = random.Next(leader.Count());
                 var leaderName = leader.ElementAt(index).PlayerName;
@@ -221,7 +221,7 @@ namespace Contaminados.Api.Controllers
                     throw new GameAlreadyStartedStartExeption();
                 }
 
-                var round = await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, RoundsPhase.Vote1, gameId));//revizar
+                var round = await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, RoundsPhase.vote1, gameId));//revizar
 
                 //Iniciar el juego
                 await _updateGameHandler.HandleAsync(new UpdateGameCommand(game.Id, Status.rounds, round.Id, player, password ?? string.Empty));
@@ -439,7 +439,7 @@ namespace Contaminados.Api.Controllers
                     //Todas las rondas
                     var rounds = await _getAllRoundByGameIdHandler.HandleAsync(new GetAllRoundByGameIdQuery(gameId));
                     //El juego no ha terminado
-                    if (round.Phase != RoundsPhase.Vote5 && (rounds.Count(x => x.Result == RoundsResult.citizens) < 2 && rounds.Count(x => x.Result == RoundsResult.enemies) < 2))
+                    if (round.Phase != RoundsPhase.vote3 && (rounds.Count(x => x.Result == RoundsResult.citizens) < 2 && rounds.Count(x => x.Result == RoundsResult.enemies) < 2))
                     {
                         //Pasamos a la siguiente ronda, actualizamos Game y actualizamos enemies
                         var leader = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));

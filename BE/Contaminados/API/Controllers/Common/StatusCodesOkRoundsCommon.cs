@@ -8,6 +8,7 @@ namespace API.Controllers.Common
 {
     public class StatusCodesOkRoundsCommon
     {
+
         private int Status { get; set; }
         private string Msg { get; set; }
         private DataRounds Data { get; set; }

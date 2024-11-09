@@ -31,11 +31,9 @@ namespace Contaminados.Models.Common
     
     public enum RoundsPhase
     {
-        Vote1,
-        Vote2,
-        Vote3,
-        Vote4,
-        Vote5
+        vote1,
+        vote2,
+        vote3,
     }
 
     public enum Vote

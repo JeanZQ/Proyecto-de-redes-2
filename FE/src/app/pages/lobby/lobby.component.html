@@ -20,7 +20,7 @@
 <div class="lobby-grid">
 
     <div *ngFor="let player of players" class="card" [formGroup]="selectedPlayers"
-        [ngClass]="{ 'enemy-card': enemies.includes(player) }">
+        [ngClass]="{ 'enemy-card': enemies.includes(player) && isCurrentPlayerEnemy()}">
         <!-- Clase condicional para enemigos -->
         <div class="groupSelect" *ngIf="
         roundLeader != undefined &&

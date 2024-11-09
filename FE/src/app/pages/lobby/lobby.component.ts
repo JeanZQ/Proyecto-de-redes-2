@@ -194,8 +194,8 @@ export class LobbyComponent implements OnDestroy {
                                     roundId: response.data.currentRound,
                                     player: this.game.player
                                 };
-                                // console.log("Variables de la ronda");
-                                // console.log(this.roundPayload);
+                                console.log("Variables de la ronda");
+                                console.log(this.roundPayload);
 
                                 // console.log("Payload de la ronda");
                                 // console.log(this.gameResponse);
@@ -289,11 +289,11 @@ export class LobbyComponent implements OnDestroy {
             this.gameStarted = true;
         }
 
-        // if (this.isCurrentPlayerEnemy()) {
-        //     // console.log(`${this.game.player} es un enemigo.`);
-        // } else {
-        //     // console.log(`${this.game.player} NO es un enemigo.`);
-        // }
+        if (this.isCurrentPlayerEnemy()) {
+            console.log(`${this.game.player} es un enemigo.`);
+        } else {
+            console.log(`${this.game.player} NO es un enemigo.`);
+        }
 
     }
 

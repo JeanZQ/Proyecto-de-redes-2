@@ -10,6 +10,8 @@ import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_P
     providedIn: 'root'
 })
 export class DataService {
+    // https://contaminados.akamai.meseguercr.com/api/games
+    // https://localhost:7047/api/games
     private urlAPI = 'https://localhost:7047/api/games';
     constructor(private http: HttpClient) { }
 
