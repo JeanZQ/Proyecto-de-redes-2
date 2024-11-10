@@ -34,7 +34,7 @@ namespace Contaminados.Application.Handlers
             {
                 Name = command.Name,
                 Password = command.Password,
-                GameStatus = Status.Lobby,
+                GameStatus = Status.lobby,
                 Owner = command.Owner,
                 CurrentRoundId = Guid.Empty
             };

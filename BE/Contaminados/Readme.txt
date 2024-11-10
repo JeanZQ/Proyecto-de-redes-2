@@ -1,4 +1,4 @@
-Pasos QORS
+Pasos CQRS
 1. Models
 2. IRepository
 3. Repository
@@ -81,5 +81,6 @@ Diagrama de la DB
 +------------------+
 | Id (PK)          |   <-- Identificador único del voto
 | RoundId (FK)     |   <-- Identificador de la ronda (roundId)
-| Vote             |   <-- Resultado del voto (boolean)
+| Vote             |
+| GroupVote        |   
 +------------------+

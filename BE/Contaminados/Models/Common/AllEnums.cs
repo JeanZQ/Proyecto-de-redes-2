@@ -1,31 +1,47 @@
+using System.ComponentModel;
+using System.Reflection;
+
 namespace Contaminados.Models.Common
 {
     public enum Status
     {
-        Lobby,
-        Rounds,
-        Ended
+        lobby,
+        rounds,
+        ended
     }
 
     public enum RoundsStatus
     {
+        [Description("waiting-on-leader")]
         WaitingOnLeader,
-        Voting,
+        [Description("voting")]
+        voting,
+        [Description("waiting-on-group")]
         WaitingOnGroup,
-        Ended
+        [Description("ended")]
+        ended
     }
 
     public enum RoundsResult
     {
         none,
-        Citizens,
-        Enemies
+        citizens,
+        enemies
     }
     
     public enum RoundsPhase
     {
-        Vote1,
-        Vote2,
-        Vote3
+        vote1,
+        vote2,
+        vote3,
     }
+
+    public enum Vote
+    {
+        Yes,
+        No,
+        NA
+    }
+
+
 }

@@ -171,14 +171,14 @@ export class LobbyComponent implements OnDestroy {
             this.subscription = interval(3000).subscribe(() => {
                 // console.log('Game:' + localStorage.getItem('RoundResponse'));
                 // console.log('ID ROUND:' + this.roundResponse.data.id);
-                console.log(this.getAllRounds);
+                // console.log(this.getAllRounds);
                 this.dataService.getGame(this.game).subscribe({
                     next: (response: any) => {
 
                       //  console.log('DECADA: ',response.data.decade);
                       //   console.log('TOTAL JUGADORES: ',response.data.players.length);
-                        // console.log('Response de getGame');
-                        // console.log(response);
+                         console.log('Response de getGame');
+                         console.log(response);
 
                         // Actualiza los jugadores sin recargar la página                        
 
@@ -194,8 +194,8 @@ export class LobbyComponent implements OnDestroy {
                                     roundId: response.data.currentRound,
                                     player: this.game.player
                                 };
-                                // console.log("Variables de la ronda");
-                                // console.log(this.roundPayload);
+                                console.log("Variables de la ronda");
+                                console.log(this.roundPayload);
 
                                 // console.log("Payload de la ronda");
                                 // console.log(this.gameResponse);
@@ -289,11 +289,11 @@ export class LobbyComponent implements OnDestroy {
             this.gameStarted = true;
         }
 
-        // if (this.isCurrentPlayerEnemy()) {
-        //     // console.log(`${this.game.player} es un enemigo.`);
-        // } else {
-        //     // console.log(`${this.game.player} NO es un enemigo.`);
-        // }
+        if (this.isCurrentPlayerEnemy()) {
+            console.log(`${this.game.player} es un enemigo.`);
+        } else {
+            console.log(`${this.game.player} NO es un enemigo.`);
+        }
 
     }
 
@@ -329,8 +329,8 @@ export class LobbyComponent implements OnDestroy {
                 this.roundLeader = response.data.leader; // Actualiza el líder de la ronda
                 this.cdr.detectChanges(); // Actualiza la vista
 
-                // console.log('Actualizando ronda');
-                // console.log(response);
+                console.log('Actualizando ronda');
+                console.log(response);
 
                 if (response.data.status === 'waiting-on-leader') {
                     this.groupDefined = false;

@@ -14,20 +14,15 @@ namespace Contaminados.Application.Handlers
         }
         public async Task<Round> HandleAsync(UpdateRoundCommand command)
         {
-            if (command.Id == Guid.Empty)
-            {
-                throw new ClientException(); //Revizar si es la excepcion correcta
-            }
-            var round = new Round
-            {
-                Leader = command.Leader,
-                Status = command.Status,
-                Result = command.Result,
-                Phase = command.Phase,
-                GameId = command.GameId
-            };
             try
             {
+                //busca en la base de datos el round
+                var round = await _roundRepository.GetRoundByIdAsync(command.Id);
+
+                round.Phase = command.Phase;
+                round.Result = command.Result;
+                round.Status = command.Status;
+                
                 await _roundRepository.UpdateRoundAsync(round);
                 return round;
             }

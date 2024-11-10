@@ -1,3 +1,4 @@
+using Application.Commands.Common;
 using Models.gameModels;
 using Models.roundModels;
 
@@ -5,12 +6,16 @@ namespace Contaminados.Application.Commands
 {
     public class CreateRoundGroupCommand
     {
-        public Round Round { get; set; }
-        public string Player { get; set; }
-        public CreateRoundGroupCommand(Round round, string player)
+        public Guid RoundId { get; set; }
+        public IEnumerable<string> Players { get; set; }
+        public string Leader { get; set; }
+        public Guid GameId { get; set; }
+        public CreateRoundGroupCommand(Guid roundId, IEnumerable<string> players, string leader, Guid gameId)
         {
-            Round = round;
-            Player = player;
+            RoundId = roundId;
+            Players = players;
+            Leader = leader;
+            GameId = gameId;
         }
     }
 }

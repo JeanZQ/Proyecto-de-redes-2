@@ -39,12 +39,12 @@ namespace Contaminados.Application.Handlers
                 }
             }
 
-            if (game.Owner == request.Player || players.Any(p => p.PlayerName == request.Player))
-            {
-                return game; ;
-            }
+            //if (game.Owner == request.Player || players.Any(p => p.PlayerName == request.Player))
+            //{
+                return game;
+            //}
 
-            throw new ForbiddenException();
+            //throw new ForbiddenException();
         }
     }
 }

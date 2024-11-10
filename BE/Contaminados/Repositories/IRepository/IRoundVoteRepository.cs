@@ -4,5 +4,8 @@ namespace Contaminados.Repositories.IRepository
     {
         Task CreateRoundVoteAsync(RoundVote roundVote);
         Task<IEnumerable<RoundVote>> GetAllRoundVoteByRoundIdAsync(Guid roundId);
+        Task UpdateRoundVoteAsync(RoundVote roundVote);
+        Task<RoundVote> GetRoundVoteByGameIdByPlayerNameAsync(Guid roundId, string playerName);
+        Task DeleteAllRoundVotesByRoundIdAsync(Guid roundId);
     }
 }

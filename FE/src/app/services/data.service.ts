@@ -10,11 +10,12 @@ import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_P
     providedIn: 'root'
 })
 export class DataService {
-    private urlAPI = 'https://contaminados.akamai.meseguercr.com/api/games';
+    // https://contaminados.akamai.meseguercr.com/api/games
+    // https://localhost:7047/api/games
+    private urlAPI = 'https://localhost:7047/api/games';
     constructor(private http: HttpClient) { }
 
     getRooms(page: number, limit: number): Observable<ServerGameResponse> {
-        // console.log('getRooms: ',page,limit);
         return this.http.get<ServerGameResponse>(`${this.urlAPI}?page=${page}&limit=${limit}`);
     }
 
@@ -54,7 +55,8 @@ export class DataService {
         return this.http.head<ServerGameResponse>(`${this.urlAPI}/${payload.id}/start`,
             {
                 headers: {
-                    'player': payload.player
+                    'player': payload.player,
+                    ...(payload.password && { 'password': payload.password })
                 }
             }
         );

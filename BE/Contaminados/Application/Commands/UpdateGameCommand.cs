@@ -1,5 +1,4 @@
 using Contaminados.Models.Common;
-using Models.playersModels;
 
 namespace Contaminados.Application.Commands
 
