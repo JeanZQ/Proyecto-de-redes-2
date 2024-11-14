@@ -33,7 +33,7 @@ namespace Contaminados.Application.Handlers
             var game = new Game
             {
                 Name = command.Name,
-                Password = command.Password,
+                Password = command.Password ?? string.Empty,
                 GameStatus = Status.lobby,
                 Owner = command.Owner,
                 CurrentRoundId = Guid.Empty
