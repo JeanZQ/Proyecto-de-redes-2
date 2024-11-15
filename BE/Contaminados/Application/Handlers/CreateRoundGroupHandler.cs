@@ -22,7 +22,9 @@ namespace Contaminados.Application.Handlers
         public async Task HandleAsync(CreateRoundGroupCommand command)
         {
 
-            var round = await _roundRepository.GetRoundByIdAsync(command.RoundId);
+            //var round = await _roundRepository.GetRoundByIdAsync(command.RoundId);
+            var rounds  = await _roundRepository.GetAllRoundByGameIdAsync(command.RoundId);
+            var round = rounds.Select(r => r).Where(r => r.Id == command.RoundId).FirstOrDefault();
             var playerList = await _playerRepository.GetAllPlayersByGameIdAsync(command.GameId);
             Decades decades = Decades.Instance;
 
@@ -39,7 +41,7 @@ namespace Contaminados.Application.Handlers
             }
 
             //Verificamos que el numero de jugadores sea el correcto
-            if (command.Players.Count() != decades.GetGroups(round.Phase.GetHashCode(), playerList.Count()))
+            if (command.Players.Count() != decades.GetGroups(rounds.Count(), playerList.Count()))
             {
                 throw new sizeOfGroupExeption();
             }
