@@ -40,6 +40,6 @@ uses: actions/checkout@v1
 name: Build & Push Image
   run: |
     cd cd BE/Contaminados
-    docker image build -t zjean42/contaminados:latest .
-    echo "${{ secrets.DOCKERHUBPASSCONTAMINADOS }}" | docker login -u "zjeancarlo42@gmail.com" --password-stdin
-    docker push zjean42/contaminados:latest
+    docker image build -t luisballar/contaminados:latest .
+    echo "${{ secrets.DOCKERHUBPASSCONTAMINADOS }}" | docker login -u "luisballar123@gmail.com" --password-stdin
+    docker push luisballar/contaminados:latest
