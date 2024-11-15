@@ -446,7 +446,7 @@ namespace Contaminados.Api.Controllers
                         int index = random.Next(leader.Count());
                         var leaderName = leader.ElementAt(index).PlayerName;
 
-                        var nextRound = await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, round.Phase + 1, gameId));
+                        var nextRound = await _createRoundHandler.HandleAsync(new CreateRoundCommand(leaderName, RoundsStatus.WaitingOnLeader, RoundsResult.none, round.Phase, gameId));
                         await _updateGameHandler.HandleAsync(new UpdateGameCommand(gameId, Status.rounds, nextRound.Id, player, password ?? string.Empty));
                     }
                     //Ya termino el juego
