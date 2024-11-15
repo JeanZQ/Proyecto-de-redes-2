@@ -35,9 +35,8 @@ export class DataService {
     joinGame(payload: JoinGame): Observable<ServerGameResponse> {
 
         const headers = new HttpHeaders({
-            'password': payload.password ? payload.password : DEFAULT_PASSWORD,
             'player': payload.owner,
-            'Content-Type': 'application/json'
+            ...(payload.password && { 'password': payload.password })
         });
 
         return this.http.put<ServerGameResponse>(

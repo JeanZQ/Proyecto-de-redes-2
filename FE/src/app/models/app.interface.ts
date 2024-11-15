@@ -1,6 +1,6 @@
 import exp from "constants";
 
-export const DEFAULT_PASSWORD = 'Shazam!';
+export const DEFAULT_PASSWORD = null;
 
 
 export interface ServerGameResponse {
