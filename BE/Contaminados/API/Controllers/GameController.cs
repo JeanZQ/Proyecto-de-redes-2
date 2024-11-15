@@ -213,11 +213,13 @@ namespace Contaminados.Api.Controllers
                 var leaderName = leader.ElementAt(index).PlayerName;
 
                 //Mandar el juego para saber el lider
-                if (game.Owner != player) {
+                if (game.Owner != player)
+                {
                     throw new ForbiddenStartExeption();
                 }
 
-                if (game.GameStatus != Status.lobby) {
+                if (game.GameStatus != Status.lobby)
+                {
                     throw new GameAlreadyStartedStartExeption();
                 }
 
@@ -339,6 +341,8 @@ namespace Contaminados.Api.Controllers
                     await deleteAllRoundGroupsByRoundIdHandler.HandleAsync(new DeleteAllRoundGroupsByRoundIdCommand(roundId));
                     await deleteAllRoundVotesByRoundIdHandler.HandleAsync(new DeleteAllRoundVotesByRoundIdCommand(roundId));
                     await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.WaitingOnLeader, round.Result, round.Phase, round.GameId));
+
+                    await _updateRoundHandler.HandleAsync(new UpdateRoundCommand(round.Id, round.Leader, RoundsStatus.WaitingOnLeader, round.Result, round.Phase + 1, round.GameId));
                 }
 
                 //Cambiamos el status de la ronda a Waiting on group si la mayoria de los votos son SI
@@ -367,7 +371,8 @@ namespace Contaminados.Api.Controllers
             Console.WriteLine("JoinGame");
             try
             {
-                if ( players.Player != player) {
+                if (players.Player != player)
+                {
                     throw new UnauthorizedException();
                 }
 
@@ -472,7 +477,7 @@ namespace Contaminados.Api.Controllers
         private StatusCodeAllGames GamesList(List<Game> games)
         {
 
-            
+
 
             return new StatusCodeAllGames
             {
