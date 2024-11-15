@@ -1,0 +1,45 @@
+name: contaminados
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    
+uses: actions/checkout@v4
+
+    
+name: Setup .NET Core
+    uses: actions/setup-dotnet@v4
+    with:
+      dotnet-version: '8.0.x'
+
+    
+name: Restore dependencies
+    run: |
+      cd BE/Contaminados
+      dotnet restore
+
+    
+name: Build
+    run: |
+      cd BE/Contaminados
+      dotnet build --configuration Release
+
+  publish-Api:
+    runs-on: ubuntu-latest
+    steps:
+    
+uses: actions/checkout@v1
+name: Build & Push Image
+  run: |
+    cd cd BE/Contaminados
+    docker image build -t zjean42/contaminados:latest .
+    echo "${{ secrets.DOCKERHUBPASSCONTAMINADOS }}" | docker login -u "zjeancarlo42@gmail.com" --password-stdin
+    docker push zjean42/contaminados:latest
