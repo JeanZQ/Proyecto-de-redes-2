@@ -23,7 +23,6 @@ namespace Contaminados.Application.Handlers
 
         public async Task HandleAsync(UpdateRoundVoteCommand command)
         {
-
             var roundVote = await _roundVoteRepository.GetRoundVoteByGameIdByPlayerNameAsync(command.RoundId, command.PlayerName) ?? throw new PreconditionRequiredException();
             var roundGroup = await _roundGroupRepository.GetAllRoundGroupByRoundIdAsync(command.RoundId) ?? throw new NotFoundException();
             var players = await _playerRepository.GetAllPlayersByGameIdAsync(command.GameId) ?? throw new NotFoundException();
@@ -43,10 +42,6 @@ namespace Contaminados.Application.Handlers
             {
                 throw new PreconditionRequiredException();
             }
-
-
         }
-
     }
-
 }
