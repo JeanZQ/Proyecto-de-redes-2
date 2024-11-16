@@ -23,7 +23,7 @@ namespace Contaminados.Application.Handlers
         {
 
             //var round = await _roundRepository.GetRoundByIdAsync(command.RoundId);
-            var rounds  = await _roundRepository.GetAllRoundByGameIdAsync(command.RoundId);
+            var rounds  = await _roundRepository.GetAllRoundByGameIdAsync(command.GameId);
             var round = rounds.Select(r => r).Where(r => r.Id == command.RoundId).FirstOrDefault();
             var playerList = await _playerRepository.GetAllPlayersByGameIdAsync(command.GameId);
             Decades decades = Decades.Instance;
