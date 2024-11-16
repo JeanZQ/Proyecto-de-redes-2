@@ -204,10 +204,6 @@ export class LobbyComponent implements OnDestroy {
                             console.log('Estado de la ronda', response.data.status);
 
 
-
-
-                            
-
                              console.log('Grupo:', this.roundGroup);
                             
                             
