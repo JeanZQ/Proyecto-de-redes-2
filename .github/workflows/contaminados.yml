@@ -38,5 +38,5 @@ jobs:
         run: |
           cd BE/Contaminados
           docker image build -t luisballar/contaminados:latest .
-          echo "${{ secrets.DOCKERHUBPASSWORD }}" | docker login -u "luisballar" --password-stdin
+          echo "${{ secrets.DOCKERHUBPASSWORD }}" | docker login -u "${{ secrets.DOCKERHUBUSER }}" --password-stdin
           docker push luisballar/contaminados:latest
