@@ -29,7 +29,7 @@ namespace Contaminados.Application.Handlers
             //Verifica si el jugador pertenece a un grupo y que no haya votado
             if (roundGroup.Any(x => x.Player == command.PlayerName) && roundVote.Vote == Vote.NA)
             {
-                if (players.Any(x => x.PlayerName == command.PlayerName && x.IsEnemy == false) && command.Vote == Vote.No)
+                if (players.Any(x => x.PlayerName == command.PlayerName && x.IsEnemy == null) && command.Vote == Vote.No)
                 {
                     throw new PreconditionRequiredException();
                 }
