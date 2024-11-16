@@ -63,7 +63,6 @@ export class LobbyComponent implements OnDestroy {
     public gameStarted: boolean = false;
     public winner = false;
     public nameWinner = "enemies";
-    public isGroupEmpty: boolean = false;
     public roundPayload: RoundInfoRequest = {
         gameId: '',
         roundId: '',
@@ -164,7 +163,7 @@ export class LobbyComponent implements OnDestroy {
                 this.hasPassword = true;
             }
 
-
+            this.clearGroup();
 
             // Llama al servicio cada 5 segundos
 
@@ -201,11 +200,11 @@ export class LobbyComponent implements OnDestroy {
                                 // console.log(this.gameResponse);
                             }
 
-                            if(!this.isGroupEmpty && this.roundGroup.length != 0 && response.data.status === 'waiting-on-leader'){
-                                this.roundGroup.splice(0, this.roundGroup.length);
-                            }
+                            console.log('Tamano grupo:', this.roundGroup.length);
+                            console.log('Estado de la ronda', response.data.status);
 
-                            // console.log('Grupo:', this.roundGroup);
+
+                             console.log('Grupo:', this.roundGroup);
                             
                             
 
@@ -278,6 +277,12 @@ export class LobbyComponent implements OnDestroy {
         this.players = response.data.players; // Actualiza la lista de jugadores
         localStorage.setItem('GameResponse', JSON.stringify(response.data)); // Actualiza el localStorage
         this.cdr.detectChanges(); // Actualiza la vista
+
+        // if (response.data.phase === 'vote2' || response.data.phase === 'vote3') {
+        //     this.roundGroup = [];
+        //     this.isGroupEmpty = true;
+        //     console.log("Limpiando grupo para phase2");
+        // }
 
         this.enemies = response.data.enemies; // Suponiendo que los enemigos están en response.data.enemies
 
@@ -425,7 +430,7 @@ export class LobbyComponent implements OnDestroy {
                 this._snackBar.open('Grupo propuesto', 'ok', {
                     duration: 5000,
                   });
-                
+                this.clearGroup();
             },
             error: (e: any) => {
                 switch (e.status) {
@@ -522,6 +527,12 @@ export class LobbyComponent implements OnDestroy {
         });
 
     }
+
+    clearGroup() {
+        this.roundGroup = [];
+        console.log('Grupo limpiado');
+    }
+
 
     // muestra de cuantos players debe ser el grupo segun la ronda
     playerOnGroup(decade: number, totalPlayers: number) {
