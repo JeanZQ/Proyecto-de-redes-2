@@ -39,5 +39,4 @@ jobs:
           cd BE/Contaminados
           docker image build -t luisballar/contaminados:latest .
           echo "HeladoDeMango29@" | docker login -u "luisballar" --password-stdin
-          docker login --email "${{ secrets.DOCKERHUBMAIL }}"
           docker push luisballar/contaminados:latest
