@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: contaminados
+    hostname: contaminados
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=StrongP@ssw0rd!
+    ports:
+      - "1433:1433"
+    restart: unless-stopped
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql

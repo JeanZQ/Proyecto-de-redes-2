@@ -7,6 +7,12 @@ COPY . ./
 #Restore as distinct layers
 RUN dotnet restore
 
+# Exponer el puerto 443 para HTTP
+EXPOSE 80
+# Exponer el puerto 443 para HTTPS
+EXPOSE 443
+
+
 #Build and publish a release
 RUN dotnet publish -c Release -o out
 
