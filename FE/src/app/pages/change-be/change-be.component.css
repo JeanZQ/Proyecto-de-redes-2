@@ -1,0 +1,21 @@
+.changeBE {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5;
+}
+
+.form{
+    display: flex;
+}
+
+.formBE {
+    display: flex;
+    align-items: center;
+    width: 50%;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
