@@ -14,7 +14,8 @@ import { CommonModule } from "@angular/common";
     MatInputModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatCardModule
+    MatCardModule,
+    CommonModule
   ],
   templateUrl: './change-be.component.html',
   styleUrl: './change-be.component.css'
@@ -23,13 +24,19 @@ export class ChangeBEComponent {
   
   url:string ='https://contaminados.akamai.meseguercr.com/api/games';
 
-  ngOnInit() {
+  myForm: FormGroup;
 
-  }
+    constructor(
+      private fb:FormBuilder
+    ){
+      this.myForm = this.fb.group({
+        newBE: ['']
+      });
+    }
 
 
   onSubmit() {
-    console.log('onSubmit');
+    console.log(this.myForm.value);
   }
 
 }

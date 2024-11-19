@@ -1,5 +1,11 @@
-<div class="changeBE">
-    <h4>Cambiar el BE</h4>
-    <input class="formBE" >  
-    <button mat-raised-button onclick=onSubmit()>Cambiar BE</button>
-</div>
+<mat-card class="formBE">
+    <form  [formGroup]="myForm" (ngSubmit)="onSubmit()">
+        <mat-form-field class="inputBE">
+            <mat-label>Cambiar BE</mat-label>
+            <input matInput formControlName="newBE">
+        </mat-form-field>
+        <mat-card-actions>
+            <button mat-raised-button type="submit">Cambiar BE</button>
+        </mat-card-actions>
+    </form>
+</mat-card>
