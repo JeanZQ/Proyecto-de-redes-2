@@ -5,6 +5,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from "@angular/common";
+import { LinkBE } from '../../models/app.interface';
+import { DataService } from "../../services/data.service";
 
 @Component({
   selector: 'changeBE',
@@ -24,19 +26,29 @@ export class ChangeBEComponent {
   
   url:string ='https://contaminados.akamai.meseguercr.com/api/games';
 
+  linkBE: LinkBE = {
+    url: this.url
+  }
+
+
   myForm: FormGroup;
 
     constructor(
-      private fb:FormBuilder
+      private fb:FormBuilder,
+      private dataService: DataService
     ){
       this.myForm = this.fb.group({
         newBE: ['']
       });
     }
 
-
   onSubmit() {
-    console.log(this.myForm.value);
+    if (typeof localStorage !== 'undefined') {
+      this.linkBE.url = this.myForm.get('newBE')?.value;
+      this.dataService.setLinkBE(this.linkBE.url);
+    }
   }
+
+  
 
 }
