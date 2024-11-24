@@ -12,7 +12,7 @@ import { NewGame, ServerGameResponse, JoinGame, SearchGame, StartGame, DEFAULT_P
 export class DataService {
     // https://contaminados.akamai.meseguercr.com/api/games
     // https://localhost:7047/api/games
-    private urlAPI = 'https://localhost:7047/api/games';
+    private urlAPI = 'https://www.grupod.oci.meseguercr.com/api/games';
     constructor(private http: HttpClient) { }
 
     getRooms(page: number, limit: number): Observable<ServerGameResponse> {
