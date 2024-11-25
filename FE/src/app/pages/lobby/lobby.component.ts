@@ -18,6 +18,7 @@ import { MatCard } from "@angular/material/card";
 import { waitForAsync } from "@angular/core/testing";
 import { EndGameComponent } from "../endGame/endGame.component";
 import { unescape } from "querystring";
+import { throws } from "assert";
 
 
 
@@ -62,7 +63,9 @@ export class LobbyComponent implements OnDestroy {
     public leader: boolean = false;
     public gameStarted: boolean = false;
     public winner = false;
-    public nameWinner = "enemies";
+    public nameWinner = "none";
+    friendly = 0;
+    enemy = 0;
     public roundPayload: RoundInfoRequest = {
         gameId: '',
         roundId: '',
@@ -227,7 +230,6 @@ export class LobbyComponent implements OnDestroy {
 
                         }
                         else if (this.gameStatus == 'ended') {
-                            // console.log('Game ended');
                             this._snackBar.open('El juego ha terminado', 'Ok', {
                                 duration: 5000,
                             });
@@ -237,7 +239,6 @@ export class LobbyComponent implements OnDestroy {
                                 acc[curr] = (acc[curr] || 0) + 1;
                                 return acc;
                             }, {})).reduce((a, b) => a[1] > b[1] ? a : b)[0];
-                            // console.log('Winner:', this.nameWinner);
 
                             localStorage.clear();
                         }
@@ -255,7 +256,9 @@ export class LobbyComponent implements OnDestroy {
                     }
                 });
                 this.getAllRounds();
-                // console.log('TODAS LAS RONDAS: ', this.allRoundsResponse);
+                console.log('TODAS LAS RONDAS: ', this.allRoundsResponse);
+                this.friendly = this.allRoundsResponse.data.filter((round) => round.result == 'citizens').length;
+                this.enemy = this.allRoundsResponse.data.filter((round) => round.result == 'enemies').length;
 
             });
         } else {

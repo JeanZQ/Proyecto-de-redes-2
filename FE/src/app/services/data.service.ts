@@ -15,7 +15,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 export class DataService {
     // https://contaminados.akamai.meseguercr.com/api/games
     // https://localhost:7047/api/games
-
     public linkBE : LinkBE = {
         url: ''
     };
@@ -47,6 +46,7 @@ export class DataService {
             duration: 5000,
         });
     }
+
 
     getRooms(page: number, limit: number): Observable<ServerGameResponse> {
         return this.http.get<ServerGameResponse>(`${this.link+'/api/games'}?page=${page}&limit=${limit}`);
