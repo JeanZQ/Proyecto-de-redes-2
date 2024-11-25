@@ -118,7 +118,9 @@ export interface ProposeRound{
     group:string[];
 };
 
-
+export interface LinkBE{
+    url:string;
+}
 
 
 

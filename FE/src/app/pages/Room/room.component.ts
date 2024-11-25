@@ -65,7 +65,12 @@ export class RoomComponent implements OnInit {
     }
 
     searchRooms() {
-        if (this.searchTerm.length >= 3 && this.searchTerm.length <= 20) {
+
+        if (this.selectedOption === 'all') {
+            this.selectedOption = '';
+        }
+
+        if (this.searchTerm.length >= 3 && this.searchTerm.length <= 20 || this.searchTerm === '') {
             this.datasvc.gamesearch({ name: this.searchTerm, status: this.selectedOption, page: 0, limit: 50 }).subscribe(
                 response => {
                     this.serverData = response;
