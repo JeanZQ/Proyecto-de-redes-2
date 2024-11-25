@@ -77,7 +77,7 @@ namespace Contaminados.Models.Common
     // Propose a group
     public class sizeOfGroupExeption : CustomException
     {
-        public sizeOfGroupExeption() : base(428, "The group must have between 2 and 4 players") { }
+        public sizeOfGroupExeption(int number) : base(428, "The group must be of "+number+ " players") { }
     }
 
 }

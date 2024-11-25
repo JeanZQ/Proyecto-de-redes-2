@@ -336,7 +336,7 @@ namespace Contaminados.Api.Controllers
                 var game = await _getAllPlayersByGameIdHandler.HandleAsync(new GetAllPlayersByGameIdQuery(gameId));
 
                 // Eliminar todos los grupos y votos de la ronda si la mayoria de los votos son NO
-                if (votes.Count() == game.Count() && votes.Count(x => x.GroupVote == Vote.No) > game.Count() / 2)
+                if (votes.Count() == game.Count() && votes.Count(x => x.GroupVote == Vote.No) >= game.Count() / 2)
                 {
                     await deleteAllRoundGroupsByRoundIdHandler.HandleAsync(new DeleteAllRoundGroupsByRoundIdCommand(roundId));
                     await deleteAllRoundVotesByRoundIdHandler.HandleAsync(new DeleteAllRoundVotesByRoundIdCommand(roundId));
