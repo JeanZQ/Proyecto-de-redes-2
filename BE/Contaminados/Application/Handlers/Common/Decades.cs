@@ -35,7 +35,7 @@ namespace Application.Handlers.Common
 
             if (totalPlayers < 5 || totalPlayers > 10)
             {
-                throw new sizeOfGroupExeption();
+                throw new sizeOfGroupExeption(groups[decade - 1, totalPlayers - 5]);
             }
 
             return groups[decade - 1, totalPlayers - 5];

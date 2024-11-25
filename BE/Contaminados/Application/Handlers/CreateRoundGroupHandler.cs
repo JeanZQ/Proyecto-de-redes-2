@@ -43,7 +43,8 @@ namespace Contaminados.Application.Handlers
             //Verificamos que el numero de jugadores sea el correcto
             if (command.Players.Count() != decades.GetGroups(rounds.Count(), playerList.Count()))
             {
-                throw new sizeOfGroupExeption();
+
+                throw new sizeOfGroupExeption(decades.GetGroups(rounds.Count(), playerList.Count()));
             }
 
             //Verificamos que los jugadores esten en la lista de jugadores
