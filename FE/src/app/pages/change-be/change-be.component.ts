@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from "@angular/common";
 import { LinkBE } from '../../models/app.interface';
 import { DataService } from "../../services/data.service";
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'changeBE',
@@ -35,18 +36,33 @@ export class ChangeBEComponent {
 
     constructor(
       private fb:FormBuilder,
-      private dataService: DataService
+      private dataService: DataService,
+      private _snackBar: MatSnackBar
     ){
       this.myForm = this.fb.group({
-        newBE: ['']
+        newBE: ['',[Validators.required]]
       });
     }
 
+
+
+
   onSubmit() {
-    if (typeof localStorage !== 'undefined') {
-      this.linkBE.url = this.myForm.get('newBE')?.value;
-      this.dataService.setLinkBE(this.linkBE.url);
+
+    const isFormValid = this.myForm.get('newBE')?.valid ;
+
+    if (isFormValid) {
+      if (typeof localStorage !== 'undefined') {
+        this.linkBE.url = this.myForm.get('newBE')?.value;
+        this.dataService.setLinkBE(this.linkBE.url);
+      }
+    }else{
+      this._snackBar.open('Formulario Invalido', 'Ok', {
+        duration: 5000,
+      });
     }
+
+ 
   }
 
   
