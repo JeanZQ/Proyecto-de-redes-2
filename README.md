@@ -21,6 +21,9 @@ Throughout the game, players will face challenges, voting rounds, and critical s
 🛠️ Technologies Used
 
 Frontend: Angular, TypeScript
+
 Backend: .NET
+
 Cloud Infrastructure: Oracle Cloud Infrastructure (OCI)
+
 Architecture: Modern and scalable web application
